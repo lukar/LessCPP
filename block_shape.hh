@@ -7,10 +7,10 @@
 
 namespace sf
 {
-class SFML_GRAPHICS_API BlockShape : public Drawable
+class BlockShape : public Drawable
 {
 private:
-    virtual void draw(RenderTarget& target, RenderStates states) const;
+    void draw(RenderTarget& target, RenderStates states) const;
     RectangleShape surface;
     RectangleShape vertical_line;
     RectangleShape horizontal_line;
