@@ -5,7 +5,7 @@ int main()
 {
     using namespace sf;
 
-    RenderWindow window(VideoMode(400.f, 400.f), "Less game", Style::Titlebar);
+    RenderWindow window(VideoMode(400.f, 400.f), "Less game", Style::Close);
     window.setPosition(Vector2i(0.f, 0.f));
 
     BlockShape block1{200.f, 2.f};
