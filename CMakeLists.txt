@@ -8,5 +8,5 @@ project(LessCPP)
 
 
 find_package(SFML 2.5.1 COMPONENTS graphics REQUIRED)
-add_executable(less less.cc block_shape.cc)
+add_executable(less less.cc block_shape.cc wall.cc)
 target_link_libraries(less sfml-graphics)
