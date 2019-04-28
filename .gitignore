@@ -2,3 +2,6 @@ less
 build/*
 .vs/
 tags
+.idea/
+Debug/
+cmake-build-debug/
