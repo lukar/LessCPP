@@ -7,38 +7,46 @@
 #include <vector>
 
 namespace wall {
-typedef std::vector<std::vector<int>> WallConfig;
+	typedef std::vector<std::vector<int>> WallConfig;
 
 // static variabla garantira, da bo obstajala samo ena kopija na .cc fajl
 // (Brez tega ne dela!)
-static const WallConfig bFullSide = {{1, -1, -1}, {1, -1, 1}};
-static const WallConfig bHalfSide = {{1, -1, 1}};
-static const WallConfig bZigZag = {{1, -1, -1}, {-1, 0, -1}, {1, 0, 1}};
-static const WallConfig bT_Block = {{1, -1, -1}, {1, -1, 1}, {-1, 0, -1}};
-static const WallConfig bTopLeft = {{1, -1, -1}, {-1, 0, -1}};
-static const WallConfig bTopRight = {{1, 0, -1}, {-1, 0, 1}};
-static const WallConfig bBottomRight = {{1, 0, 1}, {-1, 1, 1}};
+	static const WallConfig bFullSide = {{1, -1, -1},
+										 {1, -1, 1}};
+	static const WallConfig bHalfSide = {{1, -1, 1}};
+	static const WallConfig bZigZag = {{1,  -1, -1},
+									   {-1, 0,  -1},
+									   {1,  0,  1}};
+	static const WallConfig bT_Block = {{1,  -1, -1},
+										{1,  -1, 1},
+										{-1, 0,  -1}};
+	static const WallConfig bTopLeft = {{1,  -1, -1},
+										{-1, 0,  -1}};
+	static const WallConfig bTopRight = {{1,  0, -1},
+										 {-1, 0, 1}};
+	static const WallConfig bBottomRight = {{1,  0, 1},
+											{-1, 1, 1}};
 
-static std::vector<WallConfig> wall_configs{
-    bFullSide, bHalfSide, bZigZag, bT_Block, bTopLeft, bTopRight, bBottomRight};
+	static std::vector<WallConfig> wall_configs{
+			bFullSide, bHalfSide, bZigZag, bT_Block, bTopLeft, bTopRight, bBottomRight};
 } // namespace wall
 
-namespace sf {
-class WallShape : public Drawable {
-public:
-  explicit WallShape(float width, float length, int rotation, int config);
-  void setPosition(float x, float y);
-  virtual std::size_t getPointCount() const = 0;
-  virtual Vector2f getPoint(std::size_t index) const = 0;
 
+class Wall : public sf::Drawable {
 private:
-  void draw(RenderTarget &target, RenderStates states) const;
-  const int m_rotation;
-  const float m_width;
-  const float m_length;
-  wall::WallConfig m_wall;
-  std::vector<RectangleShape> m_wallShape;
+	void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+
+	int m_rotation;
+	float m_size;
+	float m_width;
+	wall::WallConfig m_wall;
+	std::vector<sf::RectangleShape> m_wallShape;
+public:
+	explicit Wall(float size = 0, float width = 0, int rotation = 0, int config = 0);
+
+	void setPosition(float x, float y);
+
+	void setFillColor(const sf::Color &color);
 };
-}; // namespace sf
 
 #endif /* WALL_H */

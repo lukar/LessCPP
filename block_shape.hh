@@ -6,25 +6,24 @@
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Shape.hpp>
 
-namespace sf
-{
-class BlockShape : public Drawable
-{
+
+class Block : public sf::Drawable {
 private:
-    void draw(RenderTarget& target, RenderStates states) const;
-    RectangleShape surface;
-    RectangleShape vertical_line;
-    RectangleShape horizontal_line;
-    WallShape wall;
-    const float m_size;
-    const float m_line_width;
-    const float m_inner_size;
-    const float m_border;
+	void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+
+	sf::RectangleShape surface;
+	sf::RectangleShape vertical_line;
+	sf::RectangleShape horizontal_line;
+	Wall wall;
+	float m_size; //whole size
+	float m_line_width; //wall width
+	float m_inner_size; //size without borders
+	float m_border; //border width
 
 public:
-    explicit BlockShape(const float size, const float border);
-    void setPosition(float x, float y);
+	explicit Block(float size, float border);
+
+	void setPosition(float x, float y);
 };
-} // namespace sf
 
 #endif /* BLOCK_SHAPE_H */

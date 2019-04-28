@@ -2,36 +2,39 @@
 #include <SFML/Graphics.hpp>
 
 int main() {
-  using namespace sf;
+	sf::RenderWindow window(sf::VideoMode(400, 400), "Less game", sf::Style::Close);
+	window.setPosition(sf::Vector2i(0, 0));
 
-  RenderWindow window(VideoMode(400.f, 400.f), "Less game", Style::Close);
-  window.setPosition(Vector2i(0.f, 0.f));
+	Block block1{200.f, 2.f};
 
-  BlockShape block1{200.f, 2.f};
-  // BlockShape block2{200.f, 2.f};
-  // BlockShape block3{200.f, 2.f};
+	Block block2{200.f, 2.f};
+	block2.setPosition(200, 0);
 
-  // block2.setPosition(200.f, 0);
-  // block3.setPosition(0, 200.f);
+	Block block3{200.f, 2.f};
+	block3.setPosition(0, 200);
 
-  while (window.isOpen()) {
-    Event event;
-    while (window.pollEvent(event)) {
-      if (event.type == Event::Closed)
-        window.close();
-      if (event.type == Event::KeyPressed) {
-        if (event.key.code == Keyboard::Q) {
-          window.close();
-        }
-      }
-    }
+	Block block4{200.f, 2.f};
+	block4.setPosition(200, 200);
 
-    window.clear();
-    window.draw(block1);
-    // window.draw(block3);
-    // window.draw(block2);
-    window.display();
-  }
+	while (window.isOpen()) {
+		sf::Event event{};
+		while (window.pollEvent(event)) {
+			if (event.type == sf::Event::Closed)
+				window.close();
+			if (event.type == sf::Event::KeyPressed) {
+				if (event.key.code == sf::Keyboard::Q) {
+					window.close();
+				}
+			}
+		}
 
-  return 0;
+		window.clear();
+		window.draw(block1);
+		window.draw(block2);
+		window.draw(block3);
+		window.draw(block4);
+		window.display();
+	}
+
+	return 0;
 }
