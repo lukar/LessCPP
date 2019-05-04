@@ -21,9 +21,11 @@ private:
 	float m_border; //border width
 
 public:
-	explicit Block(float size, float border);
+	explicit Block(float size = 0, float border = 0, int config = 0);
 
 	void setPosition(float x, float y);
+
+	void setRotation(float angle);
 };
 
 #endif /* BLOCK_SHAPE_H */

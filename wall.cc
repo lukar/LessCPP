@@ -2,49 +2,54 @@
 #include "wall.hh"
 
 
-Wall::Wall(float size, float width, int rotation, int config) {
-	this->m_rotation = rotation;
-	this->m_size = size;
-	this->m_width = width;
+Wall::Wall(float size, float width, int config) {
+	m_size = size;
+	m_width = width;
 	assert(size > width);
-	this->m_wall = wall::wall_configs[config];
+	m_wall = wall::wall_configs[config];
 
 	for (auto &w : m_wall) {
 		sf::RectangleShape a_wall{(w[0] == 1
-								   ? sf::Vector2f(width, size / 2 + width / 2)
-								   : sf::Vector2f(size / 2 + width / 2, width))};
+								   ? sf::Vector2f(m_width, m_size / 2 + m_width / 2)
+								   : sf::Vector2f(m_size / 2 + m_width / 2, m_width))};
+		a_wall.setOrigin(-getWallSegOrigin(w));
 		m_wallShape.push_back(a_wall);
 	}
-
-	this->setPosition(0.f, 0.f);
 }
 
 void Wall::setFillColor(const sf::Color &color) {
-	for (auto &w : this->m_wallShape) {
+	for (auto &w : m_wallShape) {
 		w.setFillColor(color);
 	}
 }
 
 void Wall::setPosition(float x, float y) {
-	int len = m_wall.size();
-	for (int i = 0; i < len; ++i) {
-		float x_b = m_size / 2 - m_width / 2, y_b = x_b;
-		if (m_wall[i][0] == 1) // vertikalno
-		{
-			x_b += m_wall[i][1] * (m_size / 2 - m_width / 2);
-			y_b -= (m_wall[i][2] == -1 ? m_size / 2 - m_width / 2 : 0);
-		} else // horizontalno
-		{
-			y_b += m_wall[i][1] * (m_size / 2 - m_width / 2);
-			x_b -= (m_wall[i][2] == -1 ? m_size / 2 - m_width / 2 : 0);
-		}
-		x_b += x;
-		y_b += y;
-		this->m_wallShape[i].setPosition(x_b, y_b);
+	for (auto &w : m_wallShape) {
+		w.setPosition(sf::Vector2f(x, y));
 	}
 }
 
 void Wall::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-	for (auto &w : this->m_wallShape)
+	for (const auto &w : m_wallShape)
 		target.draw(w, states);
+}
+
+void Wall::setRotation(float angle) {
+	for (auto &w : m_wallShape) {
+		w.setRotation(angle);
+	}
+}
+
+sf::Vector2f Wall::getWallSegOrigin(std::vector<int> &wallSeg) {
+	float x_b = -m_width / 2, y_b = x_b;
+	if (wallSeg[0] == 1) // vertikalno
+	{
+		x_b += wallSeg[1] * (m_size / 2 - m_width / 2);
+		y_b -= (wallSeg[2] == -1 ? m_size / 2 - m_width / 2 : 0);
+	} else // horizontalno
+	{
+		y_b += wallSeg[1] * (m_size / 2 - m_width / 2);
+		x_b -= (wallSeg[2] == -1 ? m_size / 2 - m_width / 2 : 0);
+	}
+	return {x_b, y_b};
 }

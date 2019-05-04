@@ -36,17 +36,20 @@ class Wall : public sf::Drawable {
 private:
 	void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
-	int m_rotation;
 	float m_size;
 	float m_width;
 	wall::WallConfig m_wall;
 	std::vector<sf::RectangleShape> m_wallShape;
 public:
-	explicit Wall(float size = 0, float width = 0, int rotation = 0, int config = 0);
+	explicit Wall(float size = 0, float width = 0, int config = 0);
 
 	void setPosition(float x, float y);
 
+	void setRotation(float angle);
+
 	void setFillColor(const sf::Color &color);
+
+	sf::Vector2f getWallSegOrigin(std::vector<int> &wallSeg);
 };
 
 #endif /* WALL_H */
