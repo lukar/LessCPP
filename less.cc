@@ -12,7 +12,6 @@ int main() {
 	window.setPosition(sf::Vector2i(0, 0));
 
 	std::vector<std::vector<Block>> field;
-
 	for (int y = 0; y < 3; ++y) {
 		std::vector<Block> tmp;
 		for (int x = 0; x < 3; ++x) {
@@ -22,6 +21,18 @@ int main() {
 			tmp.emplace_back(tmp_block);
 		}
 		field.emplace_back(tmp);
+	}
+
+	std::vector<sf::CircleShape> whitePlayers(4, sf::CircleShape{30});
+	std::vector<sf::CircleShape> blackPlayers(4, sf::CircleShape{30});
+
+	for (int i = 0; i < 2; ++i) {
+		for (int j = 0; j < 2; ++j) {
+			whitePlayers[j + 2 * i].setPosition(sf::Vector2f(100 * j + 20, 100 * i + 20));
+			whitePlayers[j + 2 * i].setFillColor(sf::Color::Yellow);
+			blackPlayers[j + 2 * i].setPosition(sf::Vector2f(100 * j + 420, 100 * i + 420));
+			blackPlayers[j + 2 * i].setFillColor(sf::Color::Black);
+		}
 	}
 
 	while (window.isOpen()) {
@@ -42,9 +53,12 @@ int main() {
 				window.draw(block);
 			}
 		}
-//		window.draw(block2);
-//		window.draw(block3);
-//		window.draw(block4);
+		for (auto &player: whitePlayers) {
+			window.draw(player);
+		}
+		for (auto &player: blackPlayers) {
+			window.draw(player);
+		}
 		window.display();
 	}
 
