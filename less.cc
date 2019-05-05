@@ -2,6 +2,10 @@
 #include <SFML/Graphics.hpp>
 #include <random>
 
+float block_size = 200;
+float block_border = 2;
+float player_size = 30;
+
 int main() {
 
 	std::default_random_engine eng((std::random_device()) ());
@@ -15,23 +19,29 @@ int main() {
 	for (int y = 0; y < 3; ++y) {
 		std::vector<Block> tmp;
 		for (int x = 0; x < 3; ++x) {
-			Block tmp_block{200.f, 2.f, rand0to6(eng)};
-			tmp_block.setPosition(x * 200 + 100, y * 200 + 100);
+			Block tmp_block{block_size, block_border, rand0to6(eng)};
+			tmp_block.setPosition(x * block_size + block_size / 2, y * block_size + block_size / 2);
 			tmp_block.setRotation(rand0to3(eng) * 90);
 			tmp.emplace_back(tmp_block);
 		}
 		field.emplace_back(tmp);
 	}
 
-	std::vector<sf::CircleShape> whitePlayers(4, sf::CircleShape{30});
-	std::vector<sf::CircleShape> blackPlayers(4, sf::CircleShape{30});
+	std::vector<sf::CircleShape> whitePlayers(4, sf::CircleShape{player_size});
+	std::vector<sf::CircleShape> blackPlayers(4, sf::CircleShape{player_size});
 
 	for (int i = 0; i < 2; ++i) {
 		for (int j = 0; j < 2; ++j) {
-			whitePlayers[j + 2 * i].setPosition(sf::Vector2f(100 * j + 20, 100 * i + 20));
+			whitePlayers[j + 2 * i].setPosition(
+					sf::Vector2f((block_size / 2) * j + block_size / 4,
+								 (block_size / 2) * i + block_size / 4));
 			whitePlayers[j + 2 * i].setFillColor(sf::Color::Yellow);
-			blackPlayers[j + 2 * i].setPosition(sf::Vector2f(100 * j + 420, 100 * i + 420));
+			whitePlayers[j + 2 * i].setOrigin(sf::Vector2f(player_size, player_size));
+			blackPlayers[j + 2 * i].setPosition(
+					sf::Vector2f((block_size / 2) * (j + 4) + block_size / 4,
+								 (block_size / 2) * (i + 4) + block_size / 4));
 			blackPlayers[j + 2 * i].setFillColor(sf::Color::Black);
+			blackPlayers[j + 2 * i].setOrigin(sf::Vector2f(player_size, player_size));
 		}
 	}
 
@@ -48,6 +58,7 @@ int main() {
 		}
 
 		window.clear();
+
 		for (auto &row: field) {
 			for (auto &block: row) {
 				window.draw(block);
