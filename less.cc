@@ -30,19 +30,21 @@ int main() {
 		field.emplace_back(tmp);
 	}
 
+	sf::Color White{255, 222, 173};
+	sf::Color Black{139, 69, 19};
 
 	std::vector<Player> whitePlayers{
-			Player{player_size, sf::Color::Yellow, {0, 0}},
-			Player{player_size, sf::Color::Yellow, {1, 0}},
-			Player{player_size, sf::Color::Yellow, {0, 1}},
-			Player{player_size, sf::Color::Yellow, {1, 1}}
+			Player{player_size, White, {0, 0}},
+			Player{player_size, White, {1, 0}},
+			Player{player_size, White, {0, 1}},
+			Player{player_size, White, {1, 1}}
 	};
 
 	std::vector<Player> blackPlayers{
-			Player{player_size, sf::Color::Green, {4, 4}},
-			Player{player_size, sf::Color::Green, {5, 4}},
-			Player{player_size, sf::Color::Green, {4, 5}},
-			Player{player_size, sf::Color::Green, {5, 5}}
+			Player{player_size, Black, {4, 4}},
+			Player{player_size, Black, {5, 4}},
+			Player{player_size, Black, {4, 5}},
+			Player{player_size, Black, {5, 5}}
 	};
 
 
@@ -88,13 +90,18 @@ int main() {
 			}
 		}
 		for (auto &player: whitePlayers) {
-			if (player.isSelected()) player.setPosition(static_cast<sf::Vector2f>(getMousePosition(window)));
+			if (player.isSelected()) continue;
 			window.draw(player);
 		}
 		for (auto &player: blackPlayers) {
-			if (player.isSelected()) player.setPosition(static_cast<sf::Vector2f>(getMousePosition(window)));
+			if (player.isSelected()) continue;
 			window.draw(player);
 		}
+		if (selected_player) {
+			selected_player->setPosition(getMousePosition(window));
+			window.draw(*selected_player);
+		}
+
 		window.display();
 	}
 
