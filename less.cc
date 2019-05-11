@@ -1,10 +1,13 @@
+#include "globals.h"
+
 #include "block_shape.hh"
+#include "helpers.h"
+#include "player.h"
 #include <SFML/Graphics.hpp>
 #include <random>
+#include <iostream>
 
-float block_size = 200;
-float block_border = 2;
-float player_size = 30;
+Player *selected_player = nullptr;
 
 int main() {
 
@@ -27,23 +30,21 @@ int main() {
 		field.emplace_back(tmp);
 	}
 
-	std::vector<sf::CircleShape> whitePlayers(4, sf::CircleShape{player_size});
-	std::vector<sf::CircleShape> blackPlayers(4, sf::CircleShape{player_size});
 
-	for (int i = 0; i < 2; ++i) {
-		for (int j = 0; j < 2; ++j) {
-			whitePlayers[j + 2 * i].setPosition(
-					sf::Vector2f((block_size / 2) * j + block_size / 4,
-								 (block_size / 2) * i + block_size / 4));
-			whitePlayers[j + 2 * i].setFillColor(sf::Color::Yellow);
-			whitePlayers[j + 2 * i].setOrigin(sf::Vector2f(player_size, player_size));
-			blackPlayers[j + 2 * i].setPosition(
-					sf::Vector2f((block_size / 2) * (j + 4) + block_size / 4,
-								 (block_size / 2) * (i + 4) + block_size / 4));
-			blackPlayers[j + 2 * i].setFillColor(sf::Color::Black);
-			blackPlayers[j + 2 * i].setOrigin(sf::Vector2f(player_size, player_size));
-		}
-	}
+	std::vector<Player> whitePlayers{
+			Player{player_size, sf::Color::Yellow, {0, 0}},
+			Player{player_size, sf::Color::Yellow, {1, 0}},
+			Player{player_size, sf::Color::Yellow, {0, 1}},
+			Player{player_size, sf::Color::Yellow, {1, 1}}
+	};
+
+	std::vector<Player> blackPlayers{
+			Player{player_size, sf::Color::Green, {4, 4}},
+			Player{player_size, sf::Color::Green, {5, 4}},
+			Player{player_size, sf::Color::Green, {4, 5}},
+			Player{player_size, sf::Color::Green, {5, 5}}
+	};
+
 
 	while (window.isOpen()) {
 		sf::Event event{};
@@ -55,6 +56,28 @@ int main() {
 					window.close();
 				}
 			}
+			if (event.type == sf::Event::MouseButtonPressed) {
+				for (auto &player : whitePlayers) {
+					if (euclideanDistance(getMousePosition(window), player.getPosition()) <= player_size) {
+						selected_player = &player;
+						selected_player->setSelected();
+					}
+				}
+				for (auto &player : blackPlayers) {
+					if (euclideanDistance(getMousePosition(window), player.getPosition()) <= player_size) {
+						selected_player = &player;
+						selected_player->setSelected();
+					}
+				}
+			}
+			if (event.type == sf::Event::MouseButtonReleased) {
+				if (selected_player) {
+					selected_player->setLocation(getLocationFromPosition(selected_player->getPosition()));
+					selected_player->unsetSelected();
+					selected_player = nullptr;
+				}
+
+			}
 		}
 
 		window.clear();
@@ -65,9 +88,11 @@ int main() {
 			}
 		}
 		for (auto &player: whitePlayers) {
+			if (player.isSelected()) player.setPosition(static_cast<sf::Vector2f>(getMousePosition(window)));
 			window.draw(player);
 		}
 		for (auto &player: blackPlayers) {
+			if (player.isSelected()) player.setPosition(static_cast<sf::Vector2f>(getMousePosition(window)));
 			window.draw(player);
 		}
 		window.display();
