@@ -1,7 +1,7 @@
 #ifndef BLOCK_SHAPE_H
 #define BLOCK_SHAPE_H
 
-#include "wall.hh"
+#include "wall.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Shape.hpp>

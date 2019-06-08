@@ -9,8 +9,7 @@
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 #include <cmath>
-#include <cassert>
-
+#include "player.h"
 
 template<typename T, typename R>
 float euclideanDistance(const sf::Vector2<T> &pointA, const sf::Vector2<R> &pointB) {
@@ -20,11 +19,8 @@ float euclideanDistance(const sf::Vector2<T> &pointA, const sf::Vector2<R> &poin
 	);
 }
 
-sf::Vector2f getPositionFromLocation(std::pair<int, int>);
-
-std::pair<int, int> getLocationFromPosition(const sf::Vector2f &coords);
-
 sf::Vector2f getMousePosition(const sf::RenderWindow &);
 
+Location getMouseLocation(const sf::RenderWindow &);
 
 #endif //LESSCPP_HELPERS_H

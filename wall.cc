@@ -1,5 +1,5 @@
 #include <cassert>
-#include "wall.hh"
+#include "wall.h"
 
 
 Wall::Wall(float size, float width, int config) {

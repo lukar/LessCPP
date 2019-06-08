@@ -1,8 +1,8 @@
-#include "block_shape.hh"
+#include "block_shape.h"
 #include <cassert>
 
 Block::Block(float size, float border, int config)
-		: wall(Wall{size, size / 10, config}) {
+				: wall(Wall{size, size / 10, config}) {
 	this->m_size = size;
 	this->m_line_width = size / 40;
 	this->m_inner_size = size - 2 * border;
