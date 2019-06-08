@@ -5,7 +5,7 @@ project(LessCPP)
 ## If you want to link SFML statically
 # set(SFML_STATIC_LIBRARIES TRUE)
 ## In most cases better set in the CMake cache
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -std=c++17")
 
 find_package(SFML 2.5.1 COMPONENTS graphics REQUIRED)
 add_executable(less less.cc block_shape.cc helpers.cc player.cc wall.cc)

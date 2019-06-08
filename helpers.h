@@ -9,18 +9,19 @@
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 #include <cmath>
+#include <optional>
 #include "player.h"
 
 template<typename T, typename R>
 float euclideanDistance(const sf::Vector2<T> &pointA, const sf::Vector2<R> &pointB) {
 	return sqrt(
-			pow(pointA.x - pointB.x, 2) +
-			pow(pointA.y - pointB.y, 2)
+					pow(pointA.x - pointB.x, 2) +
+					pow(pointA.y - pointB.y, 2)
 	);
 }
 
 sf::Vector2f getMousePosition(const sf::RenderWindow &);
 
-Location getMouseLocation(const sf::RenderWindow &);
+std::optional<Location> getMouseLocation(const sf::RenderWindow &);
 
 #endif //LESSCPP_HELPERS_H

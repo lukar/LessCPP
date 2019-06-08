@@ -102,7 +102,7 @@ int main() {
 			}
 			if (event.type == sf::Event::MouseButtonReleased) {
 				if (selected_player) {
-					Location new_location = getMouseLocation(window);
+					Location new_location = getMouseLocation(window).value_or(selected_player->getLocation());
 					Location old_location = selected_player->getLocation();
 					if (moveCost(old_location, new_location)) {
 						selected_player->setPosition(new_location);
