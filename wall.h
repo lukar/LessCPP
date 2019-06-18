@@ -4,52 +4,97 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Shape.hpp>
-#include <vector>
+#include <array>
+#include "const_globals.h"
 
 namespace wall {
-	typedef std::vector<std::vector<int>> WallConfig;
 
-// static variabla garantira, da bo obstajala samo ena kopija na .cc fajl
-// (Brez tega ne dela!)
-	static const WallConfig bFullSide = {{1, -1, -1},
-										 {1, -1, 1}};
-	static const WallConfig bHalfSide = {{1, -1, 1}};
-	static const WallConfig bZigZag = {{1,  -1, -1},
-									   {-1, 0,  -1},
-									   {1,  0,  1}};
-	static const WallConfig bT_Block = {{1,  -1, -1},
-										{1,  -1, 1},
-										{-1, 0,  -1}};
-	static const WallConfig bTopLeft = {{1,  -1, -1},
-										{-1, 0,  -1}};
-	static const WallConfig bTopRight = {{1,  0, -1},
-										 {-1, 0, 1}};
-	static const WallConfig bBottomRight = {{1,  0, 1},
-											{-1, 1, 1}};
+		constexpr WallConfig bFullSide = {
+						{
+										{1, -1, -1},
+										{1, -1, 1},
+										{-2, 0, 0}
+						}
+		};
 
-	static std::vector<WallConfig> wall_configs{
-			bFullSide, bHalfSide, bZigZag, bT_Block, bTopLeft, bTopRight, bBottomRight};
+		constexpr WallConfig bHalfSide = {
+						{
+										{1, -1, 1},
+										{-2, 0, 0},
+										{-2, 0, 0}
+
+						}
+
+		};
+		constexpr WallConfig bZigZag = {
+						{
+										{1, -1, -1},
+										{-1, 0, -1},
+										{1, 0, 1}
+						}
+		};
+		constexpr WallConfig bT_Block = {
+						{
+										{1, -1, -1},
+										{1, -1, 1},
+										{-1, 0, -1}
+						}
+		};
+		constexpr WallConfig bTopLeft = {
+						{
+										{1, -1, -1},
+										{-1, 0, -1},
+										{-2, 0, 0}
+
+						}
+		};
+		constexpr WallConfig bTopRight = {
+						{
+										{1, 0, -1},
+										{-1, 0, 1},
+										{-2, 0, 0}
+						}
+		};
+		constexpr WallConfig bBottomRight = {
+						{
+										{1, 0, 1},
+										{-1, 1, 1},
+										{-2, 0, 0}
+						}
+		};
+
+
+		constexpr std::array<WallConfig, 7> wall_configs{
+						bFullSide, bHalfSide, bZigZag, bT_Block, bTopLeft, bTopRight, bBottomRight};
+
+
+		WallConfig rotateWallConfig(WallConfig wall, int rotation);
+
 } // namespace wall
 
+#endif /* WALL_H */
 
 class Wall : public sf::Drawable {
 private:
-	void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+		void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
-	float m_size;
-	float m_width;
-	wall::WallConfig m_wall;
-	std::vector<sf::RectangleShape> m_wallShape;
+		float m_size;
+		float m_width;
+		std::vector<sf::RectangleShape> m_wallShape;
+		WallConfig m_config;
 public:
-	explicit Wall(float size = 0, float width = 0, int config = 0);
+		const WallConfig &getMConfig() const;
 
-	void setPosition(float x, float y);
+		explicit Wall(float size = 0, float width = 0, WallConfig config = wall::bFullSide);
 
-	void setRotation(float angle);
+		void setPosition(float x, float y);
 
-	void setFillColor(const sf::Color &color);
+		void setRotation(float angle);
 
-	sf::Vector2f getWallSegOrigin(std::vector<int> &wallSeg);
+		void setFillColor(const sf::Color &color);
+
+		sf::Vector2f getWallSegOrigin(std::array<int, 3> &);
+
+
 };
 
-#endif /* WALL_H */

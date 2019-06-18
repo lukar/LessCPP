@@ -1,8 +1,11 @@
 #include "block_shape.h"
 #include <cassert>
 
-Block::Block(float size, float border, int config)
-				: wall(Wall{size, size / 10, config}) {
+extern std::vector<std::vector<Block>> field;
+
+
+Block::Block(float size, float border, WallConfig config, int rotation)
+				: wall(Wall{size, size / 10, wall::rotateWallConfig(config, rotation)}) {
 	this->m_size = size;
 	this->m_line_width = size / 40;
 	this->m_inner_size = size - 2 * border;
@@ -51,3 +54,13 @@ void Block::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 void Block::setRotation(float angle) {
 	this->wall.setRotation(angle);
 }
+
+int Block::hasWall(WallSeg seg) {
+	for (auto &bseg: wall.getMConfig()) {
+		if (seg == bseg) {
+			return true;
+		}
+	}
+	return false;
+}
+

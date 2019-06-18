@@ -49,9 +49,9 @@ void Player::setPosition(Location loc) {
 	int y = loc.second;
 	assert(x >= 0 && x <= 5 && y >= 0 && y <= 5);
 	this->m_shape.setPosition({
-									  x * (block_size / 2) + block_size / 4,
-									  y * (block_size / 2) + block_size / 4
-							  });
+																		x * (block_size / 2) + block_size / 4,
+																		y * (block_size / 2) + block_size / 4
+														});
 }
 
 void Player::setLocation(std::pair<int, int> location) {
@@ -60,10 +60,10 @@ void Player::setLocation(std::pair<int, int> location) {
 
 void Player::setLocation(const sf::Vector2f &coords) {
 	assert (coords.x >= 0 || coords.x <= block_size * 3 ||
-			coords.y >= 0 || coords.y <= block_size * 3
+					coords.y >= 0 || coords.y <= block_size * 3
 	);
 	m_location = {static_cast<int>(coords.x / (block_size / 2)),
-				  static_cast<int>(coords.y / (block_size / 2))};
+								static_cast<int>(coords.y / (block_size / 2))};
 }
 
 std::string Player::toString() const {

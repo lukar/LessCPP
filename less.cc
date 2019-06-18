@@ -1,43 +1,112 @@
-#include "globals.h"
-
+#include "const_globals.h"
+#include "player.h"
 #include "block_shape.h"
 #include "helpers.h"
-#include "player.h"
+
 #include <SFML/Graphics.hpp>
 #include <random>
 #include <iostream>
+#include <cstdlib> // itoa
+#include <cassert>
 
 
 Player *selected_player = nullptr;
 
 std::vector<std::vector<Block>> field;
 
-sf::Color White;
-sf::Color Black;
-
 std::vector<Player> whitePlayers;
-
 std::vector<Player> blackPlayers;
 
+sf::Color White = {255, 222, 173};
+sf::Color Black = {139, 69, 19};
 
 int moves = 3;
 
-int moveCost(Location old_l, Location new_l) {
-	for (const auto &player : whitePlayers) {
-		if (player.getLocation() == new_l) return 0;
-	}
-	for (const auto &player : blackPlayers) {
-		if (player.getLocation() == new_l) return 0;
-	}
-	if (new_l.first - old_l.first != 0 && new_l.second - old_l.second != 0) return 0;
-	if (abs(new_l.first - old_l.first) + abs(new_l.second - old_l.second) > 1) {
+struct Turn {
+private:
+		sf::Color current = White;
+public:
+		bool operator==(const sf::Color &rhs) const {
+			return current == rhs;
+		}
 
+		bool operator!=(const sf::Color &rhs) const {
+			return !(current == rhs);
+		}
+
+		void toggle() { current = (current == White ? Black : White); }
+};
+
+Turn turn;
+
+int countInnerWalls(Location const start, Location const end) {
+
+	// differences
+	int const dx = end.first - start.first;
+	int const dy = end.second - start.second;
+
+	// block coordinates
+	int const sx = start.first / 2;
+	int const sy = start.second / 2;
+
+	int const ex = end.first / 2;
+	int const ey = end.second / 2;
+
+	Block bstart = field[sy][sx];
+	Block bend = field[ey][ex];
+
+	// blocks are orthogonal and at most one space apart
+	assert((dx == 0 && abs(dy) == 1) || (abs(dx) == 1 && dy == 0));
+
+	int const first = (dx ? 1 : -1);
+	int const second = (sx == ex && sy == ey ? 0 : dx + dy);
+	int const third = -1 + 2 * abs(dx) * (start.second % 2) + 2 * abs(dy) * (start.first % 2);
+
+	int N = 0;
+	if (second) {
+		N += bend.hasWall({first, -second, third});
 	}
+	N += bstart.hasWall({first, second, third});
 
-
-	return 1;
+	return N;
 }
 
+bool isPlayerAtLocation(Location const location) {
+	bool toReturn = false;
+	for (const auto &player : whitePlayers) {
+		if (player.getLocation() == location) toReturn = true;
+	}
+	for (const auto &player : blackPlayers) {
+		if (player.getLocation() == location) toReturn = true;
+	}
+	return toReturn;
+}
+
+// return 0 means that it's impossible to make that move
+int moveCost(Location oldL, Location newL) {
+	if (newL.first - oldL.first != 0 && newL.second - oldL.second != 0) return 0;
+
+	if (isPlayerAtLocation(newL)) return 0;
+
+	int wallCount = 0;
+	int distance = abs(newL.first - oldL.first) + abs(newL.second - oldL.second);
+	if (distance > 2) return 0;
+	if (distance == 2) {
+		Location const connecting = {(newL.first + oldL.first) / 2, (newL.second + oldL.second) / 2};
+		wallCount += countInnerWalls(oldL, connecting);
+		wallCount += countInnerWalls(connecting, newL);
+
+		if (!isPlayerAtLocation(connecting)) return 0;
+		if (wallCount != 0) return 0;
+		return 1;
+	} else {
+		wallCount += countInnerWalls(oldL, newL);
+		return wallCount + 1;
+	}
+
+
+	return 0;
+}
 
 int main() {
 
@@ -51,16 +120,13 @@ int main() {
 	for (int y = 0; y < 3; ++y) {
 		std::vector<Block> tmp;
 		for (int x = 0; x < 3; ++x) {
-			Block tmp_block{block_size, block_border, rand0to6(eng)};
+			Block tmp_block{block_size, block_border, wall::wall_configs[rand0to6(eng)], rand0to3(eng)};
 			tmp_block.setPosition(x * block_size + block_size / 2, y * block_size + block_size / 2);
-			tmp_block.setRotation(rand0to3(eng) * 90);
 			tmp.emplace_back(tmp_block);
 		}
 		field.emplace_back(tmp);
 	}
 
-	White = {255, 222, 173};
-	Black = {139, 69, 19};
 
 	whitePlayers = {
 					Player{player_size, White, {0, 0}},
@@ -76,7 +142,20 @@ int main() {
 					Player{player_size, Black, {5, 5}}
 	};
 
+	sf::Text text;
+	sf::Font font;
+	if (!font.loadFromFile("resources/Roboto_Medium.ttf")) {
+		throw std::runtime_error("Cannot find the font file 'resources/Roboto_Medium.ttf'");
+	}
+	text.setString("Remaining moves: " + std::to_string(moves) + "\nTurn: " + (turn == White ? "White" : "Black"));
+	text.setFont(font);
+	text.setCharacterSize(10);
+	text.setPosition(window_height + 10, 10);
+	text.setFillColor(sf::Color::Green);
+
 	while (window.isOpen()) {
+		text.setString("Remaining moves: " + std::to_string(moves) + "\nTurn: " + (turn == White ? "White" : "Black"));
+
 		sf::Event event{};
 		while (window.pollEvent(event)) {
 			if (event.type == sf::Event::Closed)
@@ -87,16 +166,19 @@ int main() {
 				}
 			}
 			if (event.type == sf::Event::MouseButtonPressed) {
-				for (auto &player : whitePlayers) {
-					if (euclideanDistance(getMousePosition(window), player.getPosition()) <= player_size) {
-						selected_player = &player;
-						selected_player->setSelected();
+				if (turn == White) {
+					for (auto &player : whitePlayers) {
+						if (euclideanDistance(getMousePosition(window), player.getPosition()) <= player_size) {
+							selected_player = &player;
+							selected_player->setSelected();
+						}
 					}
-				}
-				for (auto &player : blackPlayers) {
-					if (euclideanDistance(getMousePosition(window), player.getPosition()) <= player_size) {
-						selected_player = &player;
-						selected_player->setSelected();
+				} else {
+					for (auto &player : blackPlayers) {
+						if (euclideanDistance(getMousePosition(window), player.getPosition()) <= player_size) {
+							selected_player = &player;
+							selected_player->setSelected();
+						}
 					}
 				}
 			}
@@ -104,7 +186,9 @@ int main() {
 				if (selected_player) {
 					Location new_location = getMouseLocation(window).value_or(selected_player->getLocation());
 					Location old_location = selected_player->getLocation();
-					if (moveCost(old_location, new_location)) {
+					int cost = moveCost(old_location, new_location);
+					if (cost && cost <= moves) {
+						moves -= cost;
 						selected_player->setPosition(new_location);
 						selected_player->setLocation(new_location);
 					} else {
@@ -112,12 +196,17 @@ int main() {
 					}
 					selected_player->unsetSelected();
 					selected_player = nullptr;
+					if (moves == 0) {
+						turn.toggle();
+						moves = 3;
+					}
 				}
 
 			}
 		}
 
 		window.clear();
+
 
 		for (auto &row: field) {
 			for (auto &block: row) {
@@ -137,7 +226,12 @@ int main() {
 			window.draw(*selected_player);
 		}
 
+		window.draw(text);
+
 		window.display();
+
+		countInnerWalls(Location{2, 3}, Location{2, 4});
+
 	}
 
 	return 0;

@@ -5,12 +5,12 @@
 #ifndef LESSCPP_HELPERS_H
 #define LESSCPP_HELPERS_H
 
-#include "globals.h"
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <optional>
-#include "player.h"
+#include "const_globals.h"
+
 
 template<typename T, typename R>
 float euclideanDistance(const sf::Vector2<T> &pointA, const sf::Vector2<R> &pointB) {
