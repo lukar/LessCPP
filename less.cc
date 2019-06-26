@@ -6,7 +6,6 @@
 #include <SFML/Graphics.hpp>
 #include <random>
 #include <iostream>
-#include <cstdlib> // itoa
 #include <cassert>
 
 
@@ -17,27 +16,29 @@ std::vector<std::vector<Block>> field;
 std::vector<Player> whitePlayers;
 std::vector<Player> blackPlayers;
 
-sf::Color White = {255, 222, 173};
-sf::Color Black = {139, 69, 19};
+sf::Color const White = {255, 222, 173};
+sf::Color const Black = {139, 69, 19};
 
 int moves = 3;
 
 struct Turn {
 private:
-		sf::Color current = White;
+		sf::Color m_current;
 public:
+		explicit Turn(sf::Color firstToMove) : m_current(firstToMove) {}
+
 		bool operator==(const sf::Color &rhs) const {
-			return current == rhs;
+			return m_current == rhs;
 		}
 
 		bool operator!=(const sf::Color &rhs) const {
-			return !(current == rhs);
+			return !(m_current == rhs);
 		}
 
-		void toggle() { current = (current == White ? Black : White); }
+		void toggle() { m_current = (m_current == White ? Black : White); }
 };
 
-Turn turn;
+Turn turn{White};
 
 int countInnerWalls(Location const start, Location const end) {
 
@@ -110,6 +111,7 @@ int moveCost(Location oldL, Location newL) {
 
 int main() {
 
+	// Game initialization
 	std::default_random_engine eng((std::random_device()) ());
 	std::uniform_int_distribution<int8_t> rand0to6(0, 6);
 	std::uniform_int_distribution<int8_t> rand0to3(0, 3);
@@ -144,10 +146,9 @@ int main() {
 
 	sf::Text text;
 	sf::Font font;
-	if (!font.loadFromFile("resources/Roboto_Medium.ttf")) {
+	if (!font.loadFromFile("../resources/Roboto_Medium.ttf")) {
 		throw std::runtime_error("Cannot find the font file 'resources/Roboto_Medium.ttf'");
 	}
-	text.setString("Remaining moves: " + std::to_string(moves) + "\nTurn: " + (turn == White ? "White" : "Black"));
 	text.setFont(font);
 	text.setCharacterSize(10);
 	text.setPosition(window_height + 10, 10);
