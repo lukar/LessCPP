@@ -109,6 +109,9 @@ int moveCost(Location oldL, Location newL) {
 	return 0;
 }
 
+sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Less game", sf::Style::Close);
+
+
 int main() {
 
 	// Game initialization
@@ -116,7 +119,6 @@ int main() {
 	std::uniform_int_distribution<int8_t> rand0to6(0, 6);
 	std::uniform_int_distribution<int8_t> rand0to3(0, 3);
 
-	sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Less game", sf::Style::Close);
 	window.setPosition(sf::Vector2i(0, 0));
 
 	for (int y = 0; y < 3; ++y) {
@@ -147,7 +149,9 @@ int main() {
 	sf::Text text;
 	sf::Font font;
 	if (!font.loadFromFile("../resources/Roboto_Medium.ttf")) {
-		throw std::runtime_error("Cannot find the font file 'resources/Roboto_Medium.ttf'");
+		if (!font.loadFromFile("resources/Roboto_Medium.ttf")) {
+			throw std::runtime_error("Cannot find the font file 'resources/Roboto_Medium.ttf'");
+		}
 	}
 	text.setFont(font);
 	text.setCharacterSize(10);
@@ -159,33 +163,37 @@ int main() {
 
 		sf::Event event{};
 		while (window.pollEvent(event)) {
+			// ON CLOSE EVENT
 			if (event.type == sf::Event::Closed)
 				window.close();
+			// CLOSE WHEN PRESSED Q
 			if (event.type == sf::Event::KeyPressed) {
 				if (event.key.code == sf::Keyboard::Q) {
 					window.close();
 				}
 			}
+			// GRAB PLAYER
 			if (event.type == sf::Event::MouseButtonPressed) {
 				if (turn == White) {
 					for (auto &player : whitePlayers) {
-						if (euclideanDistance(getMousePosition(window), player.getPosition()) <= player_size) {
+						if (euclideanDistance(getMousePosition(), player.getPosition()) <= player_size) {
 							selected_player = &player;
 							selected_player->setSelected();
 						}
 					}
 				} else {
 					for (auto &player : blackPlayers) {
-						if (euclideanDistance(getMousePosition(window), player.getPosition()) <= player_size) {
+						if (euclideanDistance(getMousePosition(), player.getPosition()) <= player_size) {
 							selected_player = &player;
 							selected_player->setSelected();
 						}
 					}
 				}
 			}
+			// DROP PLAYER
 			if (event.type == sf::Event::MouseButtonReleased) {
 				if (selected_player) {
-					Location new_location = getMouseLocation(window).value_or(selected_player->getLocation());
+					Location new_location = getMouseLocation().value_or(selected_player->getLocation());
 					Location old_location = selected_player->getLocation();
 					int cost = moveCost(old_location, new_location);
 					if (cost && cost <= moves) {
@@ -206,8 +214,8 @@ int main() {
 			}
 		}
 
+		// DRAWING
 		window.clear();
-
 
 		for (auto &row: field) {
 			for (auto &block: row) {
@@ -223,15 +231,13 @@ int main() {
 			window.draw(player);
 		}
 		if (selected_player) {
-			selected_player->setPosition(getMousePosition(window));
+			selected_player->setPosition(getMousePosition());
 			window.draw(*selected_player);
 		}
 
 		window.draw(text);
 
 		window.display();
-
-		countInnerWalls(Location{2, 3}, Location{2, 4});
 
 	}
 

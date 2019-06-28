@@ -20,8 +20,8 @@ float euclideanDistance(const sf::Vector2<T> &pointA, const sf::Vector2<R> &poin
 	);
 }
 
-sf::Vector2f getMousePosition(const sf::RenderWindow &);
+sf::Vector2f getMousePosition();
 
-std::optional<Location> getMouseLocation(const sf::RenderWindow &);
+std::optional<Location> getMouseLocation();
 
 #endif //LESSCPP_HELPERS_H
