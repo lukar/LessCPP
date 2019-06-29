@@ -7,11 +7,11 @@
 
 extern sf::RenderWindow window;
 
-sf::Vector2f getMousePosition() {
+sf::Vector2f getMousePosition(sf::RenderWindow  const& window) {
 	return static_cast<sf::Vector2f>(sf::Mouse::getPosition(window));
 }
 
-std::optional<Location> getMouseLocation() {
+std::optional<Location> getMouseLocation(sf::RenderWindow  const& window) {
 	auto mouse = sf::Mouse::getPosition(window);
 	if (mouse.x < 0 || mouse.x >= block_size * 3 ||
 			mouse.y < 0 || mouse.y >= block_size * 3)

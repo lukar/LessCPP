@@ -109,15 +109,13 @@ int moveCost(Location oldL, Location newL) {
 	return 0;
 }
 
-sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Less game", sf::Style::Close);
-
-
 int main() {
+	sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Less game", sf::Style::Close);
 
 	// Game initialization
 	std::default_random_engine eng((std::random_device()) ());
-	std::uniform_int_distribution<int8_t> rand0to6(0, 6);
-	std::uniform_int_distribution<int8_t> rand0to3(0, 3);
+	std::uniform_int_distribution<int> rand0to6(0, 6);
+	std::uniform_int_distribution<int> rand0to3(0, 3);
 
 	window.setPosition(sf::Vector2i(0, 0));
 
@@ -148,10 +146,8 @@ int main() {
 
 	sf::Text text;
 	sf::Font font;
-	if (!font.loadFromFile("../resources/Roboto_Medium.ttf")) {
-		if (!font.loadFromFile("resources/Roboto_Medium.ttf")) {
-			throw std::runtime_error("Cannot find the font file 'resources/Roboto_Medium.ttf'");
-		}
+	if (!font.loadFromFile("Roboto_Medium.ttf")) {
+		throw std::runtime_error("Cannot find the font file 'Roboto_Medium.ttf'");
 	}
 	text.setFont(font);
 	text.setCharacterSize(10);
@@ -176,14 +172,14 @@ int main() {
 			if (event.type == sf::Event::MouseButtonPressed) {
 				if (turn == White) {
 					for (auto &player : whitePlayers) {
-						if (euclideanDistance(getMousePosition(), player.getPosition()) <= player_size) {
+						if (euclideanDistance(getMousePosition(window), player.getPosition()) <= player_size) {
 							selected_player = &player;
 							selected_player->setSelected();
 						}
 					}
 				} else {
 					for (auto &player : blackPlayers) {
-						if (euclideanDistance(getMousePosition(), player.getPosition()) <= player_size) {
+						if (euclideanDistance(getMousePosition(window), player.getPosition()) <= player_size) {
 							selected_player = &player;
 							selected_player->setSelected();
 						}
@@ -193,7 +189,7 @@ int main() {
 			// DROP PLAYER
 			if (event.type == sf::Event::MouseButtonReleased) {
 				if (selected_player) {
-					Location new_location = getMouseLocation().value_or(selected_player->getLocation());
+					Location new_location = getMouseLocation(window).value_or(selected_player->getLocation());
 					Location old_location = selected_player->getLocation();
 					int cost = moveCost(old_location, new_location);
 					if (cost && cost <= moves) {
@@ -231,7 +227,7 @@ int main() {
 			window.draw(player);
 		}
 		if (selected_player) {
-			selected_player->setPosition(getMousePosition());
+			selected_player->setPosition(getMousePosition(window));
 			window.draw(*selected_player);
 		}
 

@@ -1,26 +1,36 @@
 cmake_minimum_required(VERSION 3.1)
 project(LessCPP)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wshadow -std=c++17")
+set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_INSTALL_PREFIX "solution")
-set(CMAKE_INSTALL_RPATH ../lib)
-set(CMAKE_SKIP_INSTALL_RPATH FALSE)
+
+if(UNIX)
+	set(CMAKE_INSTALL_RPATH ../lib)
+	set(CMAKE_SKIP_INSTALL_RPATH FALSE)
+elseif(WIN32)
+	set(SFML_STATIC_LIBRARIES TRUE)
+	set(SFML_DIR "C:/Users/AvianY/Documents/lib/SFML-2.5.1/lib/cmake/SFML")
+endif()
+
 
 find_package(SFML 2.5.1 COMPONENTS graphics REQUIRED)
 add_executable(less less.cc block_shape.cc helpers.cc player.cc wall.cc)
 target_link_libraries(less sfml-graphics)
 
 install(TARGETS less DESTINATION bin)
-install(FILES resources/Roboto_Medium.ttf DESTINATION resources)
-install(FILES
-        /usr/lib/x86_64-linux-gnu/libsfml-graphics.so
-        /usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.5
-        /usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.5.1
-        /usr/lib/x86_64-linux-gnu/libsfml-window.so
-        /usr/lib/x86_64-linux-gnu/libsfml-window.so.2.5
-        /usr/lib/x86_64-linux-gnu/libsfml-window.so.2.5.1
-        /usr/lib/x86_64-linux-gnu/libsfml-system.so
-        /usr/lib/x86_64-linux-gnu/libsfml-system.so.2.5
-        /usr/lib/x86_64-linux-gnu/libsfml-system.so.2.5.1
-        DESTINATION lib)
+install(FILES resources/Roboto_Medium.ttf DESTINATION bin)
+
+if(UNIX)
+	install(FILES
+			/usr/lib/x86_64-linux-gnu/libsfml-graphics.so
+			/usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.5
+			/usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.5.1
+			/usr/lib/x86_64-linux-gnu/libsfml-window.so
+			/usr/lib/x86_64-linux-gnu/libsfml-window.so.2.5
+			/usr/lib/x86_64-linux-gnu/libsfml-window.so.2.5.1
+			/usr/lib/x86_64-linux-gnu/libsfml-system.so
+			/usr/lib/x86_64-linux-gnu/libsfml-system.so.2.5
+			/usr/lib/x86_64-linux-gnu/libsfml-system.so.2.5.1
+			DESTINATION lib)
+endif()
