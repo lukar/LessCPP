@@ -12,7 +12,6 @@ Player::Player(float size, sf::Color color, Location location) : m_size(size), m
 	m_shape.setOutlineThickness(2);
 	m_shape.setOutlineColor(sf::Color::Black);
 	setLocation(location);
-	setPosition(location);
 	m_shape.setOrigin({m_size, m_size});
 }
 
@@ -55,6 +54,7 @@ void Player::setPosition(Location loc) {
 }
 
 void Player::setLocation(std::pair<int, int> location) {
+	setPosition(location);
 	m_location = location;
 }
 

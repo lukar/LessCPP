@@ -19,7 +19,9 @@ std::vector<Player> blackPlayers;
 sf::Color const White = {255, 222, 173};
 sf::Color const Black = {139, 69, 19};
 
-int moves = 3;
+int turn_moves = 3;
+
+bool game_over = false;
 
 struct Turn {
 private:
@@ -109,6 +111,10 @@ int moveCost(Location oldL, Location newL) {
 	return 0;
 }
 
+bool playersAtLocations(std::vector<Player> const &team, std::vector<Location> const &locations) {
+
+}
+
 sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Less game", sf::Style::Close);
 
 
@@ -121,6 +127,7 @@ int main() {
 
 	window.setPosition(sf::Vector2i(0, 0));
 
+	// generate the field
 	for (int y = 0; y < 3; ++y) {
 		std::vector<Block> tmp;
 		for (int x = 0; x < 3; ++x) {
@@ -138,6 +145,7 @@ int main() {
 					Player{player_size, White, {0, 1}},
 					Player{player_size, White, {1, 1}}
 	};
+	int whiteMoves = 0;
 
 	blackPlayers = {
 					Player{player_size, Black, {4, 4}},
@@ -145,6 +153,7 @@ int main() {
 					Player{player_size, Black, {4, 5}},
 					Player{player_size, Black, {5, 5}}
 	};
+	int blackMoves = 0;
 
 	sf::Text text;
 	sf::Font font;
@@ -159,58 +168,75 @@ int main() {
 	text.setFillColor(sf::Color::Green);
 
 	while (window.isOpen()) {
-		text.setString("Remaining moves: " + std::to_string(moves) + "\nTurn: " + (turn == White ? "White" : "Black"));
+		std::string displayText;
+		displayText += "Remaining moves: "s + std::to_string(turn_moves) + "\n"s;
+		displayText += "Turn: "s + (turn == White ? "White"s : "Black"s) + "\n"s;
+		displayText += "White total moves : "s + std::to_string(whiteMoves) + "\n"s;
+		displayText += "Black total moves : "s + std::to_string(blackMoves) + "\n"s;
+		text.setString(displayText);
 
 		sf::Event event{};
 		while (window.pollEvent(event)) {
 			// ON CLOSE EVENT
-			if (event.type == sf::Event::Closed)
+			if (event.type == sf::Event::Closed) {
 				window.close();
+			}
 			// CLOSE WHEN PRESSED Q
 			if (event.type == sf::Event::KeyPressed) {
 				if (event.key.code == sf::Keyboard::Q) {
 					window.close();
 				}
 			}
-			// GRAB PLAYER
-			if (event.type == sf::Event::MouseButtonPressed) {
-				if (turn == White) {
-					for (auto &player : whitePlayers) {
-						if (euclideanDistance(getMousePosition(), player.getPosition()) <= player_size) {
-							selected_player = &player;
-							selected_player->setSelected();
+			if (!game_over) {
+				// GRAB PLAYER
+				if (event.type == sf::Event::MouseButtonPressed) {
+					if (turn == White) {
+						for (auto &player : whitePlayers) {
+							if (euclideanDistance(getMousePosition(), player.getPosition()) <= player_size) {
+								selected_player = &player;
+								selected_player->setSelected();
+							}
 						}
-					}
-				} else {
-					for (auto &player : blackPlayers) {
-						if (euclideanDistance(getMousePosition(), player.getPosition()) <= player_size) {
-							selected_player = &player;
-							selected_player->setSelected();
-						}
-					}
-				}
-			}
-			// DROP PLAYER
-			if (event.type == sf::Event::MouseButtonReleased) {
-				if (selected_player) {
-					Location new_location = getMouseLocation().value_or(selected_player->getLocation());
-					Location old_location = selected_player->getLocation();
-					int cost = moveCost(old_location, new_location);
-					if (cost && cost <= moves) {
-						moves -= cost;
-						selected_player->setPosition(new_location);
-						selected_player->setLocation(new_location);
 					} else {
-						selected_player->setPosition(old_location);
-					}
-					selected_player->unsetSelected();
-					selected_player = nullptr;
-					if (moves == 0) {
-						turn.toggle();
-						moves = 3;
+						for (auto &player : blackPlayers) {
+							if (euclideanDistance(getMousePosition(), player.getPosition()) <= player_size) {
+								selected_player = &player;
+								selected_player->setSelected();
+							}
+						}
 					}
 				}
+				// DROP PLAYER
+				if (event.type == sf::Event::MouseButtonReleased) {
+					if (selected_player) {
 
+						Location new_location = getMouseLocation().value_or(selected_player->getLocation());
+						Location old_location = selected_player->getLocation();
+						int cost = moveCost(old_location, new_location);
+
+						// check if enough turn_moves are remaining to make this move
+						if (cost && cost <= turn_moves) {
+							turn_moves -= cost;
+							(turn == White ? whiteMoves : blackMoves) += cost;
+							selected_player->setLocation(new_location);
+						} else {
+							selected_player->setLocation(old_location);
+						}
+						selected_player->unsetSelected();
+						selected_player = nullptr;
+
+						// Are there end game conditions ?
+						whitePlayers[0].getLocation();
+
+
+						// change turn
+						if (turn_moves == 0) {
+							turn.toggle();
+							turn_moves = 3;
+						}
+					}
+
+				}
 			}
 		}
 
