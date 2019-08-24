@@ -23,7 +23,7 @@ private:
 		bool m_selected = false;
 
 public:
-		Player(float size = 0, sf::Color color = sf::Color::White, std::pair<int, int> location = {0, 0});
+		Player(float size = 0, sf::Color color = sf::Color::White, Location location = {0, 0});
 
 		void setLocation(Location);
 
@@ -41,14 +41,14 @@ public:
 
 		Location getLocation() const;
 
-		bool isSelected();
+		bool isSelected() const;
 
 		std::string toString() const;
 };
 
 
-extern std::vector<Player> whitePlayers;
+extern std::array<Player, 4> whitePlayers;
 
-extern std::vector<Player> blackPlayers;
+extern std::array<Player, 4> blackPlayers;
 
 #endif //LESSCPP_PLAYER_H

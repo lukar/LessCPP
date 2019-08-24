@@ -8,10 +8,13 @@
 #include <utility>
 #include <array>
 
-typedef std::pair<int, int> Location;
+typedef std::array<int, 2> Location;
 typedef std::array<int, 3> WallSeg;
 typedef std::array<WallSeg, 3> WallConfig;
 
+// individual color pieces starting positions
+constexpr std::array<Location, 4> whiteStart = {{{0, 0},{1, 0},{0, 1},{1, 1}}};
+constexpr std::array<Location, 4> blackStart = {{{4, 4},{5, 4},{4, 5},{5, 5}}};
 
 constexpr float block_size = 200;
 constexpr float block_border = 2;
