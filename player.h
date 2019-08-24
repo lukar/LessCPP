@@ -23,7 +23,7 @@ private:
 		bool m_selected = false;
 
 public:
-		Player(float size = 0, sf::Color color = sf::Color::White, std::pair<int, int> location = {0, 0});
+		Player(float size = 0, sf::Color color = sf::Color::White, Location location = {0, 0});
 
 		void setLocation(Location);
 

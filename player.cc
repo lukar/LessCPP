@@ -44,8 +44,8 @@ void Player::setPosition(const sf::Vector2f &position) {
 }
 
 void Player::setPosition(Location loc) {
-	int x = loc.first;
-	int y = loc.second;
+	int x = loc[0];
+	int y = loc[1];
 	assert(x >= 0 && x <= 5 && y >= 0 && y <= 5);
 	this->m_shape.setPosition({
 																		x * (block_size / 2) + block_size / 4,
@@ -53,7 +53,7 @@ void Player::setPosition(Location loc) {
 														});
 }
 
-void Player::setLocation(std::pair<int, int> location) {
+void Player::setLocation(std::array<int, 2> location) {
 	setPosition(location);
 	m_location = location;
 }

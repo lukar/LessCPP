@@ -5,11 +5,9 @@
 
 #include <SFML/Graphics.hpp>
 #include <random>
-#include <iostream>
 #include <cassert>
 
-
-Player *selected_player = nullptr;
+using namespace std::string_literals;
 
 std::vector<std::vector<Block>> field;
 
@@ -19,42 +17,51 @@ std::vector<Player> blackPlayers;
 sf::Color const White = {255, 222, 173};
 sf::Color const Black = {139, 69, 19};
 
-int turn_moves = 3;
+Player * selected_player = nullptr;
 
-bool game_over = false;
-
-struct Turn {
+struct GameState {
 private:
-		sf::Color m_current;
+    int moves_left = 3;
+    bool game_over = false;
+    sf::Color active_side = White;
+    int white_moves = 0;
+    int black_moves = 0;
 public:
-		explicit Turn(sf::Color firstToMove) : m_current(firstToMove) {}
+    GameState () = default;
+    [[nodiscard]] int getWhiteMoves() const { return white_moves; }
 
-		bool operator==(const sf::Color &rhs) const {
-			return m_current == rhs;
-		}
+    [[nodiscard]] int getBlackMoves() const { return black_moves; }
+    [[nodiscard]] sf::Color getActiveSide() const { return active_side; }
+    [[nodiscard]] int getMovesLeft() const { return moves_left; }
+    [[nodiscard]] bool isGameOver() const { return game_over; }
 
-		bool operator!=(const sf::Color &rhs) const {
-			return !(m_current == rhs);
-		}
+    bool move_piece(int cost) {
+        if ( cost == 0 || cost > moves_left ) return false;
+        (active_side == White ? white_moves : black_moves) += cost;
+        moves_left -= cost;
+        if ( moves_left == 0 ) {
+            next_turn();
+            moves_left = 3;
+        }
+        return true;
+    }
 
-		void toggle() { m_current = (m_current == White ? Black : White); }
+    void next_turn() { active_side = (active_side == White ? Black : White); }
+
 };
-
-Turn turn{White};
 
 int countInnerWalls(Location const start, Location const end) {
 
 	// differences
-	int const dx = end.first - start.first;
-	int const dy = end.second - start.second;
+	int const dx = end[0] - start[0];
+	int const dy = end[1] - start[1];
 
 	// block coordinates
-	int const sx = start.first / 2;
-	int const sy = start.second / 2;
+	int const sx = start[0] / 2;
+	int const sy = start[1] / 2;
 
-	int const ex = end.first / 2;
-	int const ey = end.second / 2;
-
+	int const ex = end[0] / 2;
+	int const ey = end[1] / 2;
 	Block bstart = field[sy][sx];
 	Block bend = field[ey][ex];
 
@@ -63,7 +70,7 @@ int countInnerWalls(Location const start, Location const end) {
 
 	int const first = (dx ? 1 : -1);
 	int const second = (sx == ex && sy == ey ? 0 : dx + dy);
-	int const third = -1 + 2 * abs(dx) * (start.second % 2) + 2 * abs(dy) * (start.first % 2);
+	int const third = -1 + 2 * abs(dx) * (start[1] % 2) + 2 * abs(dy) * (start[0] % 2);
 
 	int N = 0;
 	if (second) {
@@ -87,15 +94,15 @@ bool isPlayerAtLocation(Location const location) {
 
 // return 0 means that it's impossible to make that move
 int moveCost(Location oldL, Location newL) {
-	if (newL.first - oldL.first != 0 && newL.second - oldL.second != 0) return 0;
+	if (newL[0] - oldL[0] != 0 && newL[1] - oldL[1] != 0) return 0;
 
 	if (isPlayerAtLocation(newL)) return 0;
 
 	int wallCount = 0;
-	int distance = abs(newL.first - oldL.first) + abs(newL.second - oldL.second);
+	int distance = abs(newL[0] - oldL[0]) + abs(newL[1] - oldL[1]);
 	if (distance > 2) return 0;
 	if (distance == 2) {
-		Location const connecting = {(newL.first + oldL.first) / 2, (newL.second + oldL.second) / 2};
+		Location const connecting = {(newL[0] + oldL[0]) / 2, (newL[1] + oldL[1]) / 2};
 		wallCount += countInnerWalls(oldL, connecting);
 		wallCount += countInnerWalls(connecting, newL);
 
@@ -111,7 +118,7 @@ int moveCost(Location oldL, Location newL) {
 	return 0;
 }
 
-bool playersAtLocations(std::vector<Player> const &team, std::vector<Location> const &locations) {
+bool playersInBlock(std::vector<Player> const &team, std::vector<Location> const &locations) {
 
 }
 
@@ -127,6 +134,9 @@ int main() {
 
 	window.setPosition(sf::Vector2i(0, 0));
 
+	// create default game state
+	auto game = GameState();
+
 	// generate the field
 	for (int y = 0; y < 3; ++y) {
 		std::vector<Block> tmp;
@@ -138,23 +148,16 @@ int main() {
 		field.emplace_back(tmp);
 	}
 
+	// generate players
+	for( auto & start: whiteStart) {
+	    whitePlayers.emplace_back(Player(player_size, White, start));
+	}
 
-	whitePlayers = {
-					Player{player_size, White, {0, 0}},
-					Player{player_size, White, {1, 0}},
-					Player{player_size, White, {0, 1}},
-					Player{player_size, White, {1, 1}}
-	};
-	int whiteMoves = 0;
+	for( auto & start: blackStart) {
+	    blackPlayers.emplace_back(Player(player_size, Black, start));
+	}
 
-	blackPlayers = {
-					Player{player_size, Black, {4, 4}},
-					Player{player_size, Black, {5, 4}},
-					Player{player_size, Black, {4, 5}},
-					Player{player_size, Black, {5, 5}}
-	};
-	int blackMoves = 0;
-
+    // generate side text
 	sf::Text text;
 	sf::Font font;
 	if (!font.loadFromFile("../resources/Roboto_Medium.ttf")) {
@@ -169,10 +172,10 @@ int main() {
 
 	while (window.isOpen()) {
 		std::string displayText;
-		displayText += "Remaining moves: "s + std::to_string(turn_moves) + "\n"s;
-		displayText += "Turn: "s + (turn == White ? "White"s : "Black"s) + "\n"s;
-		displayText += "White total moves : "s + std::to_string(whiteMoves) + "\n"s;
-		displayText += "Black total moves : "s + std::to_string(blackMoves) + "\n"s;
+		displayText += "Remaining moves: "s + std::to_string(game.getMovesLeft()) + "\n"s;
+		displayText += "Turn: "s + (game.getActiveSide() == White ? "White"s : "Black"s) + "\n"s;
+		displayText += "White total moves : "s + std::to_string(game.getWhiteMoves()) + "\n"s;
+		displayText += "Black total moves : "s + std::to_string(game.getBlackMoves()) + "\n"s;
 		text.setString(displayText);
 
 		sf::Event event{};
@@ -187,10 +190,10 @@ int main() {
 					window.close();
 				}
 			}
-			if (!game_over) {
+			if (!game.isGameOver()) {
 				// GRAB PLAYER
 				if (event.type == sf::Event::MouseButtonPressed) {
-					if (turn == White) {
+					if (game.getActiveSide() == White) {
 						for (auto &player : whitePlayers) {
 							if (euclideanDistance(getMousePosition(), player.getPosition()) <= player_size) {
 								selected_player = &player;
@@ -209,31 +212,14 @@ int main() {
 				// DROP PLAYER
 				if (event.type == sf::Event::MouseButtonReleased) {
 					if (selected_player) {
-
 						Location new_location = getMouseLocation().value_or(selected_player->getLocation());
 						Location old_location = selected_player->getLocation();
 						int cost = moveCost(old_location, new_location);
 
-						// check if enough turn_moves are remaining to make this move
-						if (cost && cost <= turn_moves) {
-							turn_moves -= cost;
-							(turn == White ? whiteMoves : blackMoves) += cost;
-							selected_player->setLocation(new_location);
-						} else {
-							selected_player->setLocation(old_location);
-						}
+						// move player to new location if move_piece was successful
+						selected_player->setLocation(game.move_piece(cost) ? new_location : old_location);
 						selected_player->unsetSelected();
 						selected_player = nullptr;
-
-						// Are there end game conditions ?
-						whitePlayers[0].getLocation();
-
-
-						// change turn
-						if (turn_moves == 0) {
-							turn.toggle();
-							turn_moves = 3;
-						}
 					}
 
 				}
