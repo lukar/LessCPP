@@ -35,7 +35,7 @@ void Player::unsetSelected() {
 	this->m_selected = false;
 }
 
-bool Player::isSelected() {
+bool Player::isSelected() const {
 	return m_selected;
 }
 
@@ -47,13 +47,13 @@ void Player::setPosition(Location loc) {
 	int x = loc[0];
 	int y = loc[1];
 	assert(x >= 0 && x <= 5 && y >= 0 && y <= 5);
-	this->m_shape.setPosition({
-																		x * (block_size / 2) + block_size / 4,
-																		y * (block_size / 2) + block_size / 4
-														});
+	setPosition(sf::Vector2f{
+	    x * (block_size / 2) + block_size / 4,
+	    y * (block_size / 2) + block_size / 4
+	});
 }
 
-void Player::setLocation(std::array<int, 2> location) {
+void Player::setLocation(Location location) {
 	setPosition(location);
 	m_location = location;
 }

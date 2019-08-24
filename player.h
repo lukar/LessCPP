@@ -41,14 +41,14 @@ public:
 
 		Location getLocation() const;
 
-		bool isSelected();
+		bool isSelected() const;
 
 		std::string toString() const;
 };
 
 
-extern std::vector<Player> whitePlayers;
+extern std::array<Player, 4> whitePlayers;
 
-extern std::vector<Player> blackPlayers;
+extern std::array<Player, 4> blackPlayers;
 
 #endif //LESSCPP_PLAYER_H
