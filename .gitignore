@@ -5,3 +5,6 @@ tags
 .idea/
 Debug/
 cmake-build-debug/
+cmake-build-release/
+*.o
+*.log
