@@ -136,12 +136,13 @@ bool playersInLocations(std::array<Player, N> const &players, std::array<Locatio
     return true;
 }
 
-sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Less game", sf::Style::Close);
 
 
 int main() {
 
-	// Game initialization
+    sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Less game", sf::Style::Close);
+
+    // Game initialization
 	std::default_random_engine eng((std::random_device()) ());
 	std::uniform_int_distribution<int8_t> rand0to6(0, 6);
 	std::uniform_int_distribution<int8_t> rand0to3(0, 3);
@@ -218,7 +219,7 @@ int main() {
 				// GRAB PLAYER
 				if (event.type == sf::Event::MouseButtonPressed) {
                     for (auto &player : game.getActiveSide() == White? whitePlayers: blackPlayers) {
-                        if (euclideanDistance(getMousePosition(), player.getPosition()) <= player_size) {
+                        if (euclideanDistance(getMousePosition(window), player.getPosition()) <= player_size) {
                             selected_player = &player;
                             selected_player->setSelected();
                         }
@@ -228,7 +229,7 @@ int main() {
 				if (event.type == sf::Event::MouseButtonReleased) {
 					if (selected_player) {
                         Location old_location = selected_player->getLocation();
-                        Location new_location = getMouseLocation().value_or(old_location);
+                        Location new_location = getMouseLocation(window).value_or(old_location);
 						int cost = moveCost(old_location, new_location);
 
 						// move player to new location if move_piece was successful
@@ -257,7 +258,7 @@ int main() {
 		    }
 		}
 		if (selected_player) {
-			selected_player->setPosition(getMousePosition());
+			selected_player->setPosition(getMousePosition(window));
 			window.draw(*selected_player);
 		}
 
