@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_INSTALL_PREFIX "solution")
 
+file(GLOB source_files "src/*")
+
 if(UNIX)
 	set(CMAKE_INSTALL_RPATH ../lib)
 	set(CMAKE_SKIP_INSTALL_RPATH FALSE)
@@ -15,7 +17,8 @@ endif()
 
 
 find_package(SFML 2.5.1 COMPONENTS graphics REQUIRED)
-add_executable(less less.cc block_shape.cc helpers.cc player.cc wall.cc)
+add_executable(less ${source_files})
+target_include_directories(less PRIVATE include)
 target_link_libraries(less sfml-graphics)
 
 install(TARGETS less DESTINATION bin)
