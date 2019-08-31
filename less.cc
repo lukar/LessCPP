@@ -178,6 +178,7 @@ int main() {
         if (!font.loadFromFile("../resources/Roboto_Medium.ttf")) {
             if (!font.loadFromFile("resources/Roboto_Medium.ttf")) {
                 throw std::runtime_error("Cannot find the font file 'resources/Roboto_Medium.ttf'");
+
             }
         }
         text.setFont(font);

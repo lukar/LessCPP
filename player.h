@@ -25,13 +25,13 @@ private:
 public:
 		Player(float size = 0, sf::Color color = sf::Color::White, Location location = {0, 0});
 
-		void setLocation(Location);
+		void setLocation(const Location);
 
 		void setLocation(const sf::Vector2f &);
 
 		void setPosition(const sf::Vector2f &);
 
-		void setPosition(Location);
+		void setPosition(const Location);
 
 		void setSelected();
 

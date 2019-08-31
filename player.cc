@@ -3,7 +3,7 @@
 //
 
 #include "player.h"
-#include "assert.h"
+#include <cassert>
 
 
 Player::Player(float size, sf::Color color, Location location) : m_size(size), m_color{color} {
@@ -43,9 +43,9 @@ void Player::setPosition(const sf::Vector2f &position) {
 	this->m_shape.setPosition(position);
 }
 
-void Player::setPosition(Location loc) {
-	int x = loc[0];
-	int y = loc[1];
+void Player::setPosition(const Location location) {
+	int x = location[0];
+	int y = location[1];
 	assert(x >= 0 && x <= 5 && y >= 0 && y <= 5);
 	setPosition(sf::Vector2f{
 	    x * (block_size / 2) + block_size / 4,
@@ -53,7 +53,7 @@ void Player::setPosition(Location loc) {
 	});
 }
 
-void Player::setLocation(Location location) {
+void Player::setLocation(const Location location) {
 	setPosition(location);
 	m_location = location;
 }

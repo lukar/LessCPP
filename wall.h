@@ -72,7 +72,6 @@ namespace wall {
 
 } // namespace wall
 
-#endif /* WALL_H */
 
 class Wall : public sf::Drawable {
 private:
@@ -98,3 +97,4 @@ public:
 
 };
 
+#endif /* WALL_H */
