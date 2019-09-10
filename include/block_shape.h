@@ -10,7 +10,7 @@
 
 class Block : public sf::Drawable {
 private:
-		void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+        void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 		sf::RectangleShape surface;
 		sf::RectangleShape vertical_line;
@@ -23,12 +23,13 @@ private:
 
 public:
 		explicit Block(float size = 0, float border = 0, WallConfig config = wall::bFullSide, int rotation = 0);
+        Block() = delete;
 
 		void setPosition(float, float);
 
 		void setRotation(float);
 
-		int hasWall(WallSeg);
+        int hasWall(WallSeg) const;
 
 };
 

@@ -7,6 +7,11 @@
 
 #include <utility>
 #include <array>
+#include <tuple>
+#include <SFML/Graphics.hpp>
+
+// typedef std::array<std::tuple<Orientation, Lane, >, 3> WallSeg1;
+
 
 typedef std::array<int, 2> Location;
 typedef std::array<int, 3> WallSeg;
@@ -22,5 +27,8 @@ constexpr float player_size = 30;
 
 constexpr int window_width = 800;
 constexpr int window_height = 600;
+
+static sf::Color const White = {255, 222, 173};
+static sf::Color const Black = {139, 69, 19};
 
 #endif //LESSCPP_CONST_GLOBALS_H

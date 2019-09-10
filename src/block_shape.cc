@@ -1,9 +1,6 @@
 #include "block_shape.h"
 #include <cassert>
 
-extern std::vector<std::vector<Block>> field;
-
-
 Block::Block(float size, float border, WallConfig config, int rotation)
 				: wall(Wall{size, size / 10, wall::rotateWallConfig(config, rotation)}) {
 	this->m_size = size;
@@ -55,7 +52,7 @@ void Block::setRotation(float angle) {
 	this->wall.setRotation(angle);
 }
 
-int Block::hasWall(WallSeg seg) {
+int Block::hasWall(WallSeg seg) const {
 	for (auto &bseg: wall.getMConfig()) {
 		if (seg == bseg) {
 			return true;

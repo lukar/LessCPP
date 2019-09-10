@@ -3,9 +3,10 @@ project(LessCPP)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(CMAKE_INSTALL_PREFIX "solution")
+set(CMAKE_BUILD_TYPE Debug)
 
 file(GLOB source_files "src/*")
+file(GLOB header_files "include/*")
 
 if(UNIX)
 	set(CMAKE_INSTALL_RPATH ../lib)
@@ -17,7 +18,7 @@ endif()
 
 
 find_package(SFML 2.5.1 COMPONENTS graphics REQUIRED)
-add_executable(less ${source_files})
+add_executable(less ${source_files} ${header_files})
 target_include_directories(less PRIVATE include)
 target_link_libraries(less sfml-graphics)
 
@@ -26,14 +27,14 @@ install(FILES resources/Roboto_Medium.ttf DESTINATION bin)
 
 if(UNIX)
 	install(FILES
-			/usr/lib/x86_64-linux-gnu/libsfml-graphics.so
-			/usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.5
-			/usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.5.1
-			/usr/lib/x86_64-linux-gnu/libsfml-window.so
-			/usr/lib/x86_64-linux-gnu/libsfml-window.so.2.5
-			/usr/lib/x86_64-linux-gnu/libsfml-window.so.2.5.1
-			/usr/lib/x86_64-linux-gnu/libsfml-system.so
-			/usr/lib/x86_64-linux-gnu/libsfml-system.so.2.5
-			/usr/lib/x86_64-linux-gnu/libsfml-system.so.2.5.1
-			DESTINATION lib)
+        /usr/lib/x86_64-linux-gnu/libsfml-graphics.so
+        /usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.5
+        /usr/lib/x86_64-linux-gnu/libsfml-graphics.so.2.5.1
+        /usr/lib/x86_64-linux-gnu/libsfml-window.so
+        /usr/lib/x86_64-linux-gnu/libsfml-window.so.2.5
+        /usr/lib/x86_64-linux-gnu/libsfml-window.so.2.5.1
+        /usr/lib/x86_64-linux-gnu/libsfml-system.so
+        /usr/lib/x86_64-linux-gnu/libsfml-system.so.2.5
+        /usr/lib/x86_64-linux-gnu/libsfml-system.so.2.5.1
+        DESTINATION lib)
 endif()

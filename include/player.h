@@ -33,9 +33,9 @@ public:
 
 		void setPosition(const Location);
 
-		void setSelected();
+        void setSelected();
 
-		void unsetSelected();
+        void unsetSelected();
 
 		sf::Vector2f getPosition() const;
 

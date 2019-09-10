@@ -32,7 +32,7 @@ void Player::setSelected() {
 }
 
 void Player::unsetSelected() {
-	this->m_selected = false;
+    this->m_selected = false;
 }
 
 bool Player::isSelected() const {
