@@ -30,5 +30,6 @@ constexpr int window_height = 600;
 
 static sf::Color const White = {255, 222, 173};
 static sf::Color const Black = {139, 69, 19};
+static sf::Color const Noone = {0, 0, 0};
 
 #endif //LESSCPP_CONST_GLOBALS_H

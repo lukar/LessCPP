@@ -13,7 +13,7 @@
 
 #include <iostream>
 
-struct Field {
+class Field {
 private:
     int X = 3;
     int Y = 3;
@@ -29,6 +29,9 @@ private:
 
     int m_moves_left = 3;
     bool m_game_over = false;
+    bool m_last_turn = false;
+    bool m_white_finished = false;
+    bool m_black_finished = false;
     sf::Color m_active_side = White;
     sf::Color m_winning_side;
     int m_white_moves = 0;
@@ -70,18 +73,10 @@ public:
     [[nodiscard]] int moves_left() const { return m_moves_left; }
     [[nodiscard]] bool game_over() const { return m_game_over; }
 
-    bool move_piece(int cost) {
-        if ( cost == 0 || cost > m_moves_left ) return false;
-        (m_active_side == White ? m_white_moves : m_black_moves) += cost;
-        m_moves_left -= cost;
-        if ( m_moves_left == 0 ) {
-            next_turn();
-            m_moves_left = 3;
-        }
-        return true;
+    void next_turn(int moves_left) {
+        m_active_side = (m_active_side == White ? Black : White);
+        m_moves_left = moves_left;
     }
-
-    void next_turn() { m_active_side = (m_active_side == White ? Black : White); }
 
     void setGameOver(sf::Color winner) { m_game_over = true; m_winning_side = winner; }
 
@@ -127,22 +122,24 @@ public:
         return toReturn;
     }
 
-    // return 0 means that it's impossible to make that move
-    int moveCost(Location oldL, Location newL) const {
-        if (newL[0] - oldL[0] != 0 && newL[1] - oldL[1] != 0) return 0;
+    std::optional<int> moveCost(Location oldL, Location newL) const {
 
-        if (isPlayerAtLocation(newL)) return 0;
+        if (oldL == newL) return 0;
+
+        if (newL[0] - oldL[0] != 0 && newL[1] - oldL[1] != 0) return {};
+
+        if (isPlayerAtLocation(newL)) return {};
 
         int wallCount = 0;
         int distance = abs(newL[0] - oldL[0]) + abs(newL[1] - oldL[1]);
-        if (distance > 2) return 0;
+        if (distance > 2) return {};
         if (distance == 2) {
             Location const connecting = {(newL[0] + oldL[0]) / 2, (newL[1] + oldL[1]) / 2};
             wallCount += countInnerWalls(oldL, connecting);
             wallCount += countInnerWalls(connecting, newL);
 
-            if (!isPlayerAtLocation(connecting)) return 0;
-            if (wallCount != 0) return 0;
+            if (!isPlayerAtLocation(connecting)) return {};
+            if (wallCount != 0) return {};
             return 1;
         } else {
             wallCount += countInnerWalls(oldL, newL);
@@ -180,21 +177,46 @@ public:
         return this->selected_player==nullptr ? false : true;
     }
 
+    bool decrementMoves(int moves) {
+        if (m_moves_left < moves ) return false;
+        (active_side() == White ? m_white_moves : m_black_moves) += moves;
+        if ( m_moves_left == moves) {
+            next_turn(3);
+        } else {
+            m_moves_left -= moves;
+        }
+        return true;
+    }
+
     Location selectedPlayerLocation() {
         return this->selected_player->getLocation();
     }
 
     void moveSelectedPlayer(Location new_location){
-        Location old_location = this->selected_player->getLocation();
-        if (new_location == old_location) return;
-        int cost = moveCost(old_location, new_location);
+        Location old_location = selected_player->getLocation();
+        auto cost = moveCost(old_location, new_location);
 
-        // move player to new location if move_piece was successful
-        this->selected_player->setLocation(move_piece(cost) ? new_location : old_location);
+        if (cost){
+            // at this point the move is legal, but there must still be enough moves left to complete it
+            if (decrementMoves(cost.value())){
+                // the moves have been 'paid' successfully, we now have to move to player
+                selected_player->setLocation(new_location);
+            }
+        }
         unselectPlayer();
 
-        if (playersInLocations(whitePlayers, blackStart)) setGameOver(White);
-        if (playersInLocations(blackPlayers, whiteStart)) setGameOver(Black);
+        if (!m_black_finished && playersInLocations(blackPlayers, whiteStart)) m_black_finished = true;
+        if (!m_white_finished && playersInLocations(whitePlayers, blackStart) ) {
+            m_white_finished = true;
+            if ( m_moves_left < 3 ) next_turn(3 - m_moves_left);
+        }
+
+        if ( m_white_moves == m_black_moves || m_black_finished ) {
+            if ( m_white_finished && m_white_finished ) {setGameOver(Noone); return;}
+            if ( m_white_finished ) {setGameOver(White); return;}
+            if ( m_black_finished ) {setGameOver(Black); return;}
+        }
+
     }
 
     void draw() {
