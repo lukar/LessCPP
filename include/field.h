@@ -29,7 +29,6 @@ private:
 
     int m_moves_left = 3;
     bool m_game_over = false;
-    bool m_last_turn = false;
     bool m_white_finished = false;
     bool m_black_finished = false;
     sf::Color m_active_side = White;
@@ -87,11 +86,11 @@ public:
         int const dy = end[1] - start[1];
 
         // block coordinates
-        int const sx = start[0] / 2;
-        int const sy = start[1] / 2;
+        uint const sx = uint(start[0] / 2);
+        uint const sy = uint(start[1] / 2);
 
-        int const ex = end[0] / 2;
-        int const ey = end[1] / 2;
+        uint const ex = uint(end[0] / 2);
+        uint const ey = uint(end[1] / 2);
         Block const & bstart = this->field[sy][sx];
         Block const & bend = this->field[ey][ex];
 
@@ -141,13 +140,9 @@ public:
             if (!isPlayerAtLocation(connecting)) return {};
             if (wallCount != 0) return {};
             return 1;
-        } else {
-            wallCount += countInnerWalls(oldL, newL);
-            return wallCount + 1;
         }
-
-
-        return 0;
+        wallCount += countInnerWalls(oldL, newL);
+        return wallCount + 1;
     }
 
     bool playersInLocations(std::array<Player, 4> const &players,
@@ -212,7 +207,7 @@ public:
         }
 
         if ( m_white_moves == m_black_moves || m_black_finished ) {
-            if ( m_white_finished && m_white_finished ) {setGameOver(Noone); return;}
+            if ( m_white_finished && m_black_finished ) {setGameOver(Noone); return;}
             if ( m_white_finished ) {setGameOver(White); return;}
             if ( m_black_finished ) {setGameOver(Black); return;}
         }
