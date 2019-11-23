@@ -17,7 +17,7 @@ int main() {
 	window.setPosition(sf::Vector2i(0, 0));
 
     // create game field
-    auto field = Field(window);
+    auto field = Field(&window);
 
     // load game sounds
     sf::SoundBuffer buffer_pickup;
@@ -114,7 +114,7 @@ int main() {
 		// DRAWING
 		window.clear();
 
-        field.draw();
+        window.draw(field);
 
 		window.draw(text);
 

@@ -13,12 +13,12 @@
 
 #include <iostream>
 
-class Field {
+class Field: public sf::Drawable {
 private:
     int X = 3;
     int Y = 3;
 
-    sf::RenderWindow & r_window;
+    sf::RenderWindow * const p_window;
 
     std::vector<std::vector<Block>> field;
 
@@ -37,7 +37,7 @@ private:
     int m_black_moves = 0;
 
 public:
-    Field(sf::RenderWindow & window);
+    Field(sf::RenderWindow * const);
 
     [[nodiscard]] int white_moves() const;
     [[nodiscard]] int black_moves() const;
@@ -72,7 +72,7 @@ public:
 
     [[nodiscard]] bool moveSelectedPlayer(Location);
 
-    void draw();
+    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 };
 

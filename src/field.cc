@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-Field::Field(sf::RenderWindow & window) : r_window(window) {
+Field::Field(sf::RenderWindow * const window) : p_window(window) {
 
     auto eng = std::default_random_engine(std::random_device()());
     std::uniform_int_distribution<uint8_t> rand0to6(0, 6);
@@ -191,24 +191,24 @@ bool Field::moveSelectedPlayer(Location new_location){
     return move_success;
 }
 
-void Field::draw() {
+void Field::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     for (auto &row: field) {
         for (auto &block: row) {
-            r_window.draw(block);
+            target.draw(block, states);
         }
     }
 
     for (auto &players: {whitePlayers, blackPlayers}){
         for(auto &player: players) {
             if(player.isSelected()) continue;
-            r_window.draw(player);
+            target.draw(player, states);
         }
     }
 
     // Separately draw selected_player last so it will be drawn on top of others
     if (existsPlayerSelected()) {
-        this->selected_player->setPosition(getMousePosition(r_window));
-        r_window.draw(*this->selected_player);
+        this->selected_player->setPosition(getMousePosition(*p_window));
+        target.draw(*this->selected_player, states);
     }
 }
 

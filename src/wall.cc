@@ -8,7 +8,7 @@ WallConfig wall::rotateWallConfig(WallConfig const config, int const rotation) {
     int displacement;
     int distance;
 
-    for (int i = 0; i < 3; ++i) {
+    for (size_t i = 0; i < 3; ++i) {
         if (config[i][0] == -2) {
             tmp[i] = {-2, 0, 0};
             continue;
