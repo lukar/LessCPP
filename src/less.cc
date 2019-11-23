@@ -4,6 +4,7 @@
 #include "helpers.h"
 #include "field.h"
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <random>
 #include <cassert>
 
@@ -17,6 +18,24 @@ int main() {
 
     // create game field
     auto field = Field(window);
+
+    // load game sounds
+    sf::SoundBuffer buffer_pickup;
+    if (!buffer_pickup.loadFromFile("../sounds/sfx_menu_move2.wav"))
+        throw std::runtime_error("Cannot find the sound file '../sounds/sfx_menu_move2.wav'");
+
+    sf::SoundBuffer buffer_drop;
+    if (!buffer_drop.loadFromFile("../sounds/sfx_menu_move3.wav"))
+        throw std::runtime_error("Cannot find the sound file '../sounds/sfx_menu_move3.wav'");
+
+    sf::SoundBuffer buffer_illegal;
+    if (!buffer_illegal.loadFromFile("../sounds/sfx_sounds_error10.wav"))
+        throw std::runtime_error("Cannot find the sound file '../sounds/sfx_sounds_error10.wav'");
+
+    sf::Sound sound_drop, sound_pickup, sound_illegal;
+    sound_drop.setBuffer(buffer_drop);
+    sound_pickup.setBuffer(buffer_pickup);
+    sound_illegal.setBuffer(buffer_illegal);
 
 	// generate side text
     sf::Text text;
@@ -66,6 +85,7 @@ int main() {
 				if (event.type == sf::Event::MouseButtonPressed) {
                     for (auto &player : field.active_players()) {
 						if (euclideanDistance(getMousePosition(window), player.getPosition()) <= player_size) {
+                            sound_pickup.play();
                             field.selectPlayer(player);
 						}
 					}
@@ -76,8 +96,13 @@ int main() {
                         std::optional<Location> new_location = getMouseLocation(window);
 
                         if (new_location){
-                            field.moveSelectedPlayer(new_location.value());
+                            if (field.moveSelectedPlayer(new_location.value())){
+                                sound_drop.play();
+                            } else {
+                                sound_illegal.play();
+                            }
                         } else {
+                            sound_illegal.play();
                             field.unselectPlayer();
                         }
 					}

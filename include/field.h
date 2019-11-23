@@ -187,7 +187,8 @@ public:
         return this->selected_player->getLocation();
     }
 
-    void moveSelectedPlayer(Location new_location){
+    bool moveSelectedPlayer(Location new_location){
+        bool move_success = false; // to return
         Location old_location = selected_player->getLocation();
         auto cost = moveCost(old_location, new_location);
 
@@ -196,6 +197,7 @@ public:
             if (decrementMoves(cost.value())){
                 // the moves have been 'paid' successfully, we now have to move to player
                 selected_player->setLocation(new_location);
+                move_success = true;
             }
         }
         unselectPlayer();
@@ -207,11 +209,11 @@ public:
         }
 
         if ( m_white_moves == m_black_moves || m_black_finished ) {
-            if ( m_white_finished && m_black_finished ) {setGameOver(Noone); return;}
-            if ( m_white_finished ) {setGameOver(White); return;}
-            if ( m_black_finished ) {setGameOver(Black); return;}
+            if ( m_white_finished && m_black_finished ) {setGameOver(Noone); return move_success;}
+            if ( m_white_finished ) {setGameOver(White); return move_success;}
+            if ( m_black_finished ) {setGameOver(Black); return move_success;}
         }
-
+        return move_success;
     }
 
     void draw() {

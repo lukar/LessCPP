@@ -17,10 +17,10 @@ elseif(WIN32)
 endif()
 
 
-find_package(SFML 2.5.1 COMPONENTS graphics REQUIRED)
+find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
 add_executable(less ${source_files} ${header_files})
 target_include_directories(less PRIVATE include)
-target_link_libraries(less sfml-graphics)
+target_link_libraries(less sfml-graphics sfml-audio)
 
 install(TARGETS less DESTINATION bin)
 install(FILES resources/Roboto_Medium.ttf DESTINATION bin)
