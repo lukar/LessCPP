@@ -1,15 +1,14 @@
 #include "const_globals.h"
-#include <random>
-#include <array>
 #include "block_shape.h"
 #include "player.h"
 #include "field.h"
-
 #include "helpers.h"
+
+#include <array>
 #include <random>
 #include <cassert>
-
-#include <iostream>
+#include <stdexcept>
+#include <algorithm>
 
 Field::Field(sf::RenderWindow * const window) : p_window(window) {
 
@@ -36,36 +35,54 @@ Field::Field(sf::RenderWindow * const window) : p_window(window) {
     for( size_t i = 0; i < blackPlayers.size(); ++i ) {
         blackPlayers[i]= (Player(player_size, Black, blackStart[i]));
     }
+
+
 }
 
 // Getter methods
-int Field::white_moves() const { return m_white_moves; }
-int Field::black_moves() const { return m_black_moves; }
+uint Field::white_moves() const { return m_white_moves; }
+uint Field::black_moves() const { return m_black_moves; }
+State Field::getState() const { return m_state; }
 sf::Color Field::active_side() const { return m_active_side; }
 std::array<Player, 4> & Field::active_players() { return m_active_side == White ? this->whitePlayers : this->blackPlayers; }
 sf::Color Field::winning_side() const {return m_winning_side;}
-int Field::moves_left() const { return m_moves_left; }
-bool Field::game_over() const { return m_game_over; }
+uint Field::moves_left() const { return m_moves_left; }
 
-void Field::next_turn(int moves_left) {
-    m_active_side = (m_active_side == White ? Black : White);
-    m_moves_left = moves_left;
+bool Field::isEndOfTurn() const {
+    return m_moves_left == 0 or (active_side() == White
+                                 ? playersInLocations(whitePlayers, blackStart)
+                                 : playersInLocations(blackPlayers, whiteStart));
 }
 
-void Field::setGameOver(sf::Color winner) { m_game_over = true; m_winning_side = winner; }
 
-int Field::countInnerWalls(Location const start, Location const end) const {
+void Field::nextTurn() {
+    m_active_side = (m_active_side == White ? Black : White);
+
+    if ( playersInLocations(blackPlayers, whiteStart) or m_state == State::LAST_TURN ) m_state = State::ENDED;
+    else if ( playersInLocations(whitePlayers, blackStart) ) { m_state = State::LAST_TURN; m_moves_left = 3 - m_moves_left; }
+    else { m_moves_left = 3; }
+
+    if ( m_state == State::ENDED ) {
+        if ( playersInLocations(blackPlayers, whiteStart) and playersInLocations(whitePlayers, blackStart) ) m_winning_side = Noone;
+        else if (playersInLocations(whitePlayers, blackStart)) m_winning_side = White;
+        else m_winning_side = Black;
+    }
+}
+
+void Field::setGameOver(sf::Color winner) { m_state = State::ENDED; m_winning_side = winner; }
+
+uint Field::countInnerWalls(Location const start, Location const end) const {
 
     // differences
-    int const dx = end[0] - start[0];
-    int const dy = end[1] - start[1];
+    int const dx = static_cast<int>(end.x - start.x);
+    int const dy = static_cast<int>(end.y - start.y);
 
     // block coordinates
-    uint const sx = uint(start[0] / 2);
-    uint const sy = uint(start[1] / 2);
+    uint const sx = uint(start.x / 2);
+    uint const sy = uint(start.y / 2);
 
-    uint const ex = uint(end[0] / 2);
-    uint const ey = uint(end[1] / 2);
+    uint const ex = uint(end.x / 2);
+    uint const ey = uint(end.y / 2);
     Block const & bstart = this->field[sy][sx];
     Block const & bend = this->field[ey][ex];
 
@@ -74,9 +91,9 @@ int Field::countInnerWalls(Location const start, Location const end) const {
 
     int const first = (dx ? 1 : -1);
     int const second = (sx == ex && sy == ey ? 0 : dx + dy);
-    int const third = -1 + 2 * abs(dx) * (start[1] % 2) + 2 * abs(dy) * (start[0] % 2);
+    int const third = -1 + 2 * abs(dx) * static_cast<int>(start.y % 2) + 2 * abs(dy) * static_cast<int>(start.x % 2);
 
-    int num = 0;
+    uint num = 0;
     if (second) {
         num += bend.hasWall({first, -second, third});
     }
@@ -96,19 +113,23 @@ bool Field::isPlayerAtLocation(Location const location) const {
     return toReturn;
 }
 
-std::optional<int> Field::moveCost(Location oldL, Location newL) const {
+std::optional<uint> Field::moveCost(Location oldL, Direction dir) const {
+
+}
+
+std::optional<uint> Field::moveCost(Location oldL, Location newL) const {
 
     if (oldL == newL) return 0;
 
-    if (newL[0] - oldL[0] != 0 && newL[1] - oldL[1] != 0) return {};
+    if (newL.x - oldL.x != 0 && newL.y - oldL.y != 0) return {};
 
     if (isPlayerAtLocation(newL)) return {};
 
     int wallCount = 0;
-    int distance = abs(newL[0] - oldL[0]) + abs(newL[1] - oldL[1]);
+    int distance = abs(static_cast<int>(newL.x - oldL.x)) + abs(static_cast<int>(newL.y - oldL.y));
     if (distance > 2) return {};
     if (distance == 2) {
-        Location const connecting = {(newL[0] + oldL[0]) / 2, (newL[1] + oldL[1]) / 2};
+        Location const connecting = {(newL.x + oldL.x) / 2, (newL.y + oldL.y) / 2};
         wallCount += countInnerWalls(oldL, connecting);
         wallCount += countInnerWalls(connecting, newL);
 
@@ -122,17 +143,23 @@ std::optional<int> Field::moveCost(Location oldL, Location newL) const {
 
 bool Field::playersInLocations(std::array<Player, 4> const &players,
                         std::array<Location, 4> const &locations) const {
-    for ( auto & player: players) {
-        if(std::find(locations.begin(), locations.end(), player.getLocation()) == locations.end()) {
-            return false;
-        }
-    }
-    return true;
+    return std::all_of(players.begin(), players.end(), [=](const Player & player) {
+        return std::find(locations.begin(), locations.end(), player.getLocation()) != locations.end();
+    });
 }
 
-void Field::selectPlayer(Player & player) {
+Player & Field::selectPlayer(Player & player) {
     player.setSelected();
     this->selected_player = &player;
+    return player;
+}
+
+Player & Field::selectPlayer(uint player_num) {
+    if (player_num > 3) throw std::domain_error("There is no player with index: " + std::to_string(player_num));
+    Player & player = this->active_players()[player_num];
+    player.setSelected();
+    this->selected_player = &player;
+    return player;
 }
 
 void Field::unselectPlayer() {
@@ -147,48 +174,64 @@ bool Field::existsPlayerSelected() const {
     return this->selected_player==nullptr ? false : true;
 }
 
-bool Field::decrementMoves(int moves) {
+bool Field::decrementMoves(uint moves) {
     if (m_moves_left < moves ) return false;
     (active_side() == White ? m_white_moves : m_black_moves) += moves;
-    if ( m_moves_left == moves) {
-        next_turn(3);
-    } else {
-        m_moves_left -= moves;
-    }
+    m_moves_left -= moves;
     return true;
 }
 
-Location Field::selectedPlayerLocation() {
+Location Field::selectedPlayerLocation() const {
     return this->selected_player->getLocation();
 }
 
-bool Field::moveSelectedPlayer(Location new_location){
+std::optional<Location> Field::moveSelectedPlayer(Direction direction) {
+    Location old_location = selected_player->getLocation();
+    std::optional<uint> cost;
+    std::optional<Location> new_location = old_location + direction;
+
+    if (new_location){
+        if ( isPlayerAtLocation(new_location.value()) ) {
+            if ((new_location = new_location.value() + direction)) {
+                cost = moveCost(old_location, new_location.value());
+            }
+        } else {
+            cost = moveCost(old_location, new_location.value());
+        }
+    }
+
+    if ( cost && decrementMoves(cost.value())) {
+        selected_player->setLocation(new_location.value());
+    }
+    return (new_location && cost)? new_location: std::nullopt;
+}
+
+std::optional<Location> Field::moveSelectedPlayer(Location new_location){
     bool move_success = false; // to return
     Location old_location = selected_player->getLocation();
-    auto cost = moveCost(old_location, new_location);
+    std::optional<uint> cost = moveCost(old_location, new_location);
 
-    if (cost){
-        // at this point the move is legal, but there must still be enough moves left to complete it
-        if (decrementMoves(cost.value())){
-            // the moves have been 'paid' successfully, we now have to move to player
-            selected_player->setLocation(new_location);
-            move_success = true;
-        }
+    if (cost && decrementMoves(cost.value())){
+        // the moves have been 'paid' successfully, we now have to move to player
+        selected_player->setLocation(new_location);
+        move_success = true;
     }
     unselectPlayer();
 
-    if (!m_black_finished && playersInLocations(blackPlayers, whiteStart)) m_black_finished = true;
-    if (!m_white_finished && playersInLocations(whitePlayers, blackStart) ) {
-        m_white_finished = true;
-        if ( m_moves_left < 3 ) next_turn(3 - m_moves_left);
-    }
+    if ( isEndOfTurn() ) nextTurn();
 
-    if ( m_white_moves == m_black_moves || m_black_finished ) {
-        if ( m_white_finished && m_black_finished ) {setGameOver(Noone); return move_success;}
-        if ( m_white_finished ) {setGameOver(White); return move_success;}
-        if ( m_black_finished ) {setGameOver(Black); return move_success;}
-    }
-    return move_success;
+//    if (!m_black_finished && playersInLocations(blackPlayers, whiteStart)) m_black_finished = true;
+//    if (!m_white_finished && playersInLocations(whitePlayers, blackStart) ) {
+//        m_white_finished = true;
+//        if ( m_moves_left < 3 ) next_turn(3 - m_moves_left);
+//    }
+
+//    if ( m_white_moves == m_black_moves || m_black_finished ) {
+//        if ( m_white_finished && m_black_finished ) {setGameOver(Noone); return move_success;}
+//        if ( m_white_finished ) {setGameOver(White); return move_success;}
+//        if ( m_black_finished ) {setGameOver(Black); return move_success;}
+//    }
+    return new_location;
 }
 
 void Field::draw(sf::RenderTarget &target, sf::RenderStates states) const {

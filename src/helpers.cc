@@ -16,6 +16,6 @@ std::optional<Location> getMouseLocation(sf::RenderWindow  const& window) {
 	if (mouse.x < 0 || mouse.x >= block_size * 3 ||
 			mouse.y < 0 || mouse.y >= block_size * 3)
 		return {};
-	return Location{static_cast<int>(mouse.x / (block_size / 2)),
-									static_cast<int>(mouse.y / (block_size / 2))};
+    return Location{static_cast<unsigned int>(mouse.x / (block_size / 2)),
+                                    static_cast<unsigned int>(mouse.y / (block_size / 2))};
 }

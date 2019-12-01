@@ -44,8 +44,8 @@ void Player::setPosition(const sf::Vector2f &position) {
 }
 
 void Player::setPosition(const Location location) {
-	int x = location[0];
-	int y = location[1];
+    unsigned int x = location.x;
+    unsigned int y = location.y;
 	assert(x >= 0 && x <= 5 && y >= 0 && y <= 5);
 	setPosition(sf::Vector2f{
 	    x * (block_size / 2) + block_size / 4,
@@ -62,8 +62,8 @@ void Player::setLocation(const sf::Vector2f &coords) {
 	assert (coords.x >= 0 || coords.x <= block_size * 3 ||
 					coords.y >= 0 || coords.y <= block_size * 3
 	);
-	m_location = {static_cast<int>(coords.x / (block_size / 2)),
-								static_cast<int>(coords.y / (block_size / 2))};
+    m_location = {static_cast<unsigned int>(coords.x / (block_size / 2)),
+                                static_cast<unsigned int>(coords.y / (block_size / 2))};
 }
 
 std::string Player::toString() const {

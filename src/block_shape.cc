@@ -52,7 +52,7 @@ void Block::setRotation(float angle) {
 	this->wall.setRotation(angle);
 }
 
-int Block::hasWall(WallSeg seg) const {
+bool Block::hasWall(WallSeg seg) const {
 	for (auto &bseg: wall.getMConfig()) {
 		if (seg == bseg) {
 			return true;

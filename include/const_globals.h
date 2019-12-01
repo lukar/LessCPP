@@ -13,7 +13,35 @@
 // typedef std::array<std::tuple<Orientation, Lane, >, 3> WallSeg1;
 
 
-typedef std::array<int, 2> Location;
+
+enum class State {ONGOING, LAST_TURN, ENDED};
+enum class Direction { UP, DOWN, LEFT, RIGHT };
+
+struct Location {
+    unsigned int x, y;
+    bool operator==(const Location &rhs) const {return x == rhs.x && y == rhs.y;}
+    std::optional<Location> operator+(const Direction direction) {
+        Location tmp = *this;
+        if(direction == Direction::UP) {
+            if (tmp.y < 1) return {};
+            tmp.y--;
+        }
+        else if(direction == Direction::DOWN){
+            if (tmp.y < 5) return {};
+            tmp.y++;
+        }
+        else if(direction == Direction::LEFT){
+            if (tmp.x < 1) return {};
+            tmp.x--;
+        }
+        else {  // (direction == Direction::RIGHT)
+            if (tmp.x > 5) return {};
+            tmp.x++;
+        }
+        return tmp;
+    }
+};
+
 typedef std::array<int, 3> WallSeg;
 typedef std::array<WallSeg, 3> WallConfig;
 

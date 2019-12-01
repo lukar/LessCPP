@@ -29,7 +29,7 @@ public:
 
 		void setRotation(float);
 
-        int hasWall(WallSeg) const;
+        bool hasWall(WallSeg) const;
 
 };
 

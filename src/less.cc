@@ -53,7 +53,7 @@ int main() {
 	while (window.isOpen()) {
 
 		std::string displayText;
-        if ( !field.game_over() ) {
+        if ( field.getState() != State::ENDED ) {
             displayText += "Remaining moves: "s + std::to_string(field.moves_left()) + "\n"s;
             displayText += "Turn: "s + (field.active_side() == White ? "White"s : "Black"s) + "\n"s;
             displayText += "White total moves : "s + std::to_string(field.white_moves()) + "\n"s;
@@ -80,7 +80,7 @@ int main() {
 					window.close();
 				}
 			}
-            if (!field.game_over()) {
+            if ( field.getState() != State::ENDED ) {
 				// GRAB PLAYER
 				if (event.type == sf::Event::MouseButtonPressed) {
                     for (auto &player : field.active_players()) {
