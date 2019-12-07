@@ -18,8 +18,6 @@ private:
     int X = 3;
     int Y = 3;
 
-    sf::RenderWindow * const p_window;
-
     std::vector<std::vector<Block>> field;
 
     std::array<Player, 4> whitePlayers;
@@ -35,7 +33,7 @@ private:
     uint m_black_moves = 0;
 
 public:
-    Field(sf::RenderWindow * const);
+    Field();
 
     [[nodiscard]] uint white_moves() const;
     [[nodiscard]] uint black_moves() const;
@@ -62,11 +60,11 @@ public:
     [[nodiscard]] bool playersInLocations(std::array<Player, 4> const &,
                             std::array<Location, 4> const &) const;
 
-    Player & selectPlayer(Player &);
+    Player * selectPlayer(Player &);
 
-    Player & selectPlayer(uint);
+    Player * selectPlayer(uint);
 
-    void unselectPlayer();
+    std::nullptr_t unselectPlayer();
 
     [[nodiscard]] bool existsPlayerSelected() const;
 
@@ -74,9 +72,9 @@ public:
 
     [[nodiscard]] Location selectedPlayerLocation() const;
 
-    [[nodiscard]] std::optional<Location> moveSelectedPlayer(Direction);
+    std::optional<Location> moveSelectedPlayer(Direction);
 
-    [[nodiscard]] std::optional<Location> moveSelectedPlayer(Location);
+    std::optional<Location> moveSelectedPlayer(Location);
 
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 

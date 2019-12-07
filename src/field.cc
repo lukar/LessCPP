@@ -10,7 +10,7 @@
 #include <stdexcept>
 #include <algorithm>
 
-Field::Field(sf::RenderWindow * const window) : p_window(window) {
+Field::Field() {
 
     auto eng = std::default_random_engine(std::random_device()());
     std::uniform_int_distribution<uint8_t> rand0to6(0, 6);
@@ -57,6 +57,7 @@ bool Field::isEndOfTurn() const {
 
 void Field::nextTurn() {
     m_active_side = (m_active_side == White ? Black : White);
+    unselectPlayer();
 
     if ( playersInLocations(blackPlayers, whiteStart) or m_state == State::LAST_TURN ) m_state = State::ENDED;
     else if ( playersInLocations(whitePlayers, blackStart) ) { m_state = State::LAST_TURN; m_moves_left = 3 - m_moves_left; }
@@ -113,8 +114,11 @@ bool Field::isPlayerAtLocation(Location const location) const {
     return toReturn;
 }
 
-std::optional<uint> Field::moveCost(Location oldL, Direction dir) const {
-
+std::optional<uint> Field::moveCost(Location old_location, Direction direction) const {
+    if (std::optional<Location> new_location = old_location + direction) {
+        return countInnerWalls(old_location, new_location.value());
+    }
+    return {};
 }
 
 std::optional<uint> Field::moveCost(Location oldL, Location newL) const {
@@ -148,26 +152,25 @@ bool Field::playersInLocations(std::array<Player, 4> const &players,
     });
 }
 
-Player & Field::selectPlayer(Player & player) {
-    player.setSelected();
+Player * Field::selectPlayer(Player & player) {
     this->selected_player = &player;
-    return player;
+    return &player;
 }
 
-Player & Field::selectPlayer(uint player_num) {
+Player * Field::selectPlayer(uint player_num) {
     if (player_num > 3) throw std::domain_error("There is no player with index: " + std::to_string(player_num));
     Player & player = this->active_players()[player_num];
-    player.setSelected();
     this->selected_player = &player;
-    return player;
+    return &player;
 }
 
-void Field::unselectPlayer() {
+std::nullptr_t Field::unselectPlayer() {
     if (existsPlayerSelected()) {
         this->selected_player->setPosition(this->selected_player->getLocation());
         this->selected_player->unsetSelected();
         this->selected_player = nullptr;
     }
+    return nullptr;
 }
 
 bool Field::existsPlayerSelected() const {
@@ -203,34 +206,23 @@ std::optional<Location> Field::moveSelectedPlayer(Direction direction) {
     if ( cost && decrementMoves(cost.value())) {
         selected_player->setLocation(new_location.value());
     }
+
+    if ( isEndOfTurn() ) nextTurn();
     return (new_location && cost)? new_location: std::nullopt;
 }
 
 std::optional<Location> Field::moveSelectedPlayer(Location new_location){
-    bool move_success = false; // to return
     Location old_location = selected_player->getLocation();
     std::optional<uint> cost = moveCost(old_location, new_location);
 
     if (cost && decrementMoves(cost.value())){
         // the moves have been 'paid' successfully, we now have to move to player
         selected_player->setLocation(new_location);
-        move_success = true;
     }
     unselectPlayer();
 
     if ( isEndOfTurn() ) nextTurn();
 
-//    if (!m_black_finished && playersInLocations(blackPlayers, whiteStart)) m_black_finished = true;
-//    if (!m_white_finished && playersInLocations(whitePlayers, blackStart) ) {
-//        m_white_finished = true;
-//        if ( m_moves_left < 3 ) next_turn(3 - m_moves_left);
-//    }
-
-//    if ( m_white_moves == m_black_moves || m_black_finished ) {
-//        if ( m_white_finished && m_black_finished ) {setGameOver(Noone); return move_success;}
-//        if ( m_white_finished ) {setGameOver(White); return move_success;}
-//        if ( m_black_finished ) {setGameOver(Black); return move_success;}
-//    }
     return new_location;
 }
 
@@ -243,14 +235,13 @@ void Field::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 
     for (auto &players: {whitePlayers, blackPlayers}){
         for(auto &player: players) {
-            if(player.isSelected()) continue;
+            if(&player == this->selected_player) continue;
             target.draw(player, states);
         }
     }
 
     // Separately draw selected_player last so it will be drawn on top of others
     if (existsPlayerSelected()) {
-        this->selected_player->setPosition(getMousePosition(*p_window));
         target.draw(*this->selected_player, states);
     }
 }

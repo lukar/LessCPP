@@ -27,7 +27,7 @@ struct Location {
             tmp.y--;
         }
         else if(direction == Direction::DOWN){
-            if (tmp.y < 5) return {};
+            if (tmp.y > 5) return {};
             tmp.y++;
         }
         else if(direction == Direction::LEFT){

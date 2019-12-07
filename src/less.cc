@@ -10,6 +10,7 @@
 
 using namespace std::string_literals;
 
+
 int main() {
 
 	sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Less game", sf::Style::Close);
@@ -17,7 +18,8 @@ int main() {
 	window.setPosition(sf::Vector2i(0, 0));
 
     // create game field
-    auto field = Field(&window);
+    auto field = Field();
+    Player * clicked_player = nullptr;
 
     // load game sounds
     sf::SoundBuffer buffer_pickup;
@@ -82,17 +84,27 @@ int main() {
 			}
             if ( field.getState() != State::ENDED ) {
 				// GRAB PLAYER
+                if (event.type == sf::Event::KeyPressed) {
+                    if (event.key.code == sf::Keyboard::Num1) field.selectPlayer(0);
+                    if (event.key.code == sf::Keyboard::Num2) field.selectPlayer(1);
+                    if (event.key.code == sf::Keyboard::Num3) field.selectPlayer(2);
+                    if (event.key.code == sf::Keyboard::Num4) field.selectPlayer(3);
+                    if (event.key.code == sf::Keyboard::Up and field.existsPlayerSelected()) field.moveSelectedPlayer(Direction::UP);
+                    if (event.key.code == sf::Keyboard::Down and field.existsPlayerSelected()) field.moveSelectedPlayer(Direction::DOWN);
+                    if (event.key.code == sf::Keyboard::Left and field.existsPlayerSelected()) field.moveSelectedPlayer(Direction::LEFT);
+                    if (event.key.code == sf::Keyboard::Right and field.existsPlayerSelected()) field.moveSelectedPlayer(Direction::RIGHT);
+                }
 				if (event.type == sf::Event::MouseButtonPressed) {
                     for (auto &player : field.active_players()) {
 						if (euclideanDistance(getMousePosition(window), player.getPosition()) <= player_size) {
                             sound_pickup.play();
-                            field.selectPlayer(player);
+                            clicked_player = field.selectPlayer(player);
 						}
 					}
 				}
 				// DROP PLAYER
 				if (event.type == sf::Event::MouseButtonReleased) {
-                    if (field.existsPlayerSelected()) {
+                    if (clicked_player != nullptr) {
                         std::optional<Location> new_location = getMouseLocation(window);
 
                         if (new_location){
@@ -103,8 +115,8 @@ int main() {
                             }
                         } else {
                             sound_illegal.play();
-                            field.unselectPlayer();
                         }
+                        clicked_player = field.unselectPlayer();
 					}
 				}
 			}
@@ -114,6 +126,7 @@ int main() {
 		// DRAWING
 		window.clear();
 
+        if (clicked_player != nullptr) clicked_player->setPosition(getMousePosition(window));
         window.draw(field);
 
 		window.draw(text);
