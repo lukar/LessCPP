@@ -23,19 +23,19 @@ struct Location {
     std::optional<Location> operator+(const Direction direction) {
         Location tmp = *this;
         if(direction == Direction::UP) {
-            if (tmp.y < 1) return {};
+            if (tmp.y == 0) return {};
             tmp.y--;
         }
         else if(direction == Direction::DOWN){
-            if (tmp.y > 5) return {};
+            if (tmp.y == 5) return {};
             tmp.y++;
         }
         else if(direction == Direction::LEFT){
-            if (tmp.x < 1) return {};
+            if (tmp.x == 0) return {};
             tmp.x--;
         }
         else {  // (direction == Direction::RIGHT)
-            if (tmp.x > 5) return {};
+            if (tmp.x == 5) return {};
             tmp.x++;
         }
         return tmp;
