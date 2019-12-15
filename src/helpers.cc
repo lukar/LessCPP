@@ -3,7 +3,6 @@
 //
 
 #include "helpers.h"
-#include <cassert>
 
 extern sf::RenderWindow window;
 
@@ -18,4 +17,18 @@ std::optional<Location> getMouseLocation(sf::RenderWindow  const& window) {
 		return {};
     return Location{static_cast<unsigned int>(mouse.x / (block_size / 2)),
                                     static_cast<unsigned int>(mouse.y / (block_size / 2))};
+}
+
+sf::Vector2f positionFromLocation(Location location) {
+    return {
+        location.x * (block_size / 2) + block_size / 4,
+        location.y * (block_size / 2) + block_size / 4
+    };
+}
+
+Location locationFromPosition(sf::Vector2f position) {
+    return {
+        static_cast<uint>(floorf(position.x / (block_size / 2))),
+        static_cast<uint>(floorf(position.y / (block_size / 2)))
+    };
 }

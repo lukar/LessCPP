@@ -8,14 +8,14 @@
 #include <utility>
 #include <array>
 #include <tuple>
-#include <SFML/Graphics.hpp>
+#include <optional>
 
 // typedef std::array<std::tuple<Orientation, Lane, >, 3> WallSeg1;
 
 
-
+enum class Side {WHITE, BLACK, NONE};
 enum class State {ONGOING, LAST_TURN, ENDED};
-enum class Direction { UP, DOWN, LEFT, RIGHT };
+enum class Direction { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3};
 
 struct Location {
     unsigned int x, y;
@@ -50,14 +50,13 @@ constexpr std::array<Location, 4> whiteStart = {{{0, 0},{1, 0},{0, 1},{1, 1}}};
 constexpr std::array<Location, 4> blackStart = {{{4, 4},{5, 4},{4, 5},{5, 5}}};
 
 constexpr float block_size = 200;
-constexpr float block_border = 2;
+constexpr float border_width = 2;
+constexpr float line_width = 5;
+constexpr float wall_width = 20;
 constexpr float player_size = 30;
 
 constexpr int window_width = 800;
 constexpr int window_height = 600;
 
-static sf::Color const White = {255, 222, 173};
-static sf::Color const Black = {139, 69, 19};
-static sf::Color const Noone = {0, 0, 0};
 
 #endif //LESSCPP_CONST_GLOBALS_H

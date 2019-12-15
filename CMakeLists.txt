@@ -4,6 +4,7 @@ project(LessCPP)
 set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_BUILD_TYPE Debug)
+add_definitions(-DGUI)
 
 file(GLOB source_files "src/*")
 file(GLOB header_files "include/*")

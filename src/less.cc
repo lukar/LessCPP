@@ -1,12 +1,10 @@
 #include "const_globals.h"
-#include "player.h"
-#include "block_shape.h"
+#include "wall.h"
 #include "helpers.h"
-#include "field.h"
+#include "game.h"
+#include "gui.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-#include <random>
-#include <cassert>
 
 using namespace std::string_literals;
 
@@ -14,12 +12,14 @@ using namespace std::string_literals;
 int main() {
 
 	sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Less game", sf::Style::Close);
+    window.setPosition(sf::Vector2i(0, 0));
 
-	window.setPosition(sf::Vector2i(0, 0));
+    auto wall_configs = wall::generateNwallconfigs<9>();
 
-    // create game field
-    auto field = Field();
+    Game game = Game(wall_configs);
+    Gui gui = Gui(wall_configs);
     Player * clicked_player = nullptr;
+//    std::optional<uint> selected_player_num;
 
     // load game sounds
     sf::SoundBuffer buffer_pickup;
@@ -55,17 +55,17 @@ int main() {
 	while (window.isOpen()) {
 
 		std::string displayText;
-        if ( field.getState() != State::ENDED ) {
-            displayText += "Remaining moves: "s + std::to_string(field.moves_left()) + "\n"s;
-            displayText += "Turn: "s + (field.active_side() == White ? "White"s : "Black"s) + "\n"s;
-            displayText += "White total moves : "s + std::to_string(field.white_moves()) + "\n"s;
-            displayText += "Black total moves : "s + std::to_string(field.black_moves()) + "\n"s;
+        if ( game.getState() != State::ENDED ) {
+            displayText += "Remaining moves: "s + std::to_string(game.moves_left()) + "\n"s;
+            displayText += "Turn: "s + (game.active_side() == Side::WHITE ? "White"s : "Black"s) + "\n"s;
+            displayText += "White total moves : "s + std::to_string(game.white_moves()) + "\n"s;
+            displayText += "Black total moves : "s + std::to_string(game.black_moves()) + "\n"s;
 		} else {
 			displayText += "GAME OVER\n";
-            if (field.winning_side() == Noone){
+            if (game.winning_side() == Side::NONE){
                 displayText += "It's a tie!"s;
             } else {
-                displayText += (field.winning_side() == White ? "White"s : "Black"s) + " wins"s;
+                displayText += (game.winning_side() == Side::WHITE ? "White"s : "Black"s) + " wins"s;
             }
 		}
 		text.setString(displayText);
@@ -82,23 +82,27 @@ int main() {
 					window.close();
 				}
 			}
-            if ( field.getState() != State::ENDED ) {
-				// GRAB PLAYER
-                if (event.type == sf::Event::KeyPressed) {
-                    if (event.key.code == sf::Keyboard::Num1) field.selectPlayer(0);
-                    if (event.key.code == sf::Keyboard::Num2) field.selectPlayer(1);
-                    if (event.key.code == sf::Keyboard::Num3) field.selectPlayer(2);
-                    if (event.key.code == sf::Keyboard::Num4) field.selectPlayer(3);
-                    if (event.key.code == sf::Keyboard::Up and field.existsPlayerSelected()) field.moveSelectedPlayer(Direction::UP);
-                    if (event.key.code == sf::Keyboard::Down and field.existsPlayerSelected()) field.moveSelectedPlayer(Direction::DOWN);
-                    if (event.key.code == sf::Keyboard::Left and field.existsPlayerSelected()) field.moveSelectedPlayer(Direction::LEFT);
-                    if (event.key.code == sf::Keyboard::Right and field.existsPlayerSelected()) field.moveSelectedPlayer(Direction::RIGHT);
-                }
+            if ( game.getState() != State::ENDED ) {
+//                if (event.type == sf::Event::KeyPressed) {
+//                    if (event.key.code == sf::Keyboard::Num1) selected_player_num = 0;
+//                    if (event.key.code == sf::Keyboard::Num2) selected_player_num = 1;
+//                    if (event.key.code == sf::Keyboard::Num3) selected_player_num = 2;
+//                    if (event.key.code == sf::Keyboard::Num4) selected_player_num = 3;
+//                    if (event.key.code == sf::Keyboard::Up and selected_player_num) game.movePlayer(selected_player_num.value(), Direction::UP);
+//                    if (event.key.code == sf::Keyboard::Down and selected_player_num) game.movePlayer(selected_player_num.value(), Direction::DOWN);
+//                    if (event.key.code == sf::Keyboard::Left and selected_player_num) game.movePlayer(selected_player_num.value(), Direction::LEFT);
+//                    if (event.key.code == sf::Keyboard::Right and selected_player_num) {
+//                        if (auto location = game.movePlayer(selected_player_num.value(), Direction::RIGHT)) {
+
+//                        }
+//                    }
+//                }
+                // GRAB PLAYER
 				if (event.type == sf::Event::MouseButtonPressed) {
-                    for (auto &player : field.active_players()) {
-						if (euclideanDistance(getMousePosition(window), player.getPosition()) <= player_size) {
+                    for (auto &player : gui.getPlayers(game.active_side())) {
+                        if (euclideanDistance(getMousePosition(window), player.getPosition()) <= player_size) {
                             sound_pickup.play();
-                            clicked_player = field.selectPlayer(player);
+                            clicked_player = &player;
 						}
 					}
 				}
@@ -108,7 +112,8 @@ int main() {
                         std::optional<Location> new_location = getMouseLocation(window);
 
                         if (new_location){
-                            if (field.moveSelectedPlayer(new_location.value())){
+                            if (game.movePlayer(clicked_player->getLocation(), new_location.value())){
+                                clicked_player->setLocation(new_location.value());
                                 sound_drop.play();
                             } else {
                                 sound_illegal.play();
@@ -116,10 +121,11 @@ int main() {
                         } else {
                             sound_illegal.play();
                         }
-                        clicked_player = field.unselectPlayer();
+                        clicked_player->resetPosition();
+                        clicked_player = nullptr;
 					}
 				}
-			}
+            }
 		}
 
 
@@ -127,9 +133,11 @@ int main() {
 		window.clear();
 
         if (clicked_player != nullptr) clicked_player->setPosition(getMousePosition(window));
-        window.draw(field);
 
 		window.draw(text);
+
+        window.draw(gui);
+        if (clicked_player != nullptr) window.draw(*clicked_player);
 
 		window.display();
 

@@ -8,47 +8,29 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
+
 #include "const_globals.h"
+#include "helpers.h"
 
 
-class Player : public sf::Drawable {
+class Player : public sf::Drawable
+{
 private:
-		void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
-		float m_size;
-
-		sf::CircleShape m_shape;
-		Location m_location;
-		sf::Color m_color;
-		bool m_selected = false;
+    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+    sf::CircleShape m_shape;
+    Location m_location;
 
 public:
-		Player(float size = 0, sf::Color color = sf::Color::White, Location location = {0, 0});
 
-		void setLocation(const Location);
-
-		void setLocation(const sf::Vector2f &);
-
-		void setPosition(const sf::Vector2f &);
-
-		void setPosition(const Location);
-
-        void setSelected();
-
-        void unsetSelected();
-
-		sf::Vector2f getPosition() const;
-
-		Location getLocation() const;
-
-		bool isSelected() const;
-
-		std::string toString() const;
+    void setPosition(const sf::Vector2f &);
+    void setPosition(const Location &);
+    void setLocation(const Location &);
+    Location getLocation() const;
+    sf::Vector2f getPosition() const;
+    void resetPosition();
+    Player(Location, sf::Color);
+    Player() = default;
 };
-
-
-extern std::array<Player, 4> whitePlayers;
-
-extern std::array<Player, 4> blackPlayers;
 
 #endif //LESSCPP_PLAYER_H

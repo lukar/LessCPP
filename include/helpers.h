@@ -24,4 +24,8 @@ sf::Vector2f getMousePosition(sf::RenderWindow const &);
 
 std::optional<Location> getMouseLocation(sf::RenderWindow const&);
 
+sf::Vector2f positionFromLocation(Location);
+
+Location locationFromPosition(sf::Vector2f);
+
 #endif //LESSCPP_HELPERS_H

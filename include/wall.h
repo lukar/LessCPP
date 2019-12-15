@@ -1,10 +1,9 @@
 #ifndef WALL_H
 #define WALL_H
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Graphics/Export.hpp>
-#include <SFML/Graphics/Shape.hpp>
 #include <array>
+#include <random>
+#include <algorithm>
 #include "const_globals.h"
 
 namespace wall {
@@ -16,7 +15,6 @@ namespace wall {
 										{-2, 0, 0}
 						}
 		};
-
 		constexpr WallConfig bHalfSide = {
 						{
 										{1, -1, 1},
@@ -67,34 +65,24 @@ namespace wall {
 		constexpr std::array<WallConfig, 7> wall_configs{
 						bFullSide, bHalfSide, bZigZag, bT_Block, bTopLeft, bTopRight, bBottomRight};
 
+        WallConfig rotateWallConfig(WallConfig wall, uint rotation);
 
-		WallConfig rotateWallConfig(WallConfig wall, int rotation);
+        template<size_t N>
+        std::array<WallConfig, N> generateNwallconfigs() {
+            auto eng = std::default_random_engine(std::random_device()());
+            std::uniform_int_distribution<uint8_t> rand0to6(0, 6);
+            std::uniform_int_distribution<uint8_t> rand0to3(0, 3);
+
+            std::array<WallConfig, N> tmp;
+            for (size_t i = 0; i != N; ++i) {
+                tmp[i] = wall::rotateWallConfig(wall_configs[rand0to6(eng)], rand0to3(eng));
+            }
+            return tmp;
+        }
+
+        bool hasWallSeg(const WallConfig &config, const WallSeg &seg);
+
 
 } // namespace wall
-
-
-class Wall : public sf::Drawable {
-private:
-		void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
-
-		float m_size;
-		float m_width;
-		std::vector<sf::RectangleShape> m_wallShape;
-		WallConfig m_config;
-public:
-		const WallConfig &getMConfig() const;
-
-		explicit Wall(float size = 0, float width = 0, WallConfig config = wall::bFullSide);
-
-		void setPosition(float x, float y);
-
-		void setRotation(float angle);
-
-		void setFillColor(const sf::Color &color);
-
-		sf::Vector2f getWallSegOrigin(std::array<int, 3> &);
-
-
-};
 
 #endif /* WALL_H */
