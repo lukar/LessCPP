@@ -3,10 +3,42 @@
 #include "helpers.h"
 #include "game.h"
 #include "gui.h"
+#include <algorithm>
+#include <chrono>
+#include <thread>
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
 using namespace std::string_literals;
+
+uint sumPlayers(uint sum, Location player) {
+    return sum + player.x + player.y;
+}
+
+typedef std::tuple<uint, Direction, uint> Path;
+std::vector<Path> recurseFindOptimal(const Game state) {
+    std::vector<std::vector<Path>> paths;
+
+    for (uint player = 0; player < 4; ++player) {
+        Direction direction = Direction::UP;
+        do {
+            Game newstate = state;
+            if(auto location = newstate.movePlayer(player, direction)){
+                auto players = newstate.getPlayers(Side::BLACK);
+                if (newstate.active_side() == Side::BLACK) {
+                    auto aux = recurseFindOptimal(newstate);
+                    aux.emplace(aux.begin(), std::make_tuple(player, direction, std::accumulate(players.begin(), players.end(), 0, sumPlayers)));
+                    paths.push_back(aux);
+                } else {
+                    paths.emplace_back(std::vector<Path>{std::make_tuple(player, direction, std::accumulate(players.begin(), players.end(), 0, sumPlayers))});
+                    // std::accumulate(players.begin(), players.end(), sumPlayers)
+                }
+            }
+            ++direction;
+        } while (direction != Direction::UP);
+    }
+    return *std::min_element(paths.begin(), paths.end(), [](std::vector<Path> a, std::vector<Path> b){ return std::get<2>(a[0]) < std::get<2>(b[0]);});
+}
 
 
 int main() {
@@ -82,7 +114,7 @@ int main() {
 					window.close();
 				}
 			}
-            if ( game.getState() != State::ENDED ) {
+            if ( game.getState() != State::ENDED and game.active_side() == Side::WHITE ) {
 //                if (event.type == sf::Event::KeyPressed) {
 //                    if (event.key.code == sf::Keyboard::Num1) selected_player_num = 0;
 //                    if (event.key.code == sf::Keyboard::Num2) selected_player_num = 1;
@@ -125,6 +157,19 @@ int main() {
                         clicked_player = nullptr;
 					}
 				}
+            }
+            else if ( game.getState() != State::ENDED and game.active_side() == Side::BLACK ) {
+                auto path = recurseFindOptimal(game);
+                for( auto elem: path) {
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    auto newLocation = game.movePlayer(std::get<0>(elem), std::get<1>(elem));
+                    gui.getPlayers(Side::BLACK)[std::get<0>(elem)].setLocation(newLocation.value());
+                    gui.getPlayers(Side::BLACK)[std::get<0>(elem)].resetPosition();
+                    window.clear();
+                    window.draw(text);
+                    window.draw(gui);
+                    window.display();
+                }
             }
 		}
 

@@ -193,3 +193,11 @@ std::optional<Location> Game::movePlayer(Location old_location, Location new_loc
 void Game::setPlayerLocation(uint player, Location location) {
     active_players()[player] = location;
 }
+
+std::array<Location, 4> Game::getPlayers(Side side){
+    if (side == Side::WHITE) {
+        return m_whiteLocations;
+    } else {
+        return m_blackLocations;
+    }
+}

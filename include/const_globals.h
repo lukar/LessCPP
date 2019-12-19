@@ -5,17 +5,29 @@
 #ifndef LESSCPP_CONST_GLOBALS_H
 #define LESSCPP_CONST_GLOBALS_H
 
-#include <utility>
 #include <array>
-#include <tuple>
 #include <optional>
-
-// typedef std::array<std::tuple<Orientation, Lane, >, 3> WallSeg1;
-
 
 enum class Side {WHITE, BLACK, NONE};
 enum class State {ONGOING, LAST_TURN, ENDED};
 enum class Direction { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3};
+
+constexpr void operator++(Direction& direction) {
+    switch (direction) {
+        case Direction::UP:
+            direction = Direction::DOWN;
+            break;
+        case Direction::DOWN:
+            direction = Direction::LEFT;
+            break;
+        case Direction::LEFT:
+            direction = Direction::RIGHT;
+            break;
+        case Direction::RIGHT:
+            direction = Direction::UP;
+            break;
+    }
+}
 
 struct Location {
     unsigned int x, y;

@@ -31,6 +31,7 @@ private:
 
 public:
     Game(std::array<WallConfig, 9>);
+    Game(const Game &) = default;
 
     [[nodiscard]] uint white_moves() const;
     [[nodiscard]] uint black_moves() const;
@@ -41,6 +42,8 @@ public:
     [[nodiscard]] uint moves_left() const;
 
     std::optional<uint> getPlayerNumber(Location);
+
+    std::array<Location, 4> getPlayers(Side);
 
     bool isEndOfTurn() const;
 
