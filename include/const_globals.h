@@ -9,10 +9,16 @@
 #include <optional>
 
 enum class Side {WHITE, BLACK, NONE};
+
+constexpr Side operator~(const Side& side) {
+    if (side == Side::WHITE) return Side::BLACK;
+    else return Side::WHITE;
+}
+
 enum class State {ONGOING, LAST_TURN, ENDED};
 enum class Direction { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3};
 
-constexpr void operator++(Direction& direction) {
+constexpr Direction operator++(Direction& direction) {
     switch (direction) {
         case Direction::UP:
             direction = Direction::DOWN;
@@ -27,12 +33,14 @@ constexpr void operator++(Direction& direction) {
             direction = Direction::UP;
             break;
     }
+    return direction;
 }
 
 struct Location {
     unsigned int x, y;
-    bool operator==(const Location &rhs) const {return x == rhs.x && y == rhs.y;}
-    std::optional<Location> operator+(const Direction direction) {
+    constexpr bool operator==(const Location &rhs) const {return x == rhs.x && y == rhs.y;}
+    bool operator<(const Location &rhs) const {return x*10+y < rhs.x*10 +rhs.y;}
+    std::optional<Location> operator+(const Direction direction) const {
         Location tmp = *this;
         if(direction == Direction::UP) {
             if (tmp.y == 0) return {};
@@ -52,14 +60,24 @@ struct Location {
         }
         return tmp;
     }
+
+    constexpr Location operator+(const Location location) const {
+        return {this->x + location.x, this->y + location.y};
+    }
+
+    constexpr Location operator-(const Location location) const {
+        return {this->x - location.x, this->y - location.y};
+    }
 };
+
+template <size_t N> using Locations = std::array<Location, N>;
 
 typedef std::array<int, 3> WallSeg;
 typedef std::array<WallSeg, 3> WallConfig;
 
 // individual color pieces starting positions
-constexpr std::array<Location, 4> whiteStart = {{{0, 0},{1, 0},{0, 1},{1, 1}}};
-constexpr std::array<Location, 4> blackStart = {{{4, 4},{5, 4},{4, 5},{5, 5}}};
+constexpr Locations<4> whiteStart = {{{0, 0},{1, 0},{0, 1},{1, 1}}};
+constexpr Locations<4> blackStart = {{{4, 4},{5, 4},{4, 5},{5, 5}}};
 
 constexpr float block_size = 200;
 constexpr float border_width = 2;

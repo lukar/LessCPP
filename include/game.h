@@ -32,6 +32,7 @@ private:
 public:
     Game(std::array<WallConfig, 9>);
     Game(const Game &) = default;
+    bool operator==(const Game &) const;
 
     [[nodiscard]] uint white_moves() const;
     [[nodiscard]] uint black_moves() const;
@@ -43,7 +44,13 @@ public:
 
     std::optional<uint> getPlayerNumber(Location);
 
-    std::array<Location, 4> getPlayers(Side);
+    constexpr std::array<Location, 4> getPlayers(Side side) const {
+        if (side == Side::WHITE) {
+            return m_whiteLocations;
+        } else {
+            return m_blackLocations;
+        }
+    }
 
     bool isEndOfTurn() const;
 
@@ -58,8 +65,6 @@ public:
     [[nodiscard]] std::optional<uint> moveCost (Location, Location) const;
 
     [[nodiscard]] std::optional<uint> moveCost (Location, Direction) const;
-
-    [[nodiscard]] bool playersInLocations(std::array<Location, 4> const &, std::array<Location, 4> const &) const;
 
     Location getPlayerLocation(uint);
 

@@ -32,3 +32,6 @@ Location locationFromPosition(sf::Vector2f position) {
         static_cast<uint>(floorf(position.y / (block_size / 2)))
     };
 }
+
+
+

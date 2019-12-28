@@ -15,6 +15,12 @@ Game::Game(std::array<WallConfig, 9> wallconfigs) {
     }
 }
 
+bool Game::operator==(const Game & game) const {
+    if ( playersInLocations(m_whiteLocations, game.m_whiteLocations) and
+         playersInLocations(m_blackLocations, game.m_blackLocations) ) return true;
+    return false;
+}
+
 // Getter methods
 uint Game::white_moves() const { return m_white_moves; }
 uint Game::black_moves() const { return m_black_moves; }
@@ -123,12 +129,6 @@ std::optional<uint> Game::moveCost(Location oldL, Location newL) const {
     return wallCount + 1;
 }
 
-bool Game::playersInLocations(std::array<Location, 4> const &players,
-                        std::array<Location, 4> const &locations) const {
-    return std::all_of(players.begin(), players.end(), [=](const Location & player) {
-        return std::find(locations.begin(), locations.end(), player) != locations.end();
-    });
-}
 
 std::optional<uint> Game::getPlayerNumber(Location location) {
     for (size_t i = 0; i != 4; ++i) {
@@ -194,10 +194,3 @@ void Game::setPlayerLocation(uint player, Location location) {
     active_players()[player] = location;
 }
 
-std::array<Location, 4> Game::getPlayers(Side side){
-    if (side == Side::WHITE) {
-        return m_whiteLocations;
-    } else {
-        return m_blackLocations;
-    }
-}

@@ -9,6 +9,7 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <optional>
+#include <set>
 #include "const_globals.h"
 
 
@@ -27,5 +28,19 @@ std::optional<Location> getMouseLocation(sf::RenderWindow const&);
 sf::Vector2f positionFromLocation(Location);
 
 Location locationFromPosition(sf::Vector2f);
+
+constexpr bool playersInLocations(Locations<4> const &players, Locations<4> const &locations) {
+//    return std::all_of(players.begin(), players.end(), [=](const Location & player) {
+//        return std::find(locations.begin(), locations.end(), player) != locations.end();
+//    });
+//    return std::set<Location>(players.begin(), players.end()) == std::set<Location>(locations.begin(), locations.end());
+    uint count = 0;
+    for (size_t i = 0; i < 4; ++i) {
+        for (size_t j = 0; j < 4; ++j) {
+            if (players[i] == locations[j]) ++count;
+        }
+    }
+    return count == 4;
+}
 
 #endif //LESSCPP_HELPERS_H
