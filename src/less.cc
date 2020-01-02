@@ -16,14 +16,14 @@
 
 using namespace std::string_literals;
 
-constexpr uint sumLocation(Location loc) {
+constexpr int sumLocation(Location loc) {
 	return loc.x + loc.y;
 }
 
-constexpr uint evaluation(const Game & game) {
+constexpr int evaluation(const Game & game) {
 	const auto whites = game.getPlayers(Side::WHITE);
 	const auto blacks = game.getPlayers(Side::BLACK);
-	uint eval = 0;
+	int eval = 0;
 	for (size_t i = 0; i < 4; ++i) {
 		eval += sumLocation(blacks[i] + whites[i]);
 	}
@@ -35,11 +35,11 @@ constexpr uint evaluation(const Game & game) {
 //static std::vector<std::pair<std::set<Location>, std::set<Location>>> games;
 
 // path = player, direction, evaluation
-typedef std::tuple<uint, Direction, uint> Path;
-std::optional<std::vector<Path>> recurseFindOptimal(const Game state, const Side side, uint depth, uint alpha, uint beta) {
+typedef std::tuple<int, Direction, int> Path;
+std::optional<std::vector<Path>> recurseFindOptimal(const Game state, const Side side, int depth, int alpha, int beta) {
 	std::vector<std::vector<Path>> paths;
 
-	for (uint player = 0; player < 4; ++player) {
+	for (int player = 0; player < 4; ++player) {
 		Direction direction = Direction::UP;
 		do {
 			if (alpha >= beta ) goto SKIPALL;
@@ -180,13 +180,13 @@ int main() {
 				}
 			}
 			else if ( game.getState() != State::ENDED and game.active_side() == Side::BLACK ) {
-				auto path = recurseFindOptimal(game, Side::BLACK, 1, 0, 100).value();
+				auto path = recurseFindOptimal(game, Side::BLACK, 2, 0, 100).value();
 				for( auto elem: path) {
 					if (game.active_side() != Side::BLACK) break;
 					std::this_thread::sleep_for(std::chrono::seconds(1));
 					auto newLocation = game.movePlayer(std::get<0>(elem), std::get<1>(elem));
-					gui.getPlayers(Side::BLACK)[std::get<0>(elem)].setLocation(newLocation.value());
-					gui.getPlayers(Side::BLACK)[std::get<0>(elem)].resetPosition();
+					gui.getPlayers(Side::BLACK)[static_cast<uint>(std::get<0>(elem))].setLocation(newLocation.value());
+					gui.getPlayers(Side::BLACK)[static_cast<uint>(std::get<0>(elem))].resetPosition();
 					window.clear();
 					window.draw(text);
 					window.draw(gui);

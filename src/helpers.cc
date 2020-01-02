@@ -15,8 +15,8 @@ std::optional<Location> getMouseLocation(sf::RenderWindow  const& window) {
 	if (mouse.x < 0 || mouse.x >= block_size * 3 ||
 			mouse.y < 0 || mouse.y >= block_size * 3)
 		return {};
-    return Location{static_cast<unsigned int>(mouse.x / (block_size / 2)),
-                                    static_cast<unsigned int>(mouse.y / (block_size / 2))};
+	return Location{static_cast<int>(mouse.x / (block_size / 2)),
+					static_cast<int>(mouse.y / (block_size / 2))};
 }
 
 sf::Vector2f positionFromLocation(Location location) {
@@ -28,8 +28,8 @@ sf::Vector2f positionFromLocation(Location location) {
 
 Location locationFromPosition(sf::Vector2f position) {
     return {
-        static_cast<uint>(floorf(position.x / (block_size / 2))),
-        static_cast<uint>(floorf(position.y / (block_size / 2)))
+		static_cast<int>(position.x / (block_size / 2)),
+		static_cast<int>(position.y / (block_size / 2))
     };
 }
 

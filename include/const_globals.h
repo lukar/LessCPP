@@ -37,7 +37,7 @@ constexpr Direction operator++(Direction& direction) {
 }
 
 struct Location {
-    unsigned int x, y;
+	int x, y;
     constexpr bool operator==(const Location &rhs) const {return x == rhs.x && y == rhs.y;}
     bool operator<(const Location &rhs) const {return x*10+y < rhs.x*10 +rhs.y;}
 	constexpr std::optional<Location> operator+(const Direction direction) const {
