@@ -43,4 +43,10 @@ constexpr bool playersInLocations(Locations<4> const &players, Locations<4> cons
     return count == 4;
 }
 
+template <typename T>
+constexpr T cabs(T num) {
+	if ( num < 0 ) return -num;
+	else return num;
+}
+
 #endif //LESSCPP_HELPERS_H

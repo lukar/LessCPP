@@ -26,6 +26,4 @@ WallConfig wall::rotateWallConfig(WallConfig const config, uint const rotation) 
 }
 
 
-bool wall::hasWallSeg(const WallConfig &config, const WallSeg &seg) {
-    return std::find(config.begin(), config.end(), seg) != config.end();
-}
+

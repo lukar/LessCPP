@@ -40,7 +40,7 @@ struct Location {
     unsigned int x, y;
     constexpr bool operator==(const Location &rhs) const {return x == rhs.x && y == rhs.y;}
     bool operator<(const Location &rhs) const {return x*10+y < rhs.x*10 +rhs.y;}
-    std::optional<Location> operator+(const Direction direction) const {
+	constexpr std::optional<Location> operator+(const Direction direction) const {
         Location tmp = *this;
         if(direction == Direction::UP) {
             if (tmp.y == 0) return {};

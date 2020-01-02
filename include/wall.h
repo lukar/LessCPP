@@ -80,7 +80,13 @@ namespace wall {
             return tmp;
         }
 
-        bool hasWallSeg(const WallConfig &config, const WallSeg &seg);
+		constexpr bool hasWallSeg(const WallConfig &config, const WallSeg &seg) {
+			for (auto const& w: config) {
+				if (w[0] == seg[0] and w[1] == seg[1] and w[2] == seg[2]) return true;
+			}
+			return false;
+//			return std::find(config.begin(), config.end(), seg) != config.end();
+		}
 
 
 } // namespace wall

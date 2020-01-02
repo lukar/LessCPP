@@ -58,13 +58,13 @@ public:
 
     void setGameOver(Side);
 
-    [[nodiscard]] uint countInnerWalls(Location const, Location const) const;
+	[[nodiscard]] constexpr uint countInnerWalls(Location const, Location const) const;
 
-    [[nodiscard]] bool existsPlayerAtLocation(Location const) const;
+	[[nodiscard]] constexpr bool existsPlayerAtLocation(Location const) const;
 
-    [[nodiscard]] std::optional<uint> moveCost (Location, Location) const;
+	[[nodiscard]] constexpr std::optional<uint> moveCost (Location, Direction) const;
 
-    [[nodiscard]] std::optional<uint> moveCost (Location, Direction) const;
+	[[nodiscard]] constexpr std::optional<uint> moveCost (Location, Location) const;
 
     Location getPlayerLocation(uint);
 

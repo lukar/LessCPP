@@ -56,7 +56,7 @@ void Game::nextTurn() {
 
 void Game::setGameOver(Side winner) { m_state = State::ENDED; m_winning_side = winner; }
 
-uint Game::countInnerWalls(Location const start, Location const end) const {
+constexpr uint Game::countInnerWalls(Location const start, Location const end) const {
 
     // differences
     int const dx = static_cast<int>(end.x - start.x);
@@ -76,7 +76,7 @@ uint Game::countInnerWalls(Location const start, Location const end) const {
 
     int const first = (dx ? 1 : -1);
     int const second = (sx == ex && sy == ey ? 0 : dx + dy);
-    int const third = -1 + 2 * abs(dx) * static_cast<int>(start.y % 2) + 2 * abs(dy) * static_cast<int>(start.x % 2);
+    int const third = -1 + 2 * cabs(dx) * static_cast<int>(start.y % 2) + 2 * cabs(dy) * static_cast<int>(start.x % 2);
 
     uint num = 0;
     if (second) {
@@ -87,7 +87,7 @@ uint Game::countInnerWalls(Location const start, Location const end) const {
     return num;
 }
 
-bool Game::existsPlayerAtLocation(Location const location) const {
+constexpr bool Game::existsPlayerAtLocation(Location const location) const {
     bool toReturn = false;
     for (const auto &player : m_whiteLocations) {
         if (player == location) toReturn = true;
@@ -98,14 +98,14 @@ bool Game::existsPlayerAtLocation(Location const location) const {
     return toReturn;
 }
 
-std::optional<uint> Game::moveCost(Location old_location, Direction direction) const {
+constexpr std::optional<uint> Game::moveCost(Location old_location, Direction direction) const {
     if (std::optional<Location> new_location = old_location + direction) {
         return countInnerWalls(old_location, new_location.value());
     }
     return {};
 }
 
-std::optional<uint> Game::moveCost(Location oldL, Location newL) const {
+constexpr std::optional<uint> Game::moveCost(Location oldL, Location newL) const {
 
     if (oldL == newL) return 0;
 
