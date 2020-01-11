@@ -36,8 +36,9 @@ constexpr int evaluation(const Game & game) {
 
 // path = player, direction, evaluation
 typedef std::tuple<int, Direction, int> Path;
-std::optional<std::vector<Path>> recurseFindOptimal(const Game state, const Side side, int depth, int alpha, int beta) {
+std::optional<std::vector<Path>> recurseFindOptimal(const Game state, const Side side, int depth, int alpha, int beta, int lasteval) {
 	std::vector<std::vector<Path>> paths;
+//	std::vector<int> evals;
 
 	for (int player = 0; player < 4; ++player) {
 		Direction direction = Direction::UP;
@@ -45,24 +46,29 @@ std::optional<std::vector<Path>> recurseFindOptimal(const Game state, const Side
 			if (alpha >= beta ) goto SKIPALL;
 			Game newstate = state;
 			if(auto location = newstate.movePlayer(player, direction)){
-
+				auto const neweval = evaluation(newstate);
 				if (newstate.active_side() == side) {
-					if (auto aux = recurseFindOptimal(newstate, side, depth, alpha, beta)) {
-						aux.value().emplace(aux.value().begin(), std::make_tuple(player, direction, evaluation(state)));
+					if (auto aux = recurseFindOptimal(newstate, side, depth, alpha, beta, lasteval)) {
+						aux.value().emplace(aux.value().begin(), std::make_tuple(player, direction, neweval));
 						paths.push_back(aux.value());
 					}
 				} else if (depth > 0 and state.getState() != State::LAST_TURN) {
-					//  if (side == Side::BLACK and current_evaluation > last_evaluation) continue;
-					//  else if (side == Side::WHITE and current_evaluation < last_evaluation) continue;
-					if (auto aux = recurseFindOptimal(newstate, ~side, depth - 1, alpha, beta)) {
+//					if (evals.size() == 0) evals.emplace_back(neweval);
+//					else if (side == Side::BLACK and evals[0] < neweval) evals.emplace(evals.begin(), neweval);
+//					else if (evals.back() > neweval) evals.emplace_back(neweval);
+//					else continue;
+					if (side == Side::BLACK and neweval > lasteval - 2) continue;
+					else if (side == Side::WHITE and neweval < lasteval + 2) continue;
+
+					if (auto aux = recurseFindOptimal(newstate, ~side, depth - 1, alpha, beta, neweval)) {
 						auto const prune = std::get<2>(aux.value().back());
 						if (side == Side::WHITE) beta = std::min(beta, prune);
 						else alpha = std::max(alpha, prune);
-						aux.value().emplace(aux.value().begin(), std::make_tuple(player, direction, evaluation(state)));
+						aux.value().emplace(aux.value().begin(), std::make_tuple(player, direction, neweval));
 						paths.push_back(aux.value());
 					}
 				} else {
-					paths.emplace_back(std::vector<Path>{std::make_tuple(player, direction, evaluation(newstate))});
+					paths.emplace_back(std::vector<Path>{std::make_tuple(player, direction, neweval)});
 				}
 			}
 		} while (++direction != Direction::UP);
@@ -180,7 +186,7 @@ int main() {
 				}
 			}
 			else if ( game.getState() != State::ENDED and game.active_side() == Side::BLACK ) {
-				auto path = recurseFindOptimal(game, Side::BLACK, 2, 0, 100).value();
+				auto path = recurseFindOptimal(game, Side::BLACK, 2, 0, 100, evaluation(game)).value();
 				for( auto elem: path) {
 					if (game.active_side() != Side::BLACK) break;
 					std::this_thread::sleep_for(std::chrono::seconds(1));
