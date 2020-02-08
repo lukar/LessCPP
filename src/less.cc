@@ -21,11 +21,11 @@ std::string get_side_text(Game const& game) {
 	return displayText;
 }
 
-sf::Sound getSound(std::string const& filepath){
-	sf::SoundBuffer *sound_buffer = new sf::SoundBuffer(); // This will exist untill the end of the game
-	if (!sound_buffer->loadFromFile(filepath))
+sf::Sound getSound(std::string const& filepath, std::vector<sf::SoundBuffer> &soundBuffers){
+	soundBuffers.emplace_back(sf::SoundBuffer());
+	if (!soundBuffers.back().loadFromFile(filepath))
 		throw std::runtime_error("Cannot find the sound file " + filepath);
-	return sf::Sound(*sound_buffer);
+	return sf::Sound(soundBuffers.back());
 }
 
 sf::Font getFont(std::string const& filepath) {

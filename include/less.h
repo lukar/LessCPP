@@ -6,7 +6,7 @@
 
 std::string get_side_text(Game const&);
 
-sf::Sound getSound(std::string const&);
+sf::Sound getSound(std::string const&, std::vector<sf::SoundBuffer>&);
 
 sf::Font getFont(std::string const&);
 
