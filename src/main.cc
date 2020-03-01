@@ -15,6 +15,8 @@
 #include <set>
 
 #include <iostream>
+#include <deque>
+
 
 int main() {
 
@@ -30,7 +32,8 @@ int main() {
 	Player * clicked_player = nullptr;
 
 	// load game sounds
-	std::vector<sf::SoundBuffer> soundBuffers;
+	std::deque<sf::SoundBuffer> soundBuffers;
+
 	sf::Sound sound_pickup = getSound("sounds/sfx_menu_move2.wav", soundBuffers);
 	sf::Sound sound_drop = getSound("sounds/sfx_menu_move3.wav", soundBuffers);
 	sf::Sound sound_illegal = getSound("sounds/sfx_sounds_error10.wav", soundBuffers);

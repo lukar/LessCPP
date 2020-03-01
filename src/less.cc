@@ -21,8 +21,8 @@ std::string get_side_text(Game const& game) {
 	return displayText;
 }
 
-sf::Sound getSound(std::string const& filepath, std::vector<sf::SoundBuffer> &soundBuffers){
-	soundBuffers.emplace_back(sf::SoundBuffer());
+sf::Sound getSound(std::string const& filepath, std::deque<sf::SoundBuffer> &soundBuffers){
+	soundBuffers.emplace_back();
 	if (!soundBuffers.back().loadFromFile(filepath))
 		throw std::runtime_error("Cannot find the sound file " + filepath);
 	return sf::Sound(soundBuffers.back());
