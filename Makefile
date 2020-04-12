@@ -24,7 +24,7 @@ $(ODIR)/%.o: $(SDIR)/%.cc ${INCLUDES} | ${ODIR}
 ${ODIR}:
 	@mkdir -p ${ODIR}
 
-.PHONY: clean ${ODIR}
+.PHONY: clean
 
 clean:
 	rm -rf ${ODIR} less
