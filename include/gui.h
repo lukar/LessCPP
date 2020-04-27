@@ -22,6 +22,9 @@ private:
     void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
 public:
+
+	Player * selected_player = nullptr; // We need it to draw it last
+
     Gui(std::array<WallConfig, 9>);
     std::array<Player, 4> & getPlayers(Side);
 };

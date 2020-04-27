@@ -9,3 +9,5 @@ cmake-build-release/
 *.o
 *.log
 CMakeLists.txt.user
+tags
+

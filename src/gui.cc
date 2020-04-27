@@ -33,8 +33,11 @@ void Gui::draw(sf::RenderTarget &target, sf::RenderStates states) const {
             target.draw(b, states);
 
     for (auto &p: m_whitePlayers)
-        target.draw(p, states);
+        if (&p != selected_player) target.draw(p, states);
 
     for (auto &p: m_blackPlayers)
-        target.draw(p, states);
+		if (&p != selected_player) target.draw(p, states);
+
+	if (selected_player != nullptr) target.draw(*selected_player, states);
+
 }

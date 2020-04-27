@@ -23,7 +23,10 @@ float euclideanDistance(const sf::Vector2<T> &pointA, const sf::Vector2<R> &poin
 
 sf::Vector2f getMousePosition(sf::RenderWindow const &);
 
-std::optional<Location> getMouseLocation(sf::RenderWindow const&);
+std::optional<Location> getMouseLocation(const sf::RenderWindow &);
+
+std::optional<Location> getMouseLocation(const sf::Vector2<float> mouse);
+
 
 sf::Vector2f positionFromLocation(Location);
 

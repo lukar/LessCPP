@@ -15,6 +15,11 @@ INCLUDES:=$(wildcard $(IDIR)/*.h)
 # $(info  SOURCE is $(SOURCE))
 # $(info  OBJ is $(OBJ))
 
+all: release
+release: less
+debug: CXXFLAGS += -g
+debug: less
+
 less: $(OBJECTS) ${INCLUDES}
 	$(CXX) -o $@ ${OBJECTS} $(CXXFLAGS) ${LDFLAGS} $(LIBS)
 
