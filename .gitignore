@@ -1,5 +1,6 @@
 less
 build/*
+obj/*
 .vs/
 tags
 .idea/
@@ -9,5 +10,6 @@ cmake-build-release/
 *.o
 *.log
 CMakeLists.txt.user
+SFML-2.5.1
 tags
-
+.dll
