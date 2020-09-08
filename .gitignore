@@ -12,4 +12,5 @@ cmake-build-release/
 CMakeLists.txt.user
 SFML-2.5.1
 tags
-.dll
+*.dll
+*.exe
