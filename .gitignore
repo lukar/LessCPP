@@ -5,3 +5,14 @@ tags
 .idea/
 Debug/
 cmake-build-debug/
+<<<<<<< Updated upstream
+=======
+cmake-build-release/
+*.o
+*.log
+CMakeLists.txt.user
+tags
+SFML-2.5.1
+obj
+*.dll
+>>>>>>> Stashed changes
