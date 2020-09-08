@@ -1,0 +1,55 @@
+//
+// Created by aviany on 5/5/19.
+//
+
+#ifndef LESSCPP_HELPERS_H
+#define LESSCPP_HELPERS_H
+
+#include <SFML/System.hpp>
+#include <SFML/Graphics.hpp>
+#include <cmath>
+#include <optional>
+#include <set>
+#include "const_globals.h"
+
+
+template<typename T, typename R>
+float euclideanDistance(const sf::Vector2<T> &pointA, const sf::Vector2<R> &pointB) {
+	return sqrt(
+					pow(pointA.x - pointB.x, 2) +
+					pow(pointA.y - pointB.y, 2)
+	);
+}
+
+sf::Vector2f getMousePosition(sf::RenderWindow const &);
+
+std::optional<Location> getMouseLocation(const sf::RenderWindow &);
+
+std::optional<Location> getMouseLocation(const sf::Vector2<float> mouse);
+
+
+sf::Vector2f positionFromLocation(Location);
+
+Location locationFromPosition(sf::Vector2f);
+
+constexpr bool playersInLocations(Locations<4> const &players, Locations<4> const &locations) {
+//    return std::all_of(players.begin(), players.end(), [=](const Location & player) {
+//        return std::find(locations.begin(), locations.end(), player) != locations.end();
+//    });
+//    return std::set<Location>(players.begin(), players.end()) == std::set<Location>(locations.begin(), locations.end());
+    uint count = 0;
+    for (size_t i = 0; i < 4; ++i) {
+        for (size_t j = 0; j < 4; ++j) {
+            if (players[i] == locations[j]) ++count;
+        }
+    }
+    return count == 4;
+}
+
+template <typename T>
+constexpr T cabs(T num) {
+	if ( num < 0 ) return -num;
+	else return num;
+}
+
+#endif //LESSCPP_HELPERS_H
