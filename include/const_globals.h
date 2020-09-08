@@ -8,6 +8,8 @@
 #include <array>
 #include <optional>
 
+typedef unsigned int uint;
+
 enum class Side {WHITE, BLACK, NONE};
 
 constexpr Side operator~(const Side& side) {
