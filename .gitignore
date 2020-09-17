@@ -10,10 +10,9 @@ cmake-build-release/
 *.o
 *.log
 CMakeLists.txt.user
-tags
 SFML-2.5.1
-tags
 *.dll
 *.exe
 less.exe
-less.exe
+CMakeSettings.json
+/SFML-*
