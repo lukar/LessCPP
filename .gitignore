@@ -9,3 +9,6 @@ cmake-build-release/
 *.o
 *.log
 CMakeLists.txt.user
+CMakeSettings.json
+
+/SFML-*

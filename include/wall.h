@@ -70,8 +70,8 @@ namespace wall {
         template<size_t N>
         std::array<WallConfig, N> generateNwallconfigs() {
             auto eng = std::default_random_engine(std::random_device()());
-            std::uniform_int_distribution<uint8_t> rand0to6(0, 6);
-            std::uniform_int_distribution<uint8_t> rand0to3(0, 3);
+            std::uniform_int_distribution<unsigned int> rand0to6(0, 6);
+            std::uniform_int_distribution<unsigned int> rand0to3(0, 3);
 
             std::array<WallConfig, N> tmp;
             for (size_t i = 0; i != N; ++i) {
