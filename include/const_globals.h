@@ -7,6 +7,7 @@
 
 #include <array>
 #include <optional>
+#include <ciso646>
 
 typedef unsigned int uint;
 
