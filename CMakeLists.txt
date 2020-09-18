@@ -14,7 +14,8 @@ if(UNIX)
 	set(CMAKE_SKIP_INSTALL_RPATH FALSE)
 elseif(WIN32)
 	set(SFML_STATIC_LIBRARIES TRUE)
-	set(SFML_DIR "SFML-2.5.1/lib/cmake/SFML")
+    set(SFML_FOLDER "SFML-2.5.1")
+	set(SFML_DIR "${SFML_FOLDER}/lib/cmake/SFML")
 endif()
 
 
@@ -25,6 +26,11 @@ target_link_libraries(less sfml-graphics sfml-audio)
 
 file(COPY resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY sounds DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+if(WIN32)
+    file(GLOB DLLS "${SFML_FOLDER}/bin/*.dll")
+    file(COPY ${DLLS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+endif()
 
 install(TARGETS less DESTINATION bin)
 install(FILES resources/Roboto_Medium.ttf DESTINATION bin)
