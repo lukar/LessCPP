@@ -12,11 +12,11 @@
 
 typedef unsigned int uint;
 
-enum class Side {WHITE, BLACK, NONE};
+enum class Player {WHITE, BLACK, NONE};
 
-constexpr Side operator~(const Side& side) {
-    if (side == Side::WHITE) return Side::BLACK;
-    else return Side::WHITE;
+constexpr Player operator~(const Player& player) {
+    if (player == Player::WHITE) return Player::BLACK;
+    else return Player::WHITE;
 }
 
 enum class State {ONGOING, LAST_TURN, ENDED};
@@ -87,7 +87,7 @@ constexpr float block_size = 200;
 constexpr float border_width = 2;
 constexpr float line_width = 5;
 constexpr float wall_width = 20;
-constexpr float player_size = 30;
+constexpr float piece_size = 30;
 
 constexpr int window_width = 800;
 constexpr int window_height = 600;

@@ -7,15 +7,15 @@ std::string get_side_text(Game const& game) {
 	std::string displayText;
 	if ( game.getState() != State::ENDED ) {
 		displayText += "Remaining moves: "s + std::to_string(game.moves_left()) + "\n"s;
-		displayText += "Turn: "s + (game.active_side() == Side::WHITE ? "White"s : "Black"s) + "\n"s;
+		displayText += "Turn: "s + (game.active_player() == Player::WHITE ? "White"s : "Black"s) + "\n"s;
 		displayText += "White total moves : "s + std::to_string(game.white_moves()) + "\n"s;
 		displayText += "Black total moves : "s + std::to_string(game.black_moves()) + "\n"s;
 	} else {
 		displayText += "GAME OVER\n"s;
-		if (game.winning_side() == Side::NONE){
+		if (game.winning_player() == Player::NONE){
 			displayText += "It's a tie!"s;
 		} else {
-			displayText += (game.winning_side() == Side::WHITE ? "White"s : "Black"s) + " wins"s;
+			displayText += (game.winning_player() == Player::WHITE ? "White"s : "Black"s) + " wins"s;
 		}
 	}
 	return displayText;
@@ -36,7 +36,7 @@ sf::Font getFont(std::string const& filepath) {
 	return font;
 }
 
-sf::Text initializeSideText(sf::Font const& font, int xpos, int ypos, sf::Color color) {
+sf::Text initializePlayerText(sf::Font const& font, int xpos, int ypos, sf::Color color) {
 	sf::Text text;
 	text.setFont(font);
 	text.setCharacterSize(10);

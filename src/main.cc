@@ -29,7 +29,7 @@ int main() {
 	Game game = Game(wall_configs);
 	Gui gui = Gui(wall_configs);
 
-	Player * clicked_player = nullptr;
+	Piece * clicked_piece = nullptr;
 
 	// load game sounds
 	std::deque<sf::SoundBuffer> soundBuffers;
@@ -40,7 +40,7 @@ int main() {
 
 	// generate side text
 	sf::Font font = getFont("resources/Roboto_Medium.ttf");
-	sf::Text text = initializeSideText(font, window_height + 10, 10, sf::Color::Green);
+	sf::Text text = initializePlayerText(font, window_height + 10, 10, sf::Color::Green);
 
 	while (window.isOpen()) {
 		text.setString(get_side_text(game));
@@ -58,24 +58,24 @@ int main() {
 				}
 			}
 			// HUMAN
-			if ( game.getState() != State::ENDED and game.active_side() == Side::WHITE ) {
+			if ( game.getState() != State::ENDED and game.active_player() == Player::WHITE ) {
 				// GRAB PLAYER
 				if (event.type == sf::Event::MouseButtonPressed) {
-					for (auto &player : gui.getPlayers(game.active_side())) {
-						if (euclideanDistance(getMousePosition(window), player.getPosition()) <= player_size) {
+					for (auto &piece : gui.getPieces(game.active_player())) {
+						if (euclideanDistance(getMousePosition(window), piece.getPosition()) <= piece_size) {
 							sound_pickup.play();
-							clicked_player = &player;
+							clicked_piece = &piece;
 						}
 					}
 				}
 				// DROP PLAYER
 				if (event.type == sf::Event::MouseButtonReleased) {
-					if (clicked_player != nullptr) {
+					if (clicked_piece != nullptr) {
 						std::optional<Location> new_location = getMouseLocation(window);
 
 						if (new_location){
-							if (game.movePlayer(clicked_player->getLocation(), new_location.value())){
-								clicked_player->setLocation(new_location.value());
+							if (game.movePiece(clicked_piece->getLocation(), new_location.value())){
+								clicked_piece->setLocation(new_location.value());
 								sound_drop.play();
 							} else {
 								sound_illegal.play();
@@ -83,19 +83,19 @@ int main() {
 						} else {
 							sound_illegal.play();
 						}
-						clicked_player->resetPosition();
-						clicked_player = nullptr;
+						clicked_piece->resetPosition();
+						clicked_piece = nullptr;
 					}
 				}
 			}
 			// AI
-			else if ( game.getState() != State::ENDED and game.active_side() == Side::BLACK ) {
-				auto path = recurseFindOptimal(game, Side::BLACK, 1, 0, 100, evaluation(game)).value();
+			else if ( game.getState() != State::ENDED and game.active_player() == Player::BLACK ) {
+				auto path = recurseFindOptimal(game, Player::BLACK, 1, 0, 100, evaluation(game)).value();
 				for( auto elem: path) {
-					if (game.active_side() != Side::BLACK) break;
-					auto newLocation = game.movePlayer(std::get<0>(elem), std::get<1>(elem));
-					gui.getPlayers(Side::BLACK)[static_cast<uint>(std::get<0>(elem))].setLocation(newLocation.value());
-					gui.getPlayers(Side::BLACK)[static_cast<uint>(std::get<0>(elem))].resetPosition();
+					if (game.active_player() != Player::BLACK) break;
+					auto newLocation = game.movePiece(std::get<0>(elem), std::get<1>(elem));
+					gui.getPieces(Player::BLACK)[static_cast<uint>(std::get<0>(elem))].setLocation(newLocation.value());
+					gui.getPieces(Player::BLACK)[static_cast<uint>(std::get<0>(elem))].resetPosition();
 					window.clear();
 					window.draw(text);
 					window.draw(gui);
@@ -108,12 +108,12 @@ int main() {
 		// DRAWING
 		window.clear();
 
-		if (clicked_player != nullptr) clicked_player->setPosition(getMousePosition(window));
+		if (clicked_piece != nullptr) clicked_piece->setPosition(getMousePosition(window));
 
 		window.draw(text);
 
 		window.draw(gui);
-		if (clicked_player != nullptr) window.draw(*clicked_player);
+		if (clicked_piece != nullptr) window.draw(*clicked_piece);
 
 		window.display();
 

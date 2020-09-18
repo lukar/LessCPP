@@ -13,18 +13,18 @@ Gui::Gui(std::array<WallConfig, 9> wallconfigs)
         m_blocks[y] = row;
     }
 
-    // generate players
-    for( size_t i = 0; i < m_whitePlayers.size(); ++i ) {
-        m_whitePlayers[i]= Player(whiteStart[i], WHITE);
+    // generate pieces
+    for( size_t i = 0; i < m_whitePieces.size(); ++i ) {
+        m_whitePieces[i]= Piece(whiteStart[i], WHITE);
     }
 
-    for( size_t i = 0; i < m_blackPlayers.size(); ++i ) {
-        m_blackPlayers[i]= Player(blackStart[i], BLACK);
+    for( size_t i = 0; i < m_blackPieces.size(); ++i ) {
+        m_blackPieces[i]= Piece(blackStart[i], BLACK);
     }
 }
 
-std::array<Player, 4> & Gui::getPlayers(Side side){
-    return side == Side::WHITE ? m_whitePlayers : m_blackPlayers;
+std::array<Piece, 4> & Gui::getPieces(Player player){
+    return player == Player::WHITE ? m_whitePieces : m_blackPieces;
 }
 
 void Gui::draw(sf::RenderTarget &target, sf::RenderStates states) const {
@@ -32,9 +32,9 @@ void Gui::draw(sf::RenderTarget &target, sf::RenderStates states) const {
         for (auto b: row)
             target.draw(b, states);
 
-    for (auto &p: m_whitePlayers)
+    for (auto &p: m_whitePieces)
         target.draw(p, states);
 
-    for (auto &p: m_blackPlayers)
+    for (auto &p: m_blackPieces)
         target.draw(p, states);
 }

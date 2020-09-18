@@ -17,14 +17,14 @@ namespace wall {
 	// second number denotes -1 (left/up), 0 (middle), 1 (right/down)
 	// third  number denotes -1 (left/up) or 1 (right/down)
 
-		constexpr WallConfig bFullSide = {
+		constexpr WallConfig bFullPlayer = {
 						{
 										{1, -1, -1},
 										{1, -1, 1},
 										{-2, 0, 0}
 						}
 		};
-		constexpr WallConfig bHalfSide = {
+		constexpr WallConfig bHalfPlayer = {
 						{
 										{1, -1, 1},
 										{-2, 0, 0},
@@ -72,7 +72,7 @@ namespace wall {
 
 
 		constexpr std::array<WallConfig, 7> unique_wall_configs{
-						bFullSide, bHalfSide, bZigZag, bT_Block, bTopLeft, bTopRight, bBottomRight};
+						bFullPlayer, bHalfPlayer, bZigZag, bT_Block, bTopLeft, bTopRight, bBottomRight};
 
         WallConfig rotateWallConfig(WallConfig wall, uint rotation);
 

@@ -2,8 +2,8 @@
 // Created by aviany on 5/10/19.
 //
 
-#ifndef LESSCPP_PLAYER_H
-#define LESSCPP_PLAYER_H
+#ifndef LESSCPP_PIECE_H
+#define LESSCPP_PIECE_H
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Export.hpp>
@@ -13,7 +13,7 @@
 #include "helpers.h"
 
 
-class Player : public sf::Drawable
+class Piece : public sf::Drawable
 {
 private:
 
@@ -29,8 +29,8 @@ public:
     Location getLocation() const;
     sf::Vector2f getPosition() const;
     void resetPosition();
-    Player(Location, sf::Color);
-    Player() = default;
+    Piece(Location, sf::Color);
+    Piece() = default;
 };
 
-#endif //LESSCPP_PLAYER_H
+#endif //LESSCPP_PIECE_H

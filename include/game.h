@@ -13,12 +13,12 @@
 class Game {
 private:
 
-//    Player * selected_player = nullptr;
+//    Piece * selected_piece = nullptr;
 
 	int m_moves_left = 3;
     State m_state = State::ONGOING;
-    Side m_active_side = Side::WHITE;
-    Side m_winning_side = Side::NONE;
+    Player m_active_player = Player::WHITE;
+    Player m_winning_player = Player::NONE;
 	int m_white_moves = 0;
 	int m_black_moves = 0;
 
@@ -27,7 +27,7 @@ private:
 
     std::array<std::array<WallConfig, 3>, 3> m_wall_matrix;
 
-	void setPlayerLocation(int, Location);
+	void setPieceLocation(int, Location);
 
 public:
     Game(std::array<WallConfig, 9>);
@@ -37,15 +37,15 @@ public:
 	[[nodiscard]] int white_moves() const;
 	[[nodiscard]] int black_moves() const;
     [[nodiscard]] State getState() const;
-    [[nodiscard]] Side active_side() const;
-    [[nodiscard]] std::array<Location, 4> & active_players();
-    [[nodiscard]] Side winning_side() const;
+    [[nodiscard]] Player active_player() const;
+    [[nodiscard]] std::array<Location, 4> & active_pieces();
+    [[nodiscard]] Player winning_player() const;
 	[[nodiscard]] int moves_left() const;
 
-	std::optional<int> getPlayerNumber(Location);
+	std::optional<int> getPieceNumber(Location);
 
-    constexpr std::array<Location, 4> getPlayers(Side side) const {
-        if (side == Side::WHITE) {
+    constexpr std::array<Location, 4> getPieces(Player player) const {
+        if (player == Player::WHITE) {
             return m_whiteLocations;
         } else {
             return m_blackLocations;
@@ -56,23 +56,23 @@ public:
 
     void nextTurn();
 
-    void setGameOver(Side);
+    void setGameOver(Player);
 
 	[[nodiscard]] constexpr int countInnerWalls(Location const, Location const) const;
 
-	[[nodiscard]] constexpr bool existsPlayerAtLocation(Location const) const;
+	[[nodiscard]] constexpr bool existsPieceAtLocation(Location const) const;
 
 	[[nodiscard]] constexpr std::optional<int> moveCost (Location, Direction) const;
 
 	[[nodiscard]] constexpr std::optional<int> moveCost (Location, Location) const;
 
-	Location getPlayerLocation(int);
+	Location getPieceLocation(int);
 
 	[[nodiscard]] bool decrementMoves(int);
 
-	std::optional<Location> movePlayer(int, Direction);
+	std::optional<Location> movePiece(int, Direction);
 
-    std::optional<Location> movePlayer(Location, Location);
+    std::optional<Location> movePiece(Location, Location);
 
 };
 
