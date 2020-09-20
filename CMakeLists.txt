@@ -20,7 +20,7 @@ endif()
 
 
 find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
-add_executable(less ${source_files} ${header_files})
+add_executable(less ${source_files} ${header_files} "include/game_context.h")
 target_include_directories(less PRIVATE include)
 target_link_libraries(less sfml-graphics sfml-audio)
 

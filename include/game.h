@@ -16,7 +16,7 @@ private:
 //    Piece * selected_piece = nullptr;
 
 	int m_moves_left = 3;
-    State m_state = State::ONGOING;
+    GameState m_state = GameState::ONGOING;
     Player m_active_player = Player::WHITE;
     Player m_winning_player = Player::NONE;
 	int m_white_moves = 0;
@@ -36,7 +36,7 @@ public:
 
 	[[nodiscard]] int white_moves() const;
 	[[nodiscard]] int black_moves() const;
-    [[nodiscard]] State getState() const;
+    [[nodiscard]] GameState getState() const;
     [[nodiscard]] Player active_player() const;
     [[nodiscard]] std::array<Location, 4> & active_pieces();
     [[nodiscard]] Player winning_player() const;

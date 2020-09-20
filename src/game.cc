@@ -16,17 +16,16 @@ Game::Game(std::array<WallConfig, 9> wallconfigs) {
 }
 
 bool Game::operator==(const Game & game) const {
-    if ( piecesInLocations(m_whiteLocations, game.m_whiteLocations) and
-         piecesInLocations(m_blackLocations, game.m_blackLocations) ) return true;
-    return false;
+    return piecesInLocations(m_whiteLocations, game.m_whiteLocations) and
+        piecesInLocations(m_blackLocations, game.m_blackLocations);
 }
 
 // Getter methods
 int Game::white_moves() const { return m_white_moves; }
 int Game::black_moves() const { return m_black_moves; }
-State Game::getState() const { return m_state; }
+GameState Game::getState() const { return m_state; }
 Player Game::active_player() const { return m_active_player; }
-Player Game::winning_player() const {return m_winning_player;}
+Player Game::winning_player() const { return m_winning_player; }
 int Game::moves_left() const { return m_moves_left; }
 
 std::array<Location, 4> & Game::active_pieces() {
@@ -43,19 +42,30 @@ bool Game::isEndOfTurn() const {
 void Game::nextTurn() {
     m_active_player = (m_active_player == Player::WHITE ? Player::BLACK : Player::WHITE);
 
-    if ( piecesInLocations(m_blackLocations, whiteStart) or m_state == State::LAST_TURN ) m_state = State::ENDED;
-    else if ( piecesInLocations(m_whiteLocations, blackStart) ) { m_state = State::LAST_TURN; m_moves_left = 3 - m_moves_left; }
-    else { m_moves_left = 3; }
+    if (piecesInLocations(m_blackLocations, whiteStart) or m_state == GameState::LAST_TURN) {
+        m_state = GameState::ENDED;
+    } else if (piecesInLocations(m_whiteLocations, blackStart)) {
+        m_state = GameState::LAST_TURN;
+        m_moves_left = 3 - m_moves_left;
+    } else {
+        m_moves_left = 3;
+    }
 
     // Wait if black also reaches end in same turn
-    if ( m_state == State::ENDED ) {
-        if ( piecesInLocations(m_blackLocations, whiteStart) and piecesInLocations(m_whiteLocations, blackStart) ) m_winning_player = Player::NONE;
-        else if (piecesInLocations(m_whiteLocations, blackStart)) m_winning_player = Player::WHITE;
-        else m_winning_player = Player::BLACK;
+    if (m_state == GameState::ENDED) {
+        if (piecesInLocations(m_blackLocations, whiteStart) and piecesInLocations(m_whiteLocations, blackStart)) {
+            m_winning_player = Player::NONE;
+        }
+        else if (piecesInLocations(m_whiteLocations, blackStart)) {
+            m_winning_player = Player::WHITE;
+        }
+        else {
+            m_winning_player = Player::BLACK;
+        }
     }
 }
 
-void Game::setGameOver(Player winner) { m_state = State::ENDED; m_winning_player = winner; }
+void Game::setGameOver(Player winner) { m_state = GameState::ENDED; m_winning_player = winner; }
 
 // Return number of wall segments between start and end.
 constexpr int Game::countInnerWalls(Location const start, Location const end) const {

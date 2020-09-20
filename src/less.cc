@@ -5,7 +5,7 @@ using namespace std::string_literals;
 
 std::string get_side_text(Game const& game) {
 	std::string displayText;
-	if ( game.getState() != State::ENDED ) {
+	if ( game.getState() != GameState::ENDED ) {
 		displayText += "Remaining moves: "s + std::to_string(game.moves_left()) + "\n"s;
 		displayText += "Turn: "s + (game.active_player() == Player::WHITE ? "White"s : "Black"s) + "\n"s;
 		displayText += "White total moves : "s + std::to_string(game.white_moves()) + "\n"s;

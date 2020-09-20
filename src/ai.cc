@@ -17,7 +17,7 @@ std::optional<std::vector<Path>> recurseFindOptimal(const Game state, const Play
 						aux.value().emplace(aux.value().begin(), std::make_tuple(piece, direction, neweval));
 						paths.push_back(aux.value());
 					}
-				} else if (depth > 0 and state.getState() != State::LAST_TURN) {
+				} else if (depth > 0 and state.getState() != GameState::LAST_TURN) {
 //					if (evals.size() == 0) evals.emplace_back(neweval);
 //					else if (player == Player::BLACK and evals[0] < neweval) evals.emplace(evals.begin(), neweval);
 //					else if (evals.back() > neweval) evals.emplace_back(neweval);
