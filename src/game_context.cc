@@ -1,4 +1,6 @@
 #include "game_context.h"
+#include "ai.h"
+#include <tuple>
 
 GameContext::GameContext() : game(Game(wall_configs)), gui(Gui(wall_configs))
 {
@@ -18,7 +20,7 @@ GameContext::GameContext() : game(Game(wall_configs)), gui(Gui(wall_configs))
 Result GameContext::process(const sf::Event & event, const sf::Vector2f & mouse_pos)
 {
 	// HUMAN
-	if (game.getState() != GameState::ENDED) {
+	if (game.getState() != GameState::ENDED and game.active_player() != Player::BLACK) {
 		// GRAB PLAYER
 		if (event.type == sf::Event::MouseButtonPressed) {
 			for (auto& piece : gui.getPieces(game.active_player())) {
@@ -51,19 +53,21 @@ Result GameContext::process(const sf::Event & event, const sf::Vector2f & mouse_
 		}
 	}
 	//// AI
-	//else if (game.getState() != GameState::ENDED and game.active_player() == Player::BLACK) {
-	//	auto path = recurseFindOptimal(game, Player::BLACK, 1, 0, 100, evaluation(game)).value();
-	//	for (auto elem : path) {
-	//		if (game.active_player() != Player::BLACK) break;
-	//		auto newLocation = game.movePiece(std::get<0>(elem), std::get<1>(elem));
-	//		gui.getPieces(Player::BLACK)[static_cast<uint>(std::get<0>(elem))].setLocation(newLocation.value());
-	//		gui.getPieces(Player::BLACK)[static_cast<uint>(std::get<0>(elem))].resetPosition();
-	//		window.clear();
-	//		window.draw(text);
-	//		window.draw(gui);
-	//		window.display();
-	//	}
-	//}
+	else if (game.getState() != GameState::ENDED and game.active_player() == Player::BLACK) {
+		auto path = recurseFindOptimal(game, Player::BLACK, 1, 0, 100, evaluation(game));
+		std::cout << "Pre-move score: " << evaluation(game);
+		for (auto elem : path) {
+			if (game.active_player() != Player::BLACK) break;
+			auto newlocation = game.movePiece(std::get<0>(elem), std::get<1>(elem));
+			gui.getPieces(Player::BLACK)[static_cast<uint>(std::get<0>(elem))].setLocation(newlocation.value());
+			gui.getPieces(Player::BLACK)[static_cast<uint>(std::get<0>(elem))].resetPosition();
+			//window.clear();
+			//window.draw(text);
+			//window.draw(gui);
+			//window.display();
+		}
+		std::cout << " post-move score: " << evaluation(game) << '\n';
+	}
 
 	text.setString(get_side_text(game));
 
