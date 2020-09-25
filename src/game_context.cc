@@ -1,9 +1,10 @@
 #include "game_context.h"
 
-GameContext::GameContext() : game(Game(wall_configs)), gui(Gui(wall_configs)) {
+GameContext::GameContext() : game(Game(wall_configs)), gui(Gui(wall_configs))
+{
+	texture.create(window_width, window_height);
 
 	// create texture (necessary)
-	texture.create(window_width, window_height);
 
 	sound_pickup = getSound("sounds/sfx_menu_move2.wav", soundBuffers);
 	sound_drop = getSound("sounds/sfx_menu_move3.wav", soundBuffers);
@@ -14,19 +15,8 @@ GameContext::GameContext() : game(Game(wall_configs)), gui(Gui(wall_configs)) {
 	text = initializePlayerText(font, window_height + 10, 10, sf::Color::Green);
 }
 
-Result GameContext::process(sf::Event event, sf::Vector2f mouse_pos) {
-	text.setString(get_side_text(game));
-
-	// ON CLOSE EVENT
-	//if (event.type == sf::Event::Closed) {
-	//	window.close();
-	//}
-	//// CLOSE WHEN PRESSED Q
-	//if (event.type == sf::Event::KeyPressed) {
-	//	if (event.key.code == sf::Keyboard::Q) {
-	//		window.close();
-	//	}
-	//}
+Result GameContext::process(const sf::Event & event, const sf::Vector2f & mouse_pos)
+{
 	// HUMAN
 	if (game.getState() != GameState::ENDED) {
 		// GRAB PLAYER
@@ -75,19 +65,21 @@ Result GameContext::process(sf::Event event, sf::Vector2f mouse_pos) {
 	//	}
 	//}
 
-
-	 // DRAWING
-	 if (held_piece != nullptr) held_piece->setPosition(mouse_pos);
-
-	 texture.clear();
-	 
-	 texture.draw(text);
-
-	 texture.draw(gui);
-	 if (held_piece != nullptr) texture.draw(*held_piece);
-
-	 texture.display();
+	text.setString(get_side_text(game));
 
 
-	 return texture.getTexture();
+	// DRAWING
+	if (held_piece != nullptr) held_piece->setPosition(mouse_pos);
+
+	texture.clear();
+
+	texture.draw(text);
+
+	texture.draw(gui);
+	if (held_piece != nullptr) texture.draw(*held_piece);
+
+	texture.display();
+
+
+	return texture.getTexture();
 }

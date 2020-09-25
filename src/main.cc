@@ -25,21 +25,22 @@ int main() {
 
 	sf::Event event;
 	sf::Texture texture;
+	Result result;
 	if (!texture.create(window_width, window_height)) exit(1);
 
 	while (window.isOpen()) {
 
-		while (window.pollEvent(event)) {
-			window.clear();
-			Result result = contexts.top()->process(event, getMousePosition(window));
-			sf::Texture texture = std::get<sf::Texture>(result);
-			window.draw(sf::Sprite(texture));
+		window.clear();
 
-			window.display();
+		while (window.pollEvent(event)) {
+			result = contexts.top()->process(event, getMousePosition(window));
+			texture = std::get<sf::Texture>(result);
+
 		}
 
+		window.draw(sf::Sprite(texture));
 
-
+		window.display();
 	}
 
 	return 0;

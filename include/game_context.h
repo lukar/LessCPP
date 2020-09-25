@@ -39,7 +39,7 @@ public:
 
 	GameContext();
 
-	Result process(sf::Event, sf::Vector2f) override;
+	Result process(const sf::Event &,  const sf::Vector2f & /* Mouse position */) override;
 
 };
 

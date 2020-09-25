@@ -14,10 +14,8 @@ class Context;
 typedef std::variant<Context*, sf::Texture, std::nullopt_t> Result;
 
 class Context {
-private:
-	Context* subcontext = nullptr;
 public:
-	virtual Result process(sf::Event, sf::Vector2f /* Mouse position */) = 0;
+	virtual Result process(const sf::Event &,  const sf::Vector2f & /* Mouse position */) = 0;
 };
 
 
