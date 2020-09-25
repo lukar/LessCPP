@@ -15,7 +15,6 @@
 
 class GameContext : public Context {
 private:
-
 	std::array<WallConfig, 9> wall_configs = wall::generateNwallconfigs<9>();
 	Game game;
 	Gui gui;

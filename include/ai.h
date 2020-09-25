@@ -33,6 +33,9 @@ constexpr int evaluation(const Game & game) {
 std::vector<Path> recurseFindOptimal(const Game, const Player, int, int, int, int);
 
 
+int alphaBeta(const Game state, int depth, int alpha, int beta, const Player player);
+std::vector<Path> findOptimalMove(Game state, int depth);
+
 
 
 #endif // AI_H
