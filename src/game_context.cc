@@ -76,19 +76,15 @@ Result GameContext::process(const sf::Event & event, const sf::Vector2f & mouse_
 	//	std::cout << " post-move score: " << evaluation(game) << '\n';
 	//}
 	else if (game.getState() != GameState::ENDED and game.active_player() == Player::BLACK) {
+
 		auto path = findOptimalMove(game,3);
-		std::cout << "Pre-move score: " << evaluation(game);
+	//	auto path = recurseFindOptimal(game, Player::BLACK, 1, 0, 100, evaluation(game));
 		for (auto elem : path) {
 			if (game.active_player() != Player::BLACK) break;
 			auto newlocation = game.movePiece(std::get<0>(elem), std::get<1>(elem));
 			gui.getPieces(Player::BLACK)[static_cast<uint>(std::get<0>(elem))].setLocation(newlocation.value());
 			gui.getPieces(Player::BLACK)[static_cast<uint>(std::get<0>(elem))].resetPosition();
-			//window.clear();
-			//window.draw(text);
-			//window.draw(gui);
-			//window.display();
 		}
-		std::cout << " post-move score: " << evaluation(game) << '\n';
 	}
 
 	text.setString(get_side_text(game));

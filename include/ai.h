@@ -8,7 +8,8 @@
 #include <optional>
 
 // piece, direction, evaluation
-typedef std::tuple<int, Direction, int> Path; // refactor path->move
+typedef std::tuple<int, Direction, int> Move;
+typedef std::vector<Move> Path;
 
 
 
@@ -30,7 +31,7 @@ constexpr int evaluation(const Game & game) {
 	return eval;
 }
 
-std::vector<Path> recurseFindOptimal(const Game, const Player, int, int, int, int);
+Path recurseFindOptimal(const Game, const Player, int, int, int, int);
 
 
 int alphaBeta(const Game state, int depth, int alpha, int beta, const Player player);

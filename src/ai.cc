@@ -1,9 +1,8 @@
 #include "ai.h"
 
 // path = piece, direction, evaluation
-std::vector<Path> recurseFindOptimal(const Game state, const Player player, int depth, int alpha, int beta, int lasteval) {
-	std::vector<std::vector<Path>> paths;
-//	std::vector<int> evals;
+Path recurseFindOptimal(const Game state, const Player player, int depth, int alpha, int beta, int lasteval) {
+	std::vector<Path> paths;
 
 	for (int piece = 0; piece < 4; ++piece) {
 		Direction direction = Direction::UP;
@@ -33,7 +32,7 @@ std::vector<Path> recurseFindOptimal(const Game state, const Player player, int 
 						paths.push_back(aux);
 					}
 				} else {
-					paths.emplace_back(std::vector<Path>{std::make_tuple(piece, direction, neweval)});
+					paths.emplace_back(std::vector<Move>{std::make_tuple(piece, direction, neweval)});
 				}
 			}
 		} while (++direction != Direction::UP);
@@ -41,9 +40,9 @@ std::vector<Path> recurseFindOptimal(const Game state, const Player player, int 
 SKIPALL:
 	if (paths.empty()) return {};
 	if (player == Player::BLACK)
-		return *std::min_element(paths.begin(), paths.end(), [](std::vector<Path> a, std::vector<Path> b){ return std::get<2>(a.back()) < std::get<2>(b.back());});
+		return *std::min_element(paths.begin(), paths.end(), [](Path a, Path b){ return std::get<2>(a.back()) < std::get<2>(b.back());});
 	else
-		return *std::max_element(paths.begin(), paths.end(), [](std::vector<Path> a, std::vector<Path> b){ return std::get<2>(a.back()) < std::get<2>(b.back());});
+		return *std::max_element(paths.begin(), paths.end(), [](Path a, Path b){ return std::get<2>(a.back()) < std::get<2>(b.back());});
 }
 
 
