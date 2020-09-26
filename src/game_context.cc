@@ -54,31 +54,9 @@ Result GameContext::process(const sf::Event & event, const sf::Vector2f & mouse_
 		}
 	}
 	//// AI
-	//else if (game.getState() != GameState::ENDED and game.active_player() == Player::BLACK) {
-	//	int moves = findOptimalMove(game);
-	//	std::cout << "Pre-move score: " << evaluation(game);
-	//	int best_move;
-	//	best_move = moves; best_move >>= 8;
-	//	auto newlocation = game.movePiece((best_move / 4), (Direction)(best_move % 4));
-	//	gui.getPieces(Player::BLACK)[(best_move / 4)].setLocation(newlocation.value());
-	//	gui.getPieces(Player::BLACK)[(best_move / 4)].resetPosition();
-
-	//	best_move = moves; best_move >>= 4; best_move &= 16;
-	//	newlocation = game.movePiece(best_move / 4, (Direction)(best_move % 4));
-	//	gui.getPieces(Player::BLACK)[(best_move / 4)].setLocation(newlocation.value());
-	//	gui.getPieces(Player::BLACK)[(best_move / 4)].resetPosition();
-
-	//	best_move = moves; best_move &= 16;
-	//	newlocation = game.movePiece(best_move / 4, (Direction)(best_move % 4));
-	//	gui.getPieces(Player::BLACK)[(best_move / 4)].setLocation(newlocation.value());
-	//	gui.getPieces(Player::BLACK)[(best_move / 4)].resetPosition();
-
-	//	std::cout << " post-move score: " << evaluation(game) << '\n';
-	//}
 	else if (game.getState() != GameState::ENDED and game.active_player() == Player::BLACK) {
 
-		auto path = findOptimalMove(game,3);
-	//	auto path = recurseFindOptimal(game, Player::BLACK, 1, 0, 100, evaluation(game));
+		auto path = findOptimalMove(game,6);
 		for (auto elem : path) {
 			if (game.active_player() != Player::BLACK) break;
 			auto newlocation = game.movePiece(std::get<0>(elem), std::get<1>(elem));

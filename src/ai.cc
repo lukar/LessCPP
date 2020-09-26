@@ -48,52 +48,54 @@ SKIPALL:
 
 
 
-int alphaBeta(const Game state, int depth, int alpha, int beta, const Player player) {
+int alphaBeta(const Game state, int node, int depth, int alpha, int beta) {
 	Game newstate = state;
 	int value;
-	if (depth==0) return evaluation(newstate);
-	if (newstate.active_player() == player) {
-		value = -1000;
-		for (int i = 0; i < 16; i++) {
-			if (auto location = newstate.movePiece((i / 4), (Direction)(i % 4))) {
-				value = alphaBeta(newstate, --depth, -1000, 1000, player);
+	int tmp_ab;
+	if (newstate.movePiece((node / 4), static_cast<Direction>(node % 4))) {// make move and check if legal
+		if (depth == 0) { return evaluation(newstate); } // final depth?
+
+		if (newstate.active_player() == Player::WHITE) {
+			value = -1000;
+			for (int i = 0; i < 16; i++) {
+				tmp_ab = alphaBeta(newstate,i, depth-1, alpha, beta);
+				value = std::max(value, tmp_ab);
+				alpha = std::max(alpha, value);
+				if (alpha >= beta) break;
 			}
-			else { value = -1000; }
-			if (value > alpha) alpha = value;
-			if (alpha >= beta) break;
-			
+			return value;
 		}
-		return value;
-	}
-	else {
-		value = 1000;
-		for (int i = 0; i < 16; i++) {
-			if (auto location = newstate.movePiece((i / 4), (Direction)(i % 4))) {
-				value = alphaBeta(newstate, --depth, -1000, 1000, player);
+		else {
+			value = 1000;
+			for (int i = 0; i < 16; i++) {
+				tmp_ab = alphaBeta(newstate,i, depth-1, alpha, beta);
+				value = std::min(value, tmp_ab);
+				beta = std::min(beta, value);
+				if (alpha >= beta) break;
 			}
-			else { value = 1000; }
-			if (value < alpha) alpha = value;
-			if (alpha <= beta) break;
+			return value;
 		}
-		return value;
+	// If Illegal move
 	}
+	if (newstate.active_player() == Player::WHITE) return -10000; 
+	else return 10000;
 }
-std::vector<Path> findOptimalMove(Game state,int depth) {
-	std::vector<Path> path;
+std::vector<Move> findOptimalMove(Game state,int depth) {
+	std::vector<Move> path;
 	Game newstate = state;
-	for (int j=0; j < 3; j++) {
-		int best_score = 1000;
+	while (newstate.active_player() == Player::BLACK) {
+		int lowest_score = 100000;
 		int best_move=0;
 		int tmp = 0;
 		for (int i=0; i < 16; i++) {
-			tmp = alphaBeta(newstate, depth, -1000, 1000, Player::WHITE);
-			if (tmp <= best_score) {
-				best_score = tmp;
+			tmp = alphaBeta(newstate, i, depth, -1000, 1000);
+			if (tmp <= lowest_score) {
+				lowest_score = tmp;
 				best_move = i;
 			}
 		}
-		newstate.movePiece(best_move / 4, (Direction)(best_move % 4));
-		path.emplace(path.begin(), std::make_tuple(best_move / 4, (Direction)(best_move % 4), 0));
+		newstate.movePiece(best_move / 4, static_cast<Direction>(best_move % 4));
+		path.emplace(path.end(), std::make_tuple(best_move / 4, static_cast<Direction>(best_move % 4), 0));
 	}
 	return path;
 }
