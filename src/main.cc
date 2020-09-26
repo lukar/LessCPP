@@ -8,7 +8,7 @@
 #include <stack>
 
 #include "context.h"
-#include "game_context.h"
+#include "menu_context.h"
 
 
 
@@ -21,24 +21,27 @@ int main() {
 	window.setPosition(sf::Vector2i(0, 0));
 	window.setFramerateLimit(30);
 
-	contexts.push(new GameContext());
+	contexts.push(new MenuContext());
 
 	sf::Event event;
 	sf::Texture texture;
-	Result result;
 	if (!texture.create(window_width, window_height)) exit(1);
 
 	while (window.isOpen()) {
+		if (contexts.top()->isQuitting()) {
+			delete contexts.top();
+			contexts.pop();
+			if (contexts.size() == 0) break;
+		}
+
+		while (window.pollEvent(event)) {
+			Context* newcontext = contexts.top()->update(event, getMousePosition(window));
+			if (newcontext != nullptr) contexts.push(newcontext);
+		}
 
 		window.clear();
 
-		while (window.pollEvent(event)) {
-			result = contexts.top()->process(event, getMousePosition(window));
-			texture = std::get<sf::Texture>(result);
-
-		}
-
-		window.draw(sf::Sprite(texture));
+		window.draw(sf::Sprite(contexts.top()->render(getMousePosition(window))));
 
 		window.display();
 	}

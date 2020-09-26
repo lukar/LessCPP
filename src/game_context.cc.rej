@@ -1,0 +1,12 @@
+diff a/src/game_context.cc b/src/game_context.cc	(rejected hunks)
+@@ -4,9 +4,8 @@
+ 
+ GameContext::GameContext() : game(Game(wall_configs)), gui(Gui(wall_configs))
+ {
+-	texture.create(window_width, window_height);
+-
+ 	// create texture (necessary)
++	rentex.create(window_width, window_height);
+ 
+ 	sound_pickup = getSound("sounds/sfx_menu_move2.wav", soundBuffers);
+ 	sound_drop = getSound("sounds/sfx_menu_move3.wav", soundBuffers);

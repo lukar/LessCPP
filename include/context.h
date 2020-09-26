@@ -8,17 +8,20 @@
 
 #include "const_globals.h"
 
-// Need to predeclare it due to circular dependency
-class Context;
-
-typedef std::variant<Context*, sf::Texture, std::nullopt_t> Result;
-
 class Context {
+protected:
+	// texture that will be passed out to render
+	sf::RenderTexture rentex;
+
+	bool quit = false;
+
+
 public:
-	virtual Result process(const sf::Event &,  const sf::Vector2f & /* Mouse position */) = 0;
+	virtual Context* update(const sf::Event &,  const sf::Vector2f & /* Mouse position */) = 0;
+	virtual sf::Texture render(const sf::Vector2f &) = 0;
+
+	bool isQuitting() const { return quit; }
 };
-
-
 
 
 #endif // CONTEXT_LESSCPP

@@ -18,8 +18,14 @@ GameContext::GameContext() : game(Game(wall_configs)), gui(Gui(wall_configs))
 	text = initializePlayerText(font, window_height + 10, 10, sf::Color::Green);
 }
 
-Result GameContext::process(const sf::Event & event, const sf::Vector2f & mouse_pos)
+Context* GameContext::update(const sf::Event & event, const sf::Vector2f & mouse_pos)
 {
+	// END GAME?
+	if (event.type == sf::Event::KeyPressed) {
+		if (event.key.code == sf::Keyboard::Q) {
+			quit = true;
+		}
+	}
 	// HUMAN
 	if (game.getState() != GameState::ENDED and game.active_player() != Player::BLACK) {
 		// GRAB PLAYER
@@ -65,21 +71,24 @@ Result GameContext::process(const sf::Event & event, const sf::Vector2f & mouse_
 		}
 	}
 
+	return nullptr;
+}
+
+sf::Texture GameContext::render(const sf::Vector2f & mouse_pos)
+{
 	text.setString(get_side_text(game));
 
-
-	// DRAWING
 	if (held_piece != nullptr) held_piece->setPosition(mouse_pos);
 
-	texture.clear();
+	rentex.clear();
 
-	texture.draw(text);
+	rentex.draw(text);
 
-	texture.draw(gui);
-	if (held_piece != nullptr) texture.draw(*held_piece);
+	rentex.draw(gui);
+	if (held_piece != nullptr) rentex.draw(*held_piece);
 
-	texture.display();
+	rentex.display();
 
 
-	return texture.getTexture();
+	return rentex.getTexture();
 }
