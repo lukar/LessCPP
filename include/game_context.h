@@ -34,12 +34,10 @@ private:
 
 public:
 
-	// texture that will be passed out to render
-	sf::RenderTexture texture;
-
 	GameContext();
 
-	Result process(const sf::Event &,  const sf::Vector2f & /* Mouse position */) override;
+	Context* update(const sf::Event &,  const sf::Vector2f & /* Mouse position */) override;
+	sf::Texture render(const sf::Vector2f &) override;
 
 };
 
