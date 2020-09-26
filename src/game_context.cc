@@ -4,11 +4,8 @@
 
 GameContext::GameContext() : game(Game(wall_configs)), gui(Gui(wall_configs))
 {
-	
-	texture.create(window_width, window_height);
-
 	// create texture (necessary)
-
+	rentex.create(window_width, window_height);
 	sound_pickup = getSound("sounds/sfx_menu_move2.wav", soundBuffers);
 	sound_drop = getSound("sounds/sfx_menu_move3.wav", soundBuffers);
 	sound_illegal = getSound("sounds/sfx_sounds_error10.wav", soundBuffers);
@@ -62,7 +59,7 @@ Context* GameContext::update(const sf::Event & event, const sf::Vector2f & mouse
 	//// AI
 	else if (game.getState() != GameState::ENDED and game.active_player() == Player::BLACK) {
 
-		auto path = findOptimalMove(game,6);
+		auto path = findOptimalMove(game,7);
 		for (auto elem : path) {
 			if (game.active_player() != Player::BLACK) break;
 			auto newlocation = game.movePiece(std::get<0>(elem), std::get<1>(elem));

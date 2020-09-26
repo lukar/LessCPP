@@ -1,4 +1,5 @@
 #include <less.h>
+#include <ai.h>
 
 
 using namespace std::string_literals;
@@ -10,6 +11,7 @@ std::string get_side_text(Game const& game) {
 		displayText += "Turn: "s + (game.active_player() == Player::WHITE ? "White"s : "Black"s) + "\n"s;
 		displayText += "White total moves : "s + std::to_string(game.white_moves()) + "\n"s;
 		displayText += "Black total moves : "s + std::to_string(game.black_moves()) + "\n"s;
+		displayText += "Game score is : "s + std::to_string(evaluation(game)) + "\n"s;
 	} else {
 		displayText += "GAME OVER\n"s;
 		if (game.winning_player() == Player::NONE){

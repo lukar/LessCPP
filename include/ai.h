@@ -17,17 +17,19 @@ constexpr int sumLocation(Location loc) {
 	return loc.x + loc.y;
 }
 
+
 constexpr int evaluation(const Game & game) {
 	const auto whites = game.getPieces(Player::WHITE);
 	const auto blacks = game.getPieces(Player::BLACK);
 	int eval = 0;
 	for (size_t i = 0; i < 4; ++i) {
-		eval += sumLocation(whites[i])/2;
+		eval += sumLocation(whites[i]);
 		eval += sumLocation(blacks[i]);
-
+		eval += std::min(whites[i].x, whites[i].y)*2; // White wants to middle (wants to maximize)
+		eval += std::max(blacks[i].x, blacks[i].y)*2; // Black wants to middle (wants to minimize)
 	}
-	if (piecesInLocations(whites, blackStart)) eval += 4;
-	else if (piecesInLocations(blacks, whiteStart)) eval -= 4;
+	if (piecesInLocations(whites, blackStart)) eval += 900;
+	else if (piecesInLocations(blacks, whiteStart)) eval -= 1000;
 	return eval;
 }
 
