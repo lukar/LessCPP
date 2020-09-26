@@ -56,8 +56,8 @@ int alphaBeta(const Game state, int depth, int alpha, int beta, const Player pla
 	if (newstate.active_player() == player) {
 		value = -1000;
 		for (int i = 0; i < 16; i++) {
-			if (auto location = newstate.movePiece(i / 4, (Direction)(i % 4))) {
-				value = alphaBeta(newstate, --depth, -1000, 1000, Player::WHITE);
+			if (auto location = newstate.movePiece((i / 4), (Direction)(i % 4))) {
+				value = alphaBeta(newstate, --depth, -1000, 1000, player);
 			}
 			else { value = -1000; }
 			if (value > alpha) alpha = value;
@@ -69,8 +69,8 @@ int alphaBeta(const Game state, int depth, int alpha, int beta, const Player pla
 	else {
 		value = 1000;
 		for (int i = 0; i < 16; i++) {
-			if (auto location = newstate.movePiece(i / 4, (Direction)(i % 4))) {
-				value = alphaBeta(newstate, --depth, -1000, 1000, Player::WHITE);
+			if (auto location = newstate.movePiece((i / 4), (Direction)(i % 4))) {
+				value = alphaBeta(newstate, --depth, -1000, 1000, player);
 			}
 			else { value = 1000; }
 			if (value < alpha) alpha = value;
@@ -86,7 +86,6 @@ std::vector<Path> findOptimalMove(Game state,int depth) {
 		int best_score = 1000;
 		int best_move=0;
 		int tmp = 0;
-		Direction direction;
 		for (int i=0; i < 16; i++) {
 			tmp = alphaBeta(newstate, depth, -1000, 1000, Player::WHITE);
 			if (tmp <= best_score) {
