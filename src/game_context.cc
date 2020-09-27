@@ -13,7 +13,7 @@ GameContext::GameContext() : game(Game(wall_configs)), gui(Gui(wall_configs))
 
 	// generate side text
 	font = getFont("resources/Roboto_Medium.ttf");
-	text = initializePlayerText(font, window_height + 10, 10, sf::Color::Green);
+	text = initializeText(font, 10, window_height + 10, 10, sf::Color::Green);
 }
 
 Context* GameContext::update(const sf::Event & event, const sf::Vector2f & mouse_pos)
@@ -59,7 +59,7 @@ Context* GameContext::update(const sf::Event & event, const sf::Vector2f & mouse
 	}
 	//// AI
 	else if (game.getState() != GameState::ENDED and game.active_player() == Player::BLACK) {
-		auto path = recurseFindOptimal(game, Player::BLACK, 1, 0, 100, evaluation(game));
+		auto path = recurseFindOptimal(game, Player::BLACK, 1, 0, 100);
 		for (auto elem : path) {
 			if (game.active_player() != Player::BLACK) break;
 			auto newlocation = game.movePiece(std::get<0>(elem), std::get<1>(elem));

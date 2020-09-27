@@ -1,7 +1,7 @@
 #include "ai.h"
 
 // path = piece, direction, evaluation
-Path recurseFindOptimal(const Game state, const Player player, int depth, int alpha, int beta, int lasteval) {
+Path recurseFindOptimal(const Game state, const Player player, int depth, int alpha, int beta) {
 	std::vector<Path> paths;
 
 	for (int piece = 0; piece < 4; ++piece) {
@@ -12,19 +12,12 @@ Path recurseFindOptimal(const Game state, const Player player, int depth, int al
 			if(auto location = newstate.movePiece(piece, direction)){
 				auto const neweval = evaluation(newstate);
 				if (newstate.active_player() == player) {
-					if (auto aux = recurseFindOptimal(newstate, player, depth, alpha, beta, lasteval); aux.size() != 0) {
+					if (auto aux = recurseFindOptimal(newstate, player, depth, alpha, beta); aux.size() != 0) {
 						aux.emplace(aux.begin(), std::make_tuple(piece, direction, neweval));
 						paths.push_back(aux);
 					}
 				} else if (depth > 0 and state.getState() != GameState::LAST_TURN) {
-//					if (evals.size() == 0) evals.emplace_back(neweval);
-//					else if (player == Player::BLACK and evals[0] < neweval) evals.emplace(evals.begin(), neweval);
-//					else if (evals.back() > neweval) evals.emplace_back(neweval);
-//					else continue;
-					if (player == Player::BLACK and neweval > (lasteval + 1)) continue;
-					else if (player == Player::WHITE and neweval < (lasteval - 1)) continue;
-
-					if (auto aux = recurseFindOptimal(newstate, ~player, depth - 1, alpha, beta, neweval); aux.size()!=0) {
+					if (auto aux = recurseFindOptimal(newstate, ~player, depth - 1, alpha, beta); aux.size()!=0) {
 						auto const prune = std::get<2>(aux.back()); // prune = cost of the tip of the branch 
 						if (player == Player::WHITE) beta = std::min(beta, prune);
 						else alpha = std::max(alpha, prune);
