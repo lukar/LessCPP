@@ -36,10 +36,8 @@ sf::Font getFont(std::string const& filepath) {
 	return font;
 }
 
-sf::Text initializePlayerText(sf::Font const& font, int xpos, int ypos, sf::Color color) {
-	sf::Text text;
-	text.setFont(font);
-	text.setCharacterSize(10);
+sf::Text initializeText(sf::Font const& font, int size, int xpos, int ypos, sf::Color color) {
+	sf::Text text("", font, size);
 	text.setPosition(xpos, ypos);
 	text.setFillColor(color);
 

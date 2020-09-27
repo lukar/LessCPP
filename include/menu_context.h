@@ -4,17 +4,23 @@
 #include "const_globals.h"
 #include "helpers.h"
 #include "less.h"
+#include "ai.h"
+#include <tuple>
 
 #include "context.h"
 #include "game_context.h"
+
+#include "menu.h"
 
 #include <array>
 
 class MenuContext : public Context {
 private:
 	// side text
-	sf::Font font;
-	sf::Text text;
+	sf::Font font = getFont("resources/Roboto_Medium.ttf");
+	sf::Text text = initializeText(font, 60, window_width/3, window_height/3, sf::Color::Green);
+
+	menu::Button quitButton = menu::Button("Quit", window_width/2 - 15, window_height - 50, 30);
 
 public:
 
