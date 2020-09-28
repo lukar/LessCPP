@@ -21,6 +21,7 @@ private:
 	sf::Text text = initializeText(font, 60, window_width/3, window_height/3, sf::Color::Green);
 
 	menu::Button quitButton = menu::Button("Quit", window_width/2 - 15, window_height - 50, 30);
+	menu::Button startGameButton = menu::Button("Start Game", window_width/3 + 50, window_height/3 + 100, 30);
 
 public:
 

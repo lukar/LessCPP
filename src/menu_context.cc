@@ -9,7 +9,7 @@ Context* MenuContext::update(const sf::Event & event, const sf::Vector2f & mouse
 {
 	if (event.type == sf::Event::MouseButtonPressed) {
 		if (quitButton.contains(mouse_pos)) quit = true;
-		else return new GameContext();
+		else if (startGameButton.contains(mouse_pos)) return new GameContext();
 	}
 	if (event.type == sf::Event::KeyPressed) {
 	}
@@ -23,6 +23,7 @@ sf::Texture MenuContext::render(const sf::Vector2f & mouse_pos) {
 
 	rentex.draw(text);
 	rentex.draw(quitButton);
+	rentex.draw(startGameButton);
 	
 
 	rentex.display();
