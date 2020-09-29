@@ -25,8 +25,8 @@ constexpr int evaluation(const Game & game) {
 	for (size_t i = 0; i < 4; ++i) {
 		eval += sumLocation(whites[i]);
 		eval += sumLocation(blacks[i]);
-		eval += std::min(whites[i].x, whites[i].y)*2; // White wants to middle (wants to maximize)
-		eval += std::max(blacks[i].x, blacks[i].y)*2; // Black wants to middle (wants to minimize)
+		eval += std::min(whites[i].x, whites[i].y); // White wants to middle (wants to maximize)
+		eval += std::max(blacks[i].x, blacks[i].y); // Black wants to middle (wants to minimize)
 	}
 	if (piecesInLocations(whites, blackStart)) eval += 900;
 	else if (piecesInLocations(blacks, whiteStart)) eval -= 1000;
@@ -37,8 +37,19 @@ Path recurseFindOptimal(const Game, const Player, int, int, int, int);
 
 
 int alphaBeta(const Game state, int node, int depth, int alpha, int beta);
+int alphaBetaStohastic(const Game state, int node, Direction d, int depth, int alpha, int beta);
 std::vector<Move> findOptimalMove(Game state, int depth);
+std::vector<Move> findOptimalMoveStohastic(Game state, int depth);
 
+Direction randomDirectionWhite(void);
+Direction randomDirectionBlack(void);
+
+namespace myrng {
+	static unsigned long x = 123456789;
+	static unsigned long y = 362436069;
+	static unsigned long z = 521288629;
+	unsigned long xorshf96(void);
+}
 
 
 #endif // AI_H

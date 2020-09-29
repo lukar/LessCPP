@@ -59,7 +59,7 @@ Context* GameContext::update(const sf::Event & event, const sf::Vector2f & mouse
 	//// AI
 	else if (game.getState() != GameState::ENDED and game.active_player() == Player::BLACK) {
 
-		auto path = findOptimalMove(game,7);
+		auto path = findOptimalMoveStohastic(game,10);
 		for (auto elem : path) {
 			if (game.active_player() != Player::BLACK) break;
 			auto newlocation = game.movePiece(std::get<0>(elem), std::get<1>(elem));
