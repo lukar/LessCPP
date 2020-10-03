@@ -1,6 +1,9 @@
 #include "game_context.h"
 #include "ai.h"
 #include <tuple>
+#include <chrono>
+#include <thread>
+
 
 GameContext::GameContext() : game(Game(wall_configs)), gui(Gui(wall_configs))
 {
@@ -23,43 +26,56 @@ Context* GameContext::update(const sf::Event & event, const sf::Vector2f & mouse
 			quit = true;
 		}
 	}
-	// HUMAN
+	sf::sleep(sf::milliseconds(1000));
+	//std::this_thread::sleep_for(std::chrono::seconds(2));
+	// Player 1
 	if (game.getState() != GameState::ENDED and game.active_player() != Player::BLACK) {
-		// GRAB PLAYER
-		if (event.type == sf::Event::MouseButtonPressed) {
-			for (auto& piece : gui.getPieces(game.active_player())) {
-				if (euclideanDistance(mouse_pos, piece.getPosition()) <= piece_size) {
-					sound_pickup.play();
-					held_piece = &piece;
+		std::cout << "WHITE is on the move\n";
+		auto path = recurseFindOptimal(game, Player::WHITE, 1, 0, 1000, evaluation(game));
+		for (auto elem : path) {
+			if (game.active_player() != Player::WHITE) break;
+			auto newlocation = game.movePiece(std::get<0>(elem), std::get<1>(elem));
+			gui.getPieces(Player::WHITE)[static_cast<uint>(std::get<0>(elem))].setLocation(newlocation.value());
+			gui.getPieces(Player::WHITE)[static_cast<uint>(std::get<0>(elem))].resetPosition();
+		}
+		// human
+		if (false) {
+			// GRAB PLAYER
+			if (event.type == sf::Event::MouseButtonPressed) {
+				for (auto& piece : gui.getPieces(game.active_player())) {
+					if (euclideanDistance(mouse_pos, piece.getPosition()) <= piece_size) {
+						sound_pickup.play();
+						held_piece = &piece;
+					}
 				}
 			}
-		}
-		// DROP PLAYER
-		if (event.type == sf::Event::MouseButtonReleased) {
-			if (held_piece != nullptr) {
-				std::optional<Location> new_location = locationFromPosition(mouse_pos);
+			// DROP PLAYER
+			if (event.type == sf::Event::MouseButtonReleased) {
+				if (held_piece != nullptr) {
+					std::optional<Location> new_location = locationFromPosition(mouse_pos);
 
-				if (new_location) {
-					if (game.movePiece(held_piece->getLocation(), new_location.value())) {
-						held_piece->setLocation(new_location.value());
-						sound_drop.play();
+					if (new_location) {
+						if (game.movePiece(held_piece->getLocation(), new_location.value())) {
+							held_piece->setLocation(new_location.value());
+							sound_drop.play();
+						}
+						else {
+							sound_illegal.play();
+						}
 					}
 					else {
 						sound_illegal.play();
 					}
+					held_piece->resetPosition();
+					held_piece = nullptr;
 				}
-				else {
-					sound_illegal.play();
-				}
-				held_piece->resetPosition();
-				held_piece = nullptr;
 			}
 		}
 	}
 	//// AI
 	else if (game.getState() != GameState::ENDED and game.active_player() == Player::BLACK) {
-
-		auto path = findOptimalMoveStohastic(game,10);
+		std::cout << "BLACK is on the move\n";
+		auto path = findOptimalMove(game,6);
 		for (auto elem : path) {
 			if (game.active_player() != Player::BLACK) break;
 			auto newlocation = game.movePiece(std::get<0>(elem), std::get<1>(elem));
