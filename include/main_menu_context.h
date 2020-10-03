@@ -14,7 +14,7 @@
 
 #include <array>
 
-class MenuContext : public Context {
+class MainMenuContext : public Context {
 private:
 	// side text
 	sf::Font font = getFont("resources/Roboto_Medium.ttf");
@@ -25,7 +25,7 @@ private:
 
 public:
 
-	MenuContext();
+	MainMenuContext();
 
 	Context* update(const sf::Event &,  const sf::Vector2f & /* Mouse position */) override;
 	sf::Texture render(const sf::Vector2f &) override;

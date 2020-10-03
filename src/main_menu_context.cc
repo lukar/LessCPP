@@ -1,11 +1,11 @@
-#include "menu_context.h"
+#include "main_menu_context.h"
 
 
-MenuContext::MenuContext() {
+MainMenuContext::MainMenuContext() {
 	rentex.create(window_width, window_height);
 }
 
-Context* MenuContext::update(const sf::Event & event, const sf::Vector2f & mouse_pos)
+Context* MainMenuContext::update(const sf::Event & event, const sf::Vector2f & mouse_pos)
 {
 	if (event.type == sf::Event::MouseButtonPressed) {
 		if (quitButton.contains(mouse_pos)) quit = true;
@@ -16,7 +16,7 @@ Context* MenuContext::update(const sf::Event & event, const sf::Vector2f & mouse
 	return nullptr;
 }
 
-sf::Texture MenuContext::render(const sf::Vector2f & mouse_pos) {
+sf::Texture MainMenuContext::render(const sf::Vector2f & mouse_pos) {
 	text.setString("Less Game");
 
 	rentex.clear();

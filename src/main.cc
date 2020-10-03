@@ -8,7 +8,7 @@
 #include <stack>
 
 #include "context.h"
-#include "menu_context.h"
+#include "main_menu_context.h"
 
 
 int main()
@@ -20,7 +20,7 @@ int main()
 	window.setPosition(sf::Vector2i(0, 0));
 	window.setFramerateLimit(30);
 
-	contexts.push(new MenuContext());
+	contexts.push(new MainMenuContext());
 
 	sf::Event event;
 	sf::Texture texture;
