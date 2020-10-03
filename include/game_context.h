@@ -35,6 +35,7 @@ private:
 public:
 
 	GameContext();
+	GameContext(int quitLevelInc);
 
 	Context* update(const sf::Event &,  const sf::Vector2f & /* Mouse position */) override;
 	sf::Texture render(const sf::Vector2f &) override;

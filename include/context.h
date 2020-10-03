@@ -14,6 +14,7 @@ protected:
 	sf::RenderTexture rentex;
 
 	bool quit = false;
+	int quitLevel = 1;
 
 
 public:
@@ -21,6 +22,7 @@ public:
 	virtual sf::Texture render(const sf::Vector2f &) = 0;
 
 	bool isQuitting() const { return quit; }
+	bool getQuitLevel() const { return quitLevel; }
 };
 
 

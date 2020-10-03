@@ -11,9 +11,8 @@
 #include "menu_context.h"
 
 
-
-
-int main() {
+int main()
+{
 
 	std::stack<Context*> contexts;
 
@@ -28,9 +27,12 @@ int main() {
 	if (!texture.create(window_width, window_height)) exit(1);
 
 	while (window.isOpen()) {
+
 		if (contexts.top()->isQuitting()) {
-			delete contexts.top();
-			contexts.pop();
+			for (int i = contexts.top()->getQuitLevel(); i > 0; --i) {
+				delete contexts.top();
+				contexts.pop();
+			}
 			if (contexts.size() == 0) break;
 		}
 
