@@ -16,21 +16,8 @@ Game::Game(std::array<WallConfig, 9> wallconfigs) {
 }
 
 bool Game::operator==(const Game & game) const {
-    if ( piecesInLocations(m_whiteLocations, game.m_whiteLocations) and
-         piecesInLocations(m_blackLocations, game.m_blackLocations) ) return true;
-    return false;
-}
-
-// Getter methods
-int Game::white_moves() const { return m_white_moves; }
-int Game::black_moves() const { return m_black_moves; }
-State Game::getState() const { return m_state; }
-Player Game::active_player() const { return m_active_player; }
-Player Game::winning_player() const {return m_winning_player;}
-int Game::moves_left() const { return m_moves_left; }
-
-std::array<Location, 4> & Game::active_pieces() {
-    return m_active_player == Player::WHITE? m_whiteLocations : m_blackLocations;
+    return piecesInLocations(m_whiteLocations, game.m_whiteLocations) and
+        piecesInLocations(m_blackLocations, game.m_blackLocations);
 }
 
 bool Game::isEndOfTurn() const {
@@ -43,39 +30,50 @@ bool Game::isEndOfTurn() const {
 void Game::nextTurn() {
     m_active_player = (m_active_player == Player::WHITE ? Player::BLACK : Player::WHITE);
 
-    if ( piecesInLocations(m_blackLocations, whiteStart) or m_state == State::LAST_TURN ) m_state = State::ENDED;
-    else if ( piecesInLocations(m_whiteLocations, blackStart) ) { m_state = State::LAST_TURN; m_moves_left = 3 - m_moves_left; }
-    else { m_moves_left = 3; }
+    if (piecesInLocations(m_blackLocations, whiteStart) or m_state == GameState::LAST_TURN) {
+        m_state = GameState::ENDED;
+    } else if (piecesInLocations(m_whiteLocations, blackStart)) {
+        m_state = GameState::LAST_TURN;
+        m_moves_left = 3 - m_moves_left;
+    } else {
+        m_moves_left = 3;
+    }
 
     // Wait if black also reaches end in same turn
-    if ( m_state == State::ENDED ) {
-        if ( piecesInLocations(m_blackLocations, whiteStart) and piecesInLocations(m_whiteLocations, blackStart) ) m_winning_player = Player::NONE;
-        else if (piecesInLocations(m_whiteLocations, blackStart)) m_winning_player = Player::WHITE;
-        else m_winning_player = Player::BLACK;
+    if (m_state == GameState::ENDED) {
+        if (piecesInLocations(m_blackLocations, whiteStart) and piecesInLocations(m_whiteLocations, blackStart)) {
+            m_winning_player = Player::NONE;
+        }
+        else if (piecesInLocations(m_whiteLocations, blackStart)) {
+            m_winning_player = Player::WHITE;
+        }
+        else {
+            m_winning_player = Player::BLACK;
+        }
     }
 }
 
-void Game::setGameOver(Player winner) { m_state = State::ENDED; m_winning_player = winner; }
+void Game::setGameOver(Player winner) { m_state = GameState::ENDED; m_winning_player = winner; }
 
-// Return number of wall segments between start and end.
+// Return number of wall segments between start and end. Locations must be orthogonal and adjacent
 constexpr int Game::countInnerWalls(Location const start, Location const end) const {
     
     // differences
-	int const dx = end.x - start.x;
-	int const dy = end.y - start.y;
+	const int dx = end.x - start.x;
+	const int dy = end.y - start.y;
 
     // block coordinates
-	uint const sx = uint(start.x / 2);
-	uint const sy = uint(start.y / 2);
+	const uint sx = uint(start.x / 2);
+	const uint sy = uint(start.y / 2);
 
-	uint const ex = uint(end.x / 2);
-	uint const ey = uint(end.y / 2);
-    WallConfig const & wstart = m_wall_matrix[sy][sx];
-    WallConfig const & wend = m_wall_matrix[ey][ex];
+	const uint ex = uint(end.x / 2);
+	const uint ey = uint(end.y / 2);
+    const WallConfig & wstart = m_wall_matrix[sy][sx];
+    const WallConfig & wend = m_wall_matrix[ey][ex];
 
-    int const first = (dx ? 1 : -1);
-    int const second = (sx == ex && sy == ey ? 0 : dx + dy);
-	int const third = -1 + 2 * cabs(dx) * (start.y % 2) + 2 * cabs(dy) * (start.x % 2);
+    const int first = (dx ? 1 : -1);
+    const int second = (sx == ex and sy == ey ? 0 : dx + dy);
+	const int third = 2*(dx ? start.y%2 : start.x%2) - 1; 
 
 	int num = 0;
     if (second) {

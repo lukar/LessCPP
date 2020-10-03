@@ -16,7 +16,7 @@ private:
 //    Piece * selected_piece = nullptr;
 
 	int m_moves_left = 3;
-    State m_state = State::ONGOING;
+    GameState m_state = GameState::ONGOING;
     Player m_active_player = Player::WHITE;
     Player m_winning_player = Player::NONE;
 	int m_white_moves = 0;
@@ -34,13 +34,17 @@ public:
     Game(const Game &) = default;
     bool operator==(const Game &) const;
 
-	[[nodiscard]] int white_moves() const;
-	[[nodiscard]] int black_moves() const;
-    [[nodiscard]] State getState() const;
-    [[nodiscard]] Player active_player() const;
-    [[nodiscard]] std::array<Location, 4> & active_pieces();
-    [[nodiscard]] Player winning_player() const;
-	[[nodiscard]] int moves_left() const;
+	// Getter methods
+	constexpr int white_moves() const { return m_white_moves; }
+	constexpr int black_moves() const { return m_black_moves; }
+	constexpr GameState getState() const { return m_state; }
+	constexpr Player active_player() const { return m_active_player; }
+	constexpr Player winning_player() const { return m_winning_player; }
+	constexpr int moves_left() const { return m_moves_left; }
+	constexpr std::array<Location, 4> & active_pieces() {
+		return m_active_player == Player::WHITE? m_whiteLocations : m_blackLocations;
+	}
+
 
 	std::optional<int> getPieceNumber(Location);
 

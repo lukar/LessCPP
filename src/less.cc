@@ -5,7 +5,7 @@ using namespace std::string_literals;
 
 std::string get_side_text(Game const& game) {
 	std::string displayText;
-	if ( game.getState() != State::ENDED ) {
+	if ( game.getState() != GameState::ENDED ) {
 		displayText += "Remaining moves: "s + std::to_string(game.moves_left()) + "\n"s;
 		displayText += "Turn: "s + (game.active_player() == Player::WHITE ? "White"s : "Black"s) + "\n"s;
 		displayText += "White total moves : "s + std::to_string(game.white_moves()) + "\n"s;
@@ -36,10 +36,8 @@ sf::Font getFont(std::string const& filepath) {
 	return font;
 }
 
-sf::Text initializePlayerText(sf::Font const& font, int xpos, int ypos, sf::Color color) {
-	sf::Text text;
-	text.setFont(font);
-	text.setCharacterSize(10);
+sf::Text initializeText(sf::Font const& font, int size, int xpos, int ypos, sf::Color color) {
+	sf::Text text("", font, size);
 	text.setPosition(xpos, ypos);
 	text.setFillColor(color);
 

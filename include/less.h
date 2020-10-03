@@ -11,7 +11,7 @@ sf::Sound getSound(std::string const&, std::deque<sf::SoundBuffer>&);
 
 sf::Font getFont(std::string const&);
 
-sf::Text initializePlayerText(sf::Font const&, int, int, sf::Color);
+sf::Text initializeText(sf::Font const&, int, int, int, sf::Color);
 
 
 

@@ -13,3 +13,5 @@ CMakeSettings.json
 
 /SFML-*
 /out
+
+ignore_*

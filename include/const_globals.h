@@ -7,19 +7,25 @@
 
 #include <array>
 #include <optional>
+#include <variant>
+
 
 #include <ciso646>
+
+#include <SFML/Graphics.hpp>
+// #include <SFML/Window.hpp>
 
 typedef unsigned int uint;
 
 enum class Player {WHITE, BLACK, NONE};
+
 
 constexpr Player operator~(const Player& player) {
     if (player == Player::WHITE) return Player::BLACK;
     else return Player::WHITE;
 }
 
-enum class State {ONGOING, LAST_TURN, ENDED};
+enum class GameState {ONGOING, LAST_TURN, ENDED};
 enum class Direction { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3};
 
 constexpr Direction operator++(Direction& direction) {
