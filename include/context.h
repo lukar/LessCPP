@@ -16,13 +16,15 @@ protected:
 	bool quit = false;
 	int quitLevel = 1;
 
-
 public:
+
+	virtual ~Context() = default;
+
 	virtual Context* update(const sf::Event &,  const sf::Vector2f & /* Mouse position */) = 0;
 	virtual sf::Texture render(const sf::Vector2f &) = 0;
 
 	bool isQuitting() const { return quit; }
-	bool getQuitLevel() const { return quitLevel; }
+	int getQuitLevel() const { return quitLevel; }
 };
 
 
