@@ -1,7 +1,12 @@
 #include "ai.h"
 
-Path recurseFindOptimal(const GameRef state, const Player player, int depth, int alpha, int beta) {
-	std::vector<Path> paths;
+
+bool isLesserPath(EvalPath a, EvalPath b) {
+	return std::get<1>(a) < std::get<1>(b);
+}
+
+EvalPath recurseFindOptimal(const GameRef state, const Player player, int depth, int alpha, int beta) {
+	std::vector<EvalPath> paths;
 
 	for (int piece = 0; piece < 4; ++piece) {
 		Direction direction = Direction::UP;
@@ -11,20 +16,22 @@ Path recurseFindOptimal(const GameRef state, const Player player, int depth, int
 			if(auto location = newstate.movePiece(piece, direction)){
 				auto const neweval = evaluation(newstate);
 				if (newstate.active_player() == player) {
-					if (auto aux = recurseFindOptimal(newstate, player, depth, alpha, beta); aux.size() != 0) {
-						aux.emplace(aux.begin(), std::make_tuple(piece, direction, neweval));
-						paths.push_back(aux);
+					if (auto && [path, eval] = recurseFindOptimal(newstate, player, depth, alpha, beta); path.size() != 0) {
+						path.emplace(path.begin(), std::make_tuple(piece, direction));
+						paths.emplace_back(std::make_tuple(path, eval));
 					}
 				} else if (depth > 0 and state.getState() != GameState::LAST_TURN) {
-					if (auto aux = recurseFindOptimal(newstate, ~player, depth - 1, alpha, beta); aux.size()!=0) {
-						auto const prune = std::get<2>(aux.back()); // prune = cost of the tip of the branch 
+					if (auto && [path, prune] = recurseFindOptimal(newstate, ~player, depth - 1, alpha, beta); path.size() != 0) {
 						if (player == Player::WHITE) beta = std::min(beta, prune);
 						else alpha = std::max(alpha, prune);
-						aux.emplace(aux.begin(), std::make_tuple(piece, direction, neweval));
-						paths.push_back(aux);
+						path.emplace(path.begin(), std::make_tuple(piece, direction));
+						paths.emplace_back(std::make_tuple(path, prune));
 					}
 				} else {
-					paths.emplace_back(std::vector<Move>{std::make_tuple(piece, direction, neweval)});
+					const auto move = std::make_tuple(piece, direction);
+					const std::vector<Move> moves = {move};
+					const auto path = std::make_tuple(moves, neweval);
+					paths.emplace_back(path);
 				}
 			}
 		} while (++direction != Direction::UP);
@@ -32,7 +39,7 @@ Path recurseFindOptimal(const GameRef state, const Player player, int depth, int
 SKIPALL:
 	if (paths.empty()) return {};
 	if (player == Player::BLACK)
-		return *std::min_element(paths.begin(), paths.end(), [](Path a, Path b){ return std::get<2>(a.back()) < std::get<2>(b.back());});
+		return *std::min_element(paths.begin(), paths.end(), isLesserPath);
 	else
-		return *std::max_element(paths.begin(), paths.end(), [](Path a, Path b){ return std::get<2>(a.back()) < std::get<2>(b.back());});
+		return *std::max_element(paths.begin(), paths.end(), isLesserPath);
 }

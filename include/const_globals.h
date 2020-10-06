@@ -28,6 +28,10 @@ constexpr Player operator~(const Player& player) {
 enum class GameState {ONGOING, LAST_TURN, ENDED};
 enum class Direction { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3};
 
+// piece, direction
+typedef std::tuple<int, Direction> Move;
+typedef std::vector<Move> Path;
+
 constexpr Direction operator++(Direction& direction) {
     switch (direction) {
         case Direction::UP:

@@ -2,15 +2,16 @@
 #define AI_H
 
 #include "game.h"
+#include "const_globals.h"
 
 #include <vector>
 #include <tuple>
 #include <optional>
 
-// piece, direction, evaluation
-typedef std::tuple<int, Direction, int> Move;
-typedef std::vector<Move> Path;
 
+
+// tuple (moves, evaluation)
+typedef std::tuple<Path, int> EvalPath;
 
 
 constexpr int sumLocation(Location loc) {
@@ -46,7 +47,7 @@ constexpr int evaluation(const GameRef & game) {
 	return eval;
 }
 
-Path recurseFindOptimal(const GameRef, const Player, int, int, int);
+EvalPath recurseFindOptimal(const GameRef, const Player, int, int, int);
 
 
 
