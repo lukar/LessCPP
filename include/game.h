@@ -1,38 +1,40 @@
-#ifndef FIELD_H
-#define FIELD_H
+#ifndef GAME_H
+#define GAME_H
 
 #include "const_globals.h"
 #include <random>
 #include <array>
 
 #include "helpers.h"
-#include <random>
 
-#include <iostream>
-
-class Game {
+class GameBase {
 private:
-
-//    Piece * selected_piece = nullptr;
+	std::array<std::array<WallConfig, 3>, 3> & m_wall_matrix;
 
 	int m_moves_left = 3;
-    GameState m_state = GameState::ONGOING;
-    Player m_active_player = Player::WHITE;
-    Player m_winning_player = Player::NONE;
+	GameState m_state = GameState::ONGOING;
+	Player m_active_player = Player::WHITE;
+	Player m_winning_player = Player::NONE;
 	int m_white_moves = 0;
 	int m_black_moves = 0;
 
-    std::array<Location, 4> m_whiteLocations = whiteStart;
-    std::array<Location, 4> m_blackLocations = blackStart;
-
-    std::array<std::array<WallConfig, 3>, 3> m_wall_matrix;
+	std::array<Location, 4> m_whiteLocations = whiteStart;
+	std::array<Location, 4> m_blackLocations = blackStart;
 
 	void setPieceLocation(int, Location);
 
 public:
-    Game(std::array<WallConfig, 9>);
-    Game(const Game &) = default;
-    bool operator==(const Game &) const;
+
+	// for Game class
+	GameBase(std::array<std::array<WallConfig, 3>, 3> & wall_matrix) : m_wall_matrix(wall_matrix) {};
+
+	// for GameRef class
+	GameBase(const GameBase &) = default;
+
+	bool operator==(const GameBase & ref) const {
+		return piecesInLocations(m_whiteLocations, ref.m_whiteLocations) and
+			piecesInLocations(m_blackLocations, ref.m_blackLocations);
+	}
 
 	// Getter methods
 	constexpr int white_moves() const { return m_white_moves; }
@@ -48,37 +50,60 @@ public:
 
 	std::optional<int> getPieceNumber(Location);
 
-    constexpr std::array<Location, 4> getPieces(Player player) const {
-        if (player == Player::WHITE) {
-            return m_whiteLocations;
-        } else {
-            return m_blackLocations;
-        }
-    }
+	constexpr std::array<Location, 4> getPieces(Player player) const {
+		if (player == Player::WHITE) {
+				return m_whiteLocations;
+		} else {
+				return m_blackLocations;
+		}
+	}
 
-    bool isEndOfTurn() const;
+	bool isEndOfTurn() const;
 
-    void nextTurn();
+	void nextTurn();
 
-    void setGameOver(Player);
+	void setGameOver(Player);
 
-	[[nodiscard]] constexpr int countInnerWalls(Location const, Location const) const;
+	constexpr int countInnerWalls(Location const, Location const) const;
 
-	[[nodiscard]] constexpr bool existsPieceAtLocation(Location const) const;
+	constexpr bool existsPieceAtLocation(Location const) const;
 
-	[[nodiscard]] constexpr std::optional<int> moveCost (Location, Direction) const;
+	constexpr std::optional<int> moveCost (Location, Direction) const;
 
-	[[nodiscard]] constexpr std::optional<int> moveCost (Location, Location) const;
+	constexpr std::optional<int> moveCost (Location, Location) const;
 
 	Location getPieceLocation(int);
 
-	[[nodiscard]] bool decrementMoves(int);
+	bool decrementMoves(int);
 
 	std::optional<Location> movePiece(int, Direction);
 
-    std::optional<Location> movePiece(Location, Location);
+	std::optional<Location> movePiece(Location, Location);
 
 };
 
-#endif // FIELD_H
+class Game : public GameBase {
+public:
+	std::array<std::array<WallConfig, 3>, 3> m_wall_matrix;
+	
+	Game(std::array<WallConfig, 9> wallconfigs) : GameBase(m_wall_matrix) {
+		for (size_t y = 0; y < 3; ++y) {
+			for (size_t x = 0; x < 3; ++x) {
+				m_wall_matrix[y][x] = wallconfigs[y*3 + x];
+			}
+		}
+	}
+
+	Game(const Game &) = delete;
+
+};
+
+class GameRef : public GameBase {
+public:
+
+	GameRef(const GameBase & ref) : GameBase(ref) {};
+
+};
+
+#endif // GAME_H
 

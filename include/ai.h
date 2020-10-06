@@ -32,7 +32,7 @@ constexpr int piecesApart(std::array<Location, 4> pieces) {
 	return result - 16;
 }
 
-constexpr int evaluation(const Game & game) {
+constexpr int evaluation(const GameRef & game) {
 	const auto whites = game.getPieces(Player::WHITE);
 	const auto blacks = game.getPieces(Player::BLACK);
 	int eval = 0;
@@ -46,7 +46,7 @@ constexpr int evaluation(const Game & game) {
 	return eval;
 }
 
-Path recurseFindOptimal(const Game, const Player, int, int, int);
+Path recurseFindOptimal(const GameRef, const Player, int, int, int);
 
 
 

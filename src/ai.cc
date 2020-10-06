@@ -1,14 +1,13 @@
 #include "ai.h"
 
-// path = piece, direction, evaluation
-Path recurseFindOptimal(const Game state, const Player player, int depth, int alpha, int beta) {
+Path recurseFindOptimal(const GameRef state, const Player player, int depth, int alpha, int beta) {
 	std::vector<Path> paths;
 
 	for (int piece = 0; piece < 4; ++piece) {
 		Direction direction = Direction::UP;
 		do {
 			if (alpha >= beta ) goto SKIPALL;
-			Game newstate = state;
+			GameRef newstate = state;
 			if(auto location = newstate.movePiece(piece, direction)){
 				auto const neweval = evaluation(newstate);
 				if (newstate.active_player() == player) {
