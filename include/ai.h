@@ -36,7 +36,7 @@ constexpr int evaluation(const Game & game) {
 Path recurseFindOptimal(const Game, const Player, int, int, int, int);
 
 
-int alphaBeta(const Game state, int node, int depth, int alpha, int beta);
+Path alphaBeta(const Game state, int node, int depth, int alpha, int beta);
 int alphaBetaStohastic(const Game state, int node, Direction d, int depth, int alpha, int beta);
 std::vector<Move> findOptimalMove(Game state, int depth);
 std::vector<Move> findOptimalMoveStohastic(Game state, int depth);

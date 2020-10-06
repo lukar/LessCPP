@@ -1,8 +1,6 @@
 #include "game_context.h"
 #include "ai.h"
 #include <tuple>
-#include <chrono>
-#include <thread>
 
 
 GameContext::GameContext() : game(Game(wall_configs)), gui(Gui(wall_configs))
@@ -26,20 +24,20 @@ Context* GameContext::update(const sf::Event & event, const sf::Vector2f & mouse
 			quit = true;
 		}
 	}
-	sf::sleep(sf::milliseconds(1000));
-	//std::this_thread::sleep_for(std::chrono::seconds(2));
 	// Player 1
 	if (game.getState() != GameState::ENDED and game.active_player() != Player::BLACK) {
-		std::cout << "WHITE is on the move\n";
-		auto path = recurseFindOptimal(game, Player::WHITE, 1, 0, 1000, evaluation(game));
-		for (auto elem : path) {
-			if (game.active_player() != Player::WHITE) break;
-			auto newlocation = game.movePiece(std::get<0>(elem), std::get<1>(elem));
-			gui.getPieces(Player::WHITE)[static_cast<uint>(std::get<0>(elem))].setLocation(newlocation.value());
-			gui.getPieces(Player::WHITE)[static_cast<uint>(std::get<0>(elem))].resetPosition();
+		//std::cout << "WHITE is on the move\n";
+		if (false) { // AI
+			auto path = recurseFindOptimal(game, Player::WHITE, 1, 0, 1000, evaluation(game));
+			for (auto elem : path) {
+				if (game.active_player() != Player::WHITE) break;
+				auto newlocation = game.movePiece(std::get<0>(elem), std::get<1>(elem));
+				gui.getPieces(Player::WHITE)[static_cast<uint>(std::get<0>(elem))].setLocation(newlocation.value());
+				gui.getPieces(Player::WHITE)[static_cast<uint>(std::get<0>(elem))].resetPosition();
+			}
+			
 		}
-		// human
-		if (false) {
+		else { // human
 			// GRAB PLAYER
 			if (event.type == sf::Event::MouseButtonPressed) {
 				for (auto& piece : gui.getPieces(game.active_player())) {
@@ -74,13 +72,15 @@ Context* GameContext::update(const sf::Event & event, const sf::Vector2f & mouse
 	}
 	//// AI
 	else if (game.getState() != GameState::ENDED and game.active_player() == Player::BLACK) {
-		std::cout << "BLACK is on the move\n";
-		auto path = findOptimalMove(game,6);
+		//std::cout << "BLACK is on the move\n";
+		auto path = findOptimalMoveStohastic(game,6);
 		for (auto elem : path) {
+			sf::sleep(sf::milliseconds(500));
 			if (game.active_player() != Player::BLACK) break;
-			auto newlocation = game.movePiece(std::get<0>(elem), std::get<1>(elem));
-			gui.getPieces(Player::BLACK)[static_cast<uint>(std::get<0>(elem))].setLocation(newlocation.value());
-			gui.getPieces(Player::BLACK)[static_cast<uint>(std::get<0>(elem))].resetPosition();
+			if (auto newlocation = game.movePiece(std::get<0>(elem), std::get<1>(elem))) {
+				gui.getPieces(Player::BLACK)[static_cast<uint>(std::get<0>(elem))].setLocation(newlocation.value());
+				gui.getPieces(Player::BLACK)[static_cast<uint>(std::get<0>(elem))].resetPosition();
+			}
 		}
 	}
 

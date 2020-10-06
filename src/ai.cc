@@ -43,124 +43,161 @@ SKIPALL:
 
 
 
-int alphaBeta(const Game state, int node, int depth, int alpha, int beta) {
+Path alphaBeta(const Game state, int node, int depth, int alpha, int beta) {
 	Game newstate = state;
-	int value;
-	if (newstate.movePiece((node / 4), static_cast<Direction>(node % 4))) {// make move and check if legal
-		if (newstate.getState() == GameState::ENDED) { return evaluation(newstate); }
-		if (depth == 0) { return evaluation(newstate); } // final depth?
+	int value, new_value;
+	std::vector<Move> path, new_path;
+
+	int piece = (node / 4);
+	Direction direction = static_cast<Direction>(node % 4);
+	Move move = std::make_tuple(piece, direction, 0); // move template
+	
+	if (newstate.movePiece(piece, direction)) {// make move and check if legal
+		std::get<2>(move) = evaluation(newstate);
+		if (newstate.getState() == GameState::ENDED or depth == 0) {
+			// Path is being built from deep (depth==0) to shallow...
+			path = std::vector<Move>{ move }; path.reserve(100);
+			return path;
+		}
 
 		if (newstate.active_player() == Player::WHITE) {
 			value = -1000;
 			for (int i = 0; i < 16; i++) {
-				value = std::max(value, alphaBeta(newstate, i, depth - 1, alpha, beta));
+				new_path = alphaBeta(newstate, i, depth - 1, alpha, beta);
+				new_value = std::get<2>(new_path.back());
+				if (new_value > value) {
+					value = new_value;
+					path = new_path;
+				}
 				alpha = std::max(alpha, value);
 				if (alpha >= beta) break;
 			}
-			return value;
+			path.emplace(path.begin(), move);
+			return path;
 		}
 		else {
 			value = 1000;
 			for (int i = 0; i < 16; i++) {
-				value = std::min(value, alphaBeta(newstate, i, depth - 1, alpha, beta));
+				new_path = alphaBeta(newstate, i, depth - 1, alpha, beta);
+				new_value = std::get<2>(new_path.back());
+				if (new_value < value) {
+					value = new_value;
+					path = new_path;
+				}
 				beta = std::min(beta, value);
 				if (alpha >= beta) break;
 			}
-			return value;
+			path.emplace(path.begin(), move);
+			return path;
 		}
 	// If Illegal move
 	}
-	if (newstate.active_player() == Player::WHITE) return -10000; 
-	else return 10000;
-}
-std::vector<Move> findOptimalMove(Game state,int depth) {
-	std::vector<Move> path;
-	Game newstate = state;
-	while (newstate.active_player() == Player::BLACK) {
-		int lowest_score = 100000;
-		int best_move=0;
-		int tmp = 0;
-		for (int i=0; i < 16; i++) {
-			tmp = alphaBeta(newstate, i, depth, -10000, 10000);
-			if (tmp <= lowest_score) {
-				lowest_score = tmp;
-				best_move = i;
-			}
-		}
-		std::cout << "\nBest value in depth " << depth << " is: " << lowest_score << '\n';
-		if (newstate.movePiece(best_move / 4, static_cast<Direction>(best_move % 4))) {
-			std::cout << "Value after move is: " << evaluation(newstate) << '\n';
-			path.emplace(path.end(), std::make_tuple(best_move / 4, static_cast<Direction>(best_move % 4), 0));
-			std::cout << "Move is: Piece:" << best_move / 4 << " direction " << (best_move % 4) << '\n';
-			depth--;
-		} else {
-			std::cout << "-";
-		}
+	if (newstate.active_player() == Player::WHITE)
+		std::get<2>(move) = -10000; // move cost
+	else 
+		std::get<2>(move) = 10000; // move cost
 
-	}
+	path = std::vector<Move>{ move }; path.reserve(100);
 	return path;
+}
+
+
+std::vector<Move> findOptimalMove(Game state,int depth) {
+	Game newstate = state;
+	int lowest_score = 100000;
+	int new_value;
+	Path best_path;
+	Path new_path;
+	for (int i=0; i < 16; i++) {
+		new_path = alphaBeta(newstate, i, depth, -10000, 10000);
+		new_value = std::get<2>(new_path.front());
+		if (new_value <= lowest_score) {
+			lowest_score = new_value;
+			best_path = new_path;
+		}
+	}
+	return best_path;
 }
 
 std::vector<Move> findOptimalMoveStohastic(Game state, int depth) {
-	std::vector<Move> path;
 	Game newstate = state;
-
-	while (newstate.active_player() == Player::BLACK) {
-		int lowest_score = 100000;
-		int best_move = 0;
-		int tmp = 0;
-		for (int i = 0; i < 16; i++) {
-			//tmp = alphaBeta(newstate, i, depth, -10000, 10000);
-			tmp = alphaBetaStohastic(newstate, i%4, static_cast<Direction>(i/4), depth - 1,-10000, 10000);
-			if (tmp <= lowest_score) {
-				lowest_score = tmp;
-				best_move = i;
-			}
+	int lowest_score = 100000;
+	int new_value;
+	Path best_path;
+	Path new_path;
+	for (int i = 0; i < 16; i++) {
+		new_path = alphaBeta(newstate, i, depth, -10000, 10000);
+		new_value = std::get<2>(new_path.front());
+		if (new_value <= lowest_score) {
+			lowest_score = new_value;
+			best_path = new_path;
 		}
-		std::cout << "\nBest value in depth " << depth << " is: " << lowest_score << '\n';
-		if (newstate.movePiece(best_move % 4, static_cast<Direction>(best_move / 4))) {
-			std::cout << "Value after move is: " << evaluation(newstate) << '\n';
-			path.emplace(path.end(), std::make_tuple(best_move % 4, static_cast<Direction>(best_move / 4), 0));
-			std::cout << "Move is: Piece:" << best_move % 4 << " direction " << (best_move / 4) << '\n';
-			depth--;
-		}
-		else {
-			std::cout << "-";
-		}
-
 	}
-	return path;
+	return best_path;
 }
 
-int alphaBetaStohastic(const Game state, int node, Direction d,int depth, int alpha, int beta) {
+Path alphaBetaStohastic(const Game state, int node, int depth, int alpha, int beta) {
 	Game newstate = state;
-	int value;
-	if (newstate.movePiece((node % 4), d)) {// make move and check if legal
-		if (newstate.getState() == GameState::ENDED) { return evaluation(newstate); }
-		if (depth == 0) { return evaluation(newstate); } // final depth?
+	int value, new_value;
+	std::vector<Move> path, new_path;
+
+	int piece = (node / 4);
+	Direction direction; // = static_cast<Direction>(node % 4);
+
+	if (newstate.active_player() == Player::WHITE)
+		direction = randomDirectionWhite();
+	else
+		direction = randomDirectionBlack();
+
+	Move move = std::make_tuple(piece, direction, 0); // move template
+
+	if (newstate.movePiece(piece, direction)) {// make move and check if legal
+		std::get<2>(move) = evaluation(newstate);
+		if (newstate.getState() == GameState::ENDED or depth == 0) {
+			// Path is being built from deep (depth==0) to shallow...
+			path = std::vector<Move>{ move }; path.reserve(100);
+			return path;
+		}
 
 		if (newstate.active_player() == Player::WHITE) {
 			value = -1000;
 			for (int i = 0; i < 12; i++) {
-				value = std::max(value, alphaBetaStohastic(newstate, i, randomDirectionWhite(),depth - 1, alpha, beta));
+				new_path = alphaBetaStohastic(newstate, i, depth - 1, alpha, beta);
+				new_value = std::get<2>(new_path.back());
+				if (new_value > value) {
+					value = new_value;
+					path = new_path;
+				}
 				alpha = std::max(alpha, value);
 				if (alpha >= beta) break;
 			}
-			return value;
+			path.emplace(path.begin(), move);
+			return path;
 		}
 		else {
 			value = 1000;
 			for (int i = 0; i < 12; i++) {
-				value = std::min(value, alphaBetaStohastic(newstate, i, randomDirectionBlack(),depth - 1, alpha, beta));
+				new_path = alphaBetaStohastic(newstate, i, depth - 1, alpha, beta);
+				new_value = std::get<2>(new_path.back());
+				if (new_value < value) {
+					value = new_value;
+					path = new_path;
+				}
 				beta = std::min(beta, value);
 				if (alpha >= beta) break;
 			}
-			return value;
+			path.emplace(path.begin(), move);
+			return path;
 		}
 		// If Illegal move
 	}
-	if (newstate.active_player() == Player::WHITE) return -10000;
-	else return 10000;
+	if (newstate.active_player() == Player::WHITE)
+		std::get<2>(move) = -10000; // move cost
+	else
+		std::get<2>(move) = 10000; // move cost
+
+	path = std::vector<Move>{ move }; path.reserve(100);
+	return path;
 }
 
 Direction randomDirectionWhite() {
