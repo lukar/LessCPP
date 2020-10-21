@@ -71,18 +71,6 @@ constexpr int GameBase::countInnerWalls(Location const start, Location const end
 	return num;
 }
 
-// Is there a Piece on that Location?
-constexpr bool GameBase::existsPieceAtLocation(Location const location) const {
-	bool toReturn = false;
-	for (const auto &piece : m_whiteLocations) {
-			if (piece == location) toReturn = true;
-	}
-	for (const auto &piece : m_blackLocations) {
-			if (piece == location) toReturn = true;
-	}
-	return toReturn;
-}
-
 // For AI
 constexpr std::optional<int> GameBase::moveCost(Location old_location, Direction direction) const {
 	if (std::optional<Location> new_location = old_location + direction) {
@@ -98,7 +86,7 @@ constexpr std::optional<int> GameBase::moveCost(Location oldL, Location newL) co
 
 	if (newL.x - oldL.x != 0 && newL.y - oldL.y != 0) return {};
 
-	if (existsPieceAtLocation(newL)) return {};
+	if (pieceAtLocation(newL)) return {};
 
 	int wallCount = 0;
 	int distance = abs(newL.x - oldL.x) + abs(newL.y - oldL.y);
@@ -108,7 +96,7 @@ constexpr std::optional<int> GameBase::moveCost(Location oldL, Location newL) co
 		wallCount += countInnerWalls(oldL, connecting);
 		wallCount += countInnerWalls(connecting, newL);
 
-		if (!existsPieceAtLocation(connecting)) return {};
+		if (!pieceAtLocation(connecting)) return {};
 		if (wallCount != 0) return {};
 		return 1;
 	}
@@ -142,7 +130,7 @@ std::optional<Location> GameBase::movePiece(int piece_num, Direction direction) 
 	std::optional<Location> new_location = old_location + direction;
 
 	if (new_location){
-		if ( existsPieceAtLocation(new_location.value()) ) {
+		if ( pieceAtLocation(new_location.value()) ) {
 				if ((new_location = new_location.value() + direction)) {
 						cost = moveCost(old_location, new_location.value());
 				}

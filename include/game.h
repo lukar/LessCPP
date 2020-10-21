@@ -58,6 +58,16 @@ public:
 		}
 	}
 
+	constexpr std::optional<std::tuple<Player, int>> pieceAtLocation(const Location location) const {
+		for (int piece = 0; piece < 4; ++piece) {
+				if (m_whiteLocations[piece] == location) return {{Player::WHITE, piece}};
+		}
+		for (int piece = 0; piece < 4; ++piece) {
+				if (m_blackLocations[piece] == location) return {{Player::BLACK, piece}};
+		}
+		return {};
+	}
+
 	bool isEndOfTurn() const;
 
 	void nextTurn();
