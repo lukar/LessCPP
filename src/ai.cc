@@ -2,7 +2,7 @@
 
 
 bool isLesserPath(EvalPath a, EvalPath b) {
-	return std::get<1>(a) < std::get<1>(b);
+	return a.second < b.second;
 }
 
 EvalPath recurseFindOptimal(const GameRef state, const Player player, int depth, int alpha, int beta) {
@@ -17,20 +17,20 @@ EvalPath recurseFindOptimal(const GameRef state, const Player player, int depth,
 				auto const neweval = evaluation(newstate);
 				if (newstate.active_player() == player) {
 					if (auto && [path, eval] = recurseFindOptimal(newstate, player, depth, alpha, beta); path.size() != 0) {
-						path.emplace(path.begin(), std::make_tuple(piece, direction));
-						paths.emplace_back(std::make_tuple(path, eval));
+						path.emplace(path.begin(), std::make_pair(piece, direction));
+						paths.emplace_back(std::make_pair(path, eval));
 					}
 				} else if (depth > 0 and state.getState() != GameState::LAST_TURN) {
 					if (auto && [path, prune] = recurseFindOptimal(newstate, ~player, depth - 1, alpha, beta); path.size() != 0) {
 						if (player == Player::WHITE) beta = std::min(beta, prune);
 						else alpha = std::max(alpha, prune);
-						path.emplace(path.begin(), std::make_tuple(piece, direction));
-						paths.emplace_back(std::make_tuple(path, prune));
+						path.emplace(path.begin(), std::make_pair(piece, direction));
+						paths.emplace_back(std::make_pair(path, prune));
 					}
 				} else {
-					const auto move = std::make_tuple(piece, direction);
+					const auto move = std::make_pair(piece, direction);
 					const std::vector<Move> moves = {move};
-					const auto path = std::make_tuple(moves, neweval);
+					const auto path = std::make_pair(moves, neweval);
 					paths.emplace_back(path);
 				}
 			}

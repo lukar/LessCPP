@@ -5,12 +5,13 @@
 #ifndef LESSCPP_CONST_GLOBALS_H
 #define LESSCPP_CONST_GLOBALS_H
 
+#include <SFML/Graphics.hpp>
+
 #include <array>
 #include <optional>
-#include <variant>
-
 
 #include <ciso646>
+#include <utility>
 
 #include <SFML/Graphics.hpp>
 // #include <SFML/Window.hpp>
@@ -18,7 +19,6 @@
 typedef unsigned int uint;
 
 enum class Player {WHITE, BLACK, NONE};
-
 
 constexpr Player operator~(const Player& player) {
     if (player == Player::WHITE) return Player::BLACK;
@@ -29,8 +29,8 @@ enum class GameState {ONGOING, LAST_TURN, ENDED};
 enum class Direction { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3};
 
 // piece, direction
-typedef std::tuple<int, Direction> Move;
-typedef std::vector<Move> Path;
+using Move = std::pair<int, Direction>;
+using Path = std::vector<Move>;
 
 constexpr Direction operator++(Direction& direction) {
     switch (direction) {

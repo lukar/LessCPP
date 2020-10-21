@@ -5,13 +5,13 @@
 #include "const_globals.h"
 
 #include <vector>
-#include <tuple>
+#include <utility>
 #include <optional>
 
 
 
 // tuple (moves, evaluation)
-typedef std::tuple<Path, int> EvalPath;
+using EvalPath = std::pair<Path, int>;
 
 
 constexpr int sumLocation(Location loc) {
