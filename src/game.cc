@@ -169,3 +169,16 @@ void GameBase::setPieceLocation(uint piece, const Location& location) {
 	active_pieces()[piece] = location;
 }
 
+nlohmann::json GameBase::getPrivateFields() const
+{
+	nlohmann::json fields;
+	fields["moves_left"] = m_moves_left;
+	fields["active_player"] = m_active_player;
+	fields["winning_player"] = m_winning_player;
+	fields["white_moves"] = m_white_moves;
+	fields["black_moves"] = m_black_moves;
+	fields["whiteLocations"] = paired(m_whiteLocations);
+	fields["blackLocations"] = paired(m_blackLocations);
+
+	return fields;
+}

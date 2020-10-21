@@ -2,6 +2,8 @@
 #include "ai.h"
 #include <tuple>
 
+#include "sub_menu_context.h"
+
 GameContext::GameContext() : game(wall_configs), gui(wall_configs)
 {
 	// create texture (necessary)
@@ -21,7 +23,8 @@ Context* GameContext::update(const sf::Event & event, const sf::Vector2f & mouse
 	// END GAME?
 	if (event.type == sf::Event::KeyPressed) {
 		if (event.key.code == sf::Keyboard::Q) {
-			quit = true;
+			// quit = true;
+			return new SubMenuContext(quitLevel, rentex.getTexture(), game);
 		}
 	}
 	// HUMAN

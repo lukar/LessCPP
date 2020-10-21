@@ -4,10 +4,14 @@
 #include "const_globals.h"
 #include <random>
 #include <array>
+#include <utility>
 
 #include "helpers.h"
 
-class GameBase {
+#include <nlohmann/json.hpp>
+
+class GameBase
+{
 private:
 	std::array<std::array<WallConfig, 3>, 3> & m_wall_matrix;
 
@@ -22,6 +26,17 @@ private:
 	Locations<4> m_blackLocations = blackStart;
 
 	void setPieceLocation(uint, const Location&);
+
+	// Converts the locations array into an array of pairs (need for json output)
+	template <std::size_t Size>
+	std::array<std::pair<int, int>, Size> paired(Locations<Size> locations) const
+	{
+		std::array<std::pair<int, int>, Size> tmp;
+		for (std::size_t i = 0; i < Size; ++i) {
+			tmp[i] = std::make_pair(locations[i].x, locations[i].y);
+		}
+		return tmp;
+	}
 
 public:
 
@@ -88,6 +103,9 @@ public:
 
 	std::optional<Location> movePiece(const Location&, const Location&);
 
+protected:
+
+	nlohmann::json getPrivateFields() const;
 };
 
 class Game : public GameBase {
@@ -101,6 +119,14 @@ public:
 			}
 		}
 	}
+
+	nlohmann::json getJsonRepresentation() const {
+		nlohmann::json fields = getPrivateFields();
+		fields["wall_matrix"] = m_wall_matrix;
+
+		return fields;
+	}
+
 
 	Game(const Game &) = delete;
 
