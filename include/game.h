@@ -90,9 +90,12 @@ public:
 
 };
 
-class Game : public GameBase {
+class Game : public GameBase
+{
 public:
 	std::array<std::array<WallConfig, 3>, 3> m_wall_matrix;
+
+	Path m_history;
 	
 	Game(std::array<WallConfig, 9> wallconfigs) : GameBase(m_wall_matrix) {
 		for (size_t y = 0; y < 3; ++y) {
@@ -102,11 +105,29 @@ public:
 		}
 	}
 
+	// overload movePiece functions to produce side-effect of logging moves
+	std::optional<Location> movePiece(int piece, Direction direction) {
+		auto result = GameBase::movePiece(piece, direction);
+		if (result) m_history.push_back(std::make_pair(piece, direction));
+		return result;
+	}
+
+	std::optional<Location> movePiece(Location old_location, Location new_location) {
+		auto result = GameBase::movePiece(old_location, new_location);
+		if (result and !(old_location == new_location)) {
+			auto [player, piece] = GameBase::pieceAtLocation(new_location).value();
+			Direction direction = getDirection(old_location, new_location).value();
+			m_history.push_back(std::make_pair(piece, direction));
+		}
+		return result;
+	}
+
 	Game(const Game &) = delete;
 
 };
 
-class GameRef : public GameBase {
+class GameRef : public GameBase
+{
 public:
 
 	GameRef(const GameBase & ref) : GameBase(ref) {};

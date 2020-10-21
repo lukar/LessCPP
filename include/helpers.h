@@ -43,6 +43,19 @@ constexpr bool piecesInLocations(const Locations<4>& pieces, const Locations<4>&
     return count == 4;
 }
 
+constexpr std::optional<Direction> getDirection(Location oldL, Location newL) {
+	int dx = newL.x - oldL.x;
+	int dy = newL.y - oldL.y;
+
+	if (dx != 0 && dy != 0) return {};
+
+	if (dx > 0) return Direction::RIGHT;
+	else if (dx < 0) return Direction::LEFT;
+	else if (dy > 0) return Direction::DOWN;
+	else if (dy < 0) return Direction::UP;
+	else return {};
+}
+
 template <typename T>
 constexpr T cabs(T num) {
 	if ( num < 0 ) return -num;
