@@ -47,7 +47,8 @@ constexpr Direction operator++(Direction& direction) {
 
 struct Location {
 	int x, y;
-    constexpr bool operator==(const Location &rhs) const {return x == rhs.x && y == rhs.y;}
+    constexpr bool operator==(const Location &rhs) const {return x == rhs.x and y == rhs.y;}
+    constexpr bool operator!=(const Location &rhs) const {return x != rhs.x or y != rhs.y;}
     bool operator<(const Location &rhs) const {return x*10+y < rhs.x*10 +rhs.y;}
 	constexpr std::optional<Location> operator+(const Direction direction) const {
         Location tmp = *this;
@@ -77,6 +78,11 @@ struct Location {
     constexpr Location operator-(const Location& location) const {
         return {this->x - location.x, this->y - location.y};
     }
+
+		friend std::ostream& operator<<(std::ostream& os, const Location& location) {
+			os << "[" << location.x << "," << location.y << "]";
+			return os;
+		}
 };
 
 // piece, direction
