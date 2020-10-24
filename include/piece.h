@@ -21,10 +21,11 @@ private:
     sf::CircleShape m_shape;
     Location m_location;
 
+    void setPosition(const Location &);
+
 public:
 
     void setPosition(const sf::Vector2f &);
-    void setPosition(const Location &);
     void setLocation(const Location &);
     Location getLocation() const;
     sf::Vector2f getPosition() const;

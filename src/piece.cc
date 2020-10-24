@@ -23,6 +23,7 @@ void Piece::setPosition(const Location &location) {
 
 void Piece::setLocation(const Location & location) {
     m_location = location;
+		setPosition(location);
 }
 
 void Piece::resetPosition() {
