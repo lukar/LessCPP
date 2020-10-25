@@ -36,14 +36,15 @@ int main()
 			if (contexts.size() == 0) break;
 		}
 
+		const auto mouse_pos = getMousePosition(window);
 		while (window.pollEvent(event)) {
-			Context* newcontext = contexts.top()->update(event, getMousePosition(window));
+			Context* newcontext = contexts.top()->update(event, mouse_pos);
 			if (newcontext != nullptr) contexts.push(newcontext);
 		}
 
 		window.clear();
 
-		window.draw(sf::Sprite(contexts.top()->render(getMousePosition(window))));
+		window.draw(sf::Sprite(contexts.top()->render(mouse_pos)));
 
 		window.display();
 	}
