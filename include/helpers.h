@@ -25,11 +25,11 @@ sf::Vector2f getMousePosition(sf::RenderWindow const &);
 
 std::optional<Location> getMouseLocation(sf::RenderWindow const&);
 
-sf::Vector2f positionFromLocation(Location);
+sf::Vector2f positionFromLocation(const Location&);
 
-Location locationFromPosition(sf::Vector2f);
+Location locationFromPosition(const sf::Vector2f&);
 
-constexpr bool piecesInLocations(Locations<4> const &pieces, Locations<4> const &locations) {
+constexpr bool piecesInLocations(const Locations<4>& pieces, const Locations<4>& locations) {
 //    return std::all_of(pieces.begin(), pieces.end(), [=](const Location & piece) {
 //        return std::find(locations.begin(), locations.end(), piece) != locations.end();
 //    });

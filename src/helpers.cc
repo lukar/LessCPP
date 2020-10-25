@@ -19,14 +19,14 @@ std::optional<Location> getMouseLocation(sf::RenderWindow  const& window) {
 					static_cast<int>(mouse.y / (block_size / 2))};
 }
 
-sf::Vector2f positionFromLocation(Location location) {
+sf::Vector2f positionFromLocation(const Location& location) {
     return {
         location.x * (block_size / 2) + block_size / 4,
         location.y * (block_size / 2) + block_size / 4
     };
 }
 
-Location locationFromPosition(sf::Vector2f position) {
+Location locationFromPosition(const sf::Vector2f& position) {
     return {
 		static_cast<int>(position.x / (block_size / 2)),
 		static_cast<int>(position.y / (block_size / 2))

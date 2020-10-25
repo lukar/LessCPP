@@ -21,16 +21,16 @@ private:
     sf::CircleShape m_shape;
     Location m_location;
 
-    void setPosition(const Location &);
+    void setPosition(const Location&);
 
 public:
 
-    void setPosition(const sf::Vector2f &);
-    void setLocation(const Location &);
+    void setPosition(const sf::Vector2f&);
+    void setLocation(const Location&);
     Location getLocation() const;
     sf::Vector2f getPosition() const;
     void resetPosition();
-    Piece(Location, sf::Color);
+    Piece(const Location&, const sf::Color&);
     Piece() = default;
 };
 

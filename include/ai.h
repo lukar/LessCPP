@@ -14,11 +14,11 @@
 using EvalPath = std::pair<Path, int>;
 
 
-constexpr int sumLocation(Location loc) {
+constexpr int sumLocation(const Location& loc) {
 	return loc.x + loc.y;
 }
 
-constexpr int locationDistance(Location a, Location b) {
+constexpr int locationDistance(const Location& a, const Location& b) {
 	return cabs(a.x - b.x) + cabs(a.y - b.y);
 }
 

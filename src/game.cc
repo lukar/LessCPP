@@ -41,7 +41,7 @@ void GameBase::nextTurn() {
 }
 
 // Return number of wall segments between start and end. Locations must be orthogonal and adjacent
-constexpr int GameBase::countInnerWalls(Location const start, Location const end) const {
+constexpr int GameBase::countInnerWalls(const Location& start, const Location& end) const {
     
     // differences
 	const int dx = end.x - start.x;
@@ -70,7 +70,7 @@ constexpr int GameBase::countInnerWalls(Location const start, Location const end
 }
 
 // For AI
-constexpr std::optional<int> GameBase::moveCost(Location old_location, Direction direction) const {
+constexpr std::optional<int> GameBase::moveCost(const Location& old_location, const Direction direction) const {
 	if (std::optional<Location> new_location = old_location + direction) {
 			return countInnerWalls(old_location, new_location.value());
 	}
@@ -78,7 +78,7 @@ constexpr std::optional<int> GameBase::moveCost(Location old_location, Direction
 }
 
 // For human
-constexpr std::optional<int> GameBase::moveCost(Location oldL, Location newL) const {
+constexpr std::optional<int> GameBase::moveCost(const Location& oldL, const Location& newL) const {
 
 	if (oldL == newL) return 0;
 
@@ -103,7 +103,7 @@ constexpr std::optional<int> GameBase::moveCost(Location oldL, Location newL) co
 }
 
 
-std::optional<int> GameBase::getPieceNumber(Location location) {
+std::optional<int> GameBase::getPieceNumber(const Location& location) {
 	for (size_t i = 0; i != 4; ++i) {
 			if( active_pieces()[i] == location ) return i;
 	}
@@ -122,7 +122,7 @@ bool GameBase::decrementMoves(int moves) {
 }
 
 // for AI
-std::optional<Location> GameBase::movePiece(int piece_num, Direction direction) {
+std::optional<Location> GameBase::movePiece(const int piece_num, const Direction direction) {
 	Location old_location = getPieceLocation(piece_num);
 	std::optional<int> cost;
 	std::optional<Location> new_location = old_location + direction;
@@ -148,7 +148,7 @@ std::optional<Location> GameBase::movePiece(int piece_num, Direction direction) 
 }
 
 // For human
-std::optional<Location> GameBase::movePiece(Location old_location, Location new_location){
+std::optional<Location> GameBase::movePiece(const Location& old_location, const Location& new_location){
 	auto piece = getPieceNumber(old_location);
 	if (!piece) return {};
 	std::optional<int> cost = moveCost(old_location, new_location);
@@ -165,7 +165,7 @@ std::optional<Location> GameBase::movePiece(Location old_location, Location new_
 	return new_location;
 }
 
-void GameBase::setPieceLocation(int piece, Location location) {
+void GameBase::setPieceLocation(const int piece, const Location& location) {
 	active_pieces()[static_cast<uint>(piece)] = location;
 }
 

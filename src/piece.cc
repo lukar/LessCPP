@@ -4,7 +4,7 @@
 
 #include "piece.h"
 
-Piece::Piece(Location location, sf::Color color) : m_location(location) {
+Piece::Piece(const Location& location, const sf::Color& color) : m_location(location) {
     m_shape = sf::CircleShape(piece_size);
     m_shape.setFillColor(color);
     m_shape.setOutlineThickness(border_width);
@@ -17,11 +17,11 @@ void Piece::setPosition(const sf::Vector2f &position) {
     m_shape.setPosition(position);
 }
 
-void Piece::setPosition(const Location &location) {
+void Piece::setPosition(const Location& location) {
     m_shape.setPosition(positionFromLocation(location));
 }
 
-void Piece::setLocation(const Location & location) {
+void Piece::setLocation(const Location& location) {
     m_location = location;
 		setPosition(location);
 }

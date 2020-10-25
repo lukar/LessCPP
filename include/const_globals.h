@@ -14,7 +14,6 @@
 #include <utility>
 
 #include <SFML/Graphics.hpp>
-// #include <SFML/Window.hpp>
 
 typedef unsigned int uint;
 
@@ -75,11 +74,11 @@ struct Location {
         return tmp;
     }
 
-    constexpr Location operator+(const Location location) const {
+    constexpr Location operator+(const Location& location) const {
         return {this->x + location.x, this->y + location.y};
     }
 
-    constexpr Location operator-(const Location location) const {
+    constexpr Location operator-(const Location& location) const {
         return {this->x - location.x, this->y - location.y};
     }
 };

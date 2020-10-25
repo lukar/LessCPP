@@ -48,7 +48,7 @@ public:
 	}
 
 
-	std::optional<int> getPieceNumber(Location);
+	std::optional<int> getPieceNumber(const Location&);
 
 	constexpr std::array<Location, 4> getPieces(Player player) const {
 		if (player == Player::WHITE) {
@@ -58,7 +58,7 @@ public:
 		}
 	}
 
-	constexpr std::optional<std::tuple<Player, int>> pieceAtLocation(const Location location) const {
+	constexpr std::optional<std::tuple<Player, int>> pieceAtLocation(const Location& location) const {
 		for (int piece = 0; piece < 4; ++piece) {
 				if (m_whiteLocations[piece] == location) return {{Player::WHITE, piece}};
 		}
@@ -74,19 +74,19 @@ public:
 
 	constexpr int countInnerWalls(const Location&, const Location&) const;
 
-	constexpr bool existsPieceAtLocation(Location const) const;
+	constexpr bool existsPieceAtLocation(const Location&) const;
 
-	constexpr std::optional<int> moveCost (Location, Direction) const;
+	constexpr std::optional<int> moveCost (const Location&, const Direction) const;
 
-	constexpr std::optional<int> moveCost (Location, Location) const;
+	constexpr std::optional<int> moveCost (const Location&, const Location&) const;
 
 	Location getPieceLocation(int);
 
 	bool decrementMoves(int);
 
-	std::optional<Location> movePiece(int, Direction);
+	std::optional<Location> movePiece(int, const Direction);
 
-	std::optional<Location> movePiece(Location, Location);
+	std::optional<Location> movePiece(const Location&, const Location&);
 
 };
 
