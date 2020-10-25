@@ -18,10 +18,10 @@ private:
 	int m_white_moves = 0;
 	int m_black_moves = 0;
 
-	std::array<Location, 4> m_whiteLocations = whiteStart;
-	std::array<Location, 4> m_blackLocations = blackStart;
+	Locations<4> m_whiteLocations = whiteStart;
+	Locations<4> m_blackLocations = blackStart;
 
-	void setPieceLocation(int, Location);
+	void setPieceLocation(int, const Location&);
 
 public:
 
@@ -43,14 +43,14 @@ public:
 	constexpr Player        active_player() const { return m_active_player; }
 	constexpr Player        winning_player() const { return m_winning_player; }
 	constexpr int           moves_left() const { return m_moves_left; }
-	constexpr std::array<Location, 4> & active_pieces() {
+	constexpr Locations<4>& active_pieces() {
 		return m_active_player == Player::WHITE? m_whiteLocations : m_blackLocations;
 	}
 
 
 	std::optional<int> getPieceNumber(const Location&);
 
-	constexpr std::array<Location, 4> getPieces(Player player) const {
+	constexpr Locations<4> getPieces(Player player) const {
 		if (player == Player::WHITE) {
 				return m_whiteLocations;
 		} else {

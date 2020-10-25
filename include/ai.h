@@ -22,7 +22,7 @@ constexpr int locationDistance(const Location& a, const Location& b) {
 	return cabs(a.x - b.x) + cabs(a.y - b.y);
 }
 
-constexpr int piecesApart(std::array<Location, 4> pieces) {
+constexpr int piecesApart(Locations<4> pieces) {
 	int result = 0;
 	for (const auto & a : pieces) {
 		for (const auto & b : pieces) {
