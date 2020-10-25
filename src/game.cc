@@ -20,7 +20,7 @@ void GameBase::nextTurn() {
 	if (piecesInLocations(m_blackLocations, whiteStart) or m_state == GameState::LAST_TURN) {
 		m_state = GameState::ENDED;
 	} else if (piecesInLocations(m_whiteLocations, blackStart)) {
-		m_state = GameState::LAST_TURN;
+		setState(GameState::LAST_TURN);
 		m_moves_left = 3 - m_moves_left;
 	} else {
 		m_moves_left = 3;

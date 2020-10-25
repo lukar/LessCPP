@@ -7,12 +7,12 @@
 
 #include "helpers.h"
 
-class GameBase {
+class GameBase
+{
 private:
 	std::array<std::array<WallConfig, 3>, 3> & m_wall_matrix;
 
 	int m_moves_left = 3;
-	GameState m_state = GameState::ONGOING;
 	Player m_active_player = Player::WHITE;
 	Player m_winning_player = Player::NONE;
 	int m_white_moves = 0;
@@ -20,6 +20,9 @@ private:
 
 	Locations<4> m_whiteLocations = whiteStart;
 	Locations<4> m_blackLocations = blackStart;
+
+	GameState m_state = GameState::ONGOING;
+	GameState m_prev_state = GameState::ONGOING;
 
 	void setPieceLocation(uint, const Location&);
 
@@ -88,6 +91,10 @@ public:
 
 	std::optional<Location> movePiece(const Location&, const Location&);
 
+	constexpr void setState(GameState state) {
+		m_prev_state = m_state;
+		m_state = state;
+	}
 };
 
 class Game : public GameBase
