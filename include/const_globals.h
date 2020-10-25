@@ -27,10 +27,6 @@ constexpr Player operator~(const Player& player) {
 enum class GameState {ONGOING, LAST_TURN, ENDED};
 enum class Direction { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3};
 
-// piece, direction
-using Move = std::pair<int, Direction>;
-using Path = std::vector<Move>;
-
 constexpr Direction operator++(Direction& direction) {
     switch (direction) {
         case Direction::UP:
@@ -82,6 +78,10 @@ struct Location {
         return {this->x - location.x, this->y - location.y};
     }
 };
+
+// piece, direction
+using Move = std::pair<uint, Direction>;
+using Path = std::vector<Move>;
 
 template <size_t N> using Locations = std::array<Location, N>;
 

@@ -110,7 +110,7 @@ std::optional<int> GameBase::getPieceNumber(const Location& location) {
 	return {};
 }
 
-Location GameBase::getPieceLocation(int piece_num) {
+Location GameBase::getPieceLocation(uint piece_num) {
 	return active_pieces()[static_cast<uint>(piece_num)];
 }
 
@@ -165,7 +165,7 @@ std::optional<Location> GameBase::movePiece(const Location& old_location, const 
 	return new_location;
 }
 
-void GameBase::setPieceLocation(const int piece, const Location& location) {
-	active_pieces()[static_cast<uint>(piece)] = location;
+void GameBase::setPieceLocation(uint piece, const Location& location) {
+	active_pieces()[piece] = location;
 }
 

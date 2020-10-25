@@ -21,7 +21,7 @@ private:
 	Locations<4> m_whiteLocations = whiteStart;
 	Locations<4> m_blackLocations = blackStart;
 
-	void setPieceLocation(int, const Location&);
+	void setPieceLocation(uint, const Location&);
 
 public:
 
@@ -80,7 +80,7 @@ public:
 
 	constexpr std::optional<int> moveCost (const Location&, const Location&) const;
 
-	Location getPieceLocation(int);
+	Location getPieceLocation(uint);
 
 	bool decrementMoves(int);
 

@@ -60,11 +60,11 @@ Context* GameContext::update(const sf::Event & event, const sf::Vector2f & mouse
 	//// AI
 	else if (game.getState() != GameState::ENDED and game.active_player() == Player::BLACK) {
 		const auto & [path, eval] = recurseFindOptimal(game, Player::BLACK, 1, 0, 100);
-		for (auto elem : path) {
+		for (auto [piece, direction] : path) {
 			if (game.active_player() != Player::BLACK) break;
-			auto newlocation = game.movePiece(std::get<0>(elem), std::get<1>(elem));
-			gui.getPieces(Player::BLACK)[static_cast<uint>(std::get<0>(elem))].setLocation(newlocation.value());
-			gui.getPieces(Player::BLACK)[static_cast<uint>(std::get<0>(elem))].resetPosition();
+			auto newlocation = game.movePiece(piece, direction);
+			gui.getPieces(Player::BLACK)[piece].setLocation(newlocation.value());
+			gui.getPieces(Player::BLACK)[piece].resetPosition();
 		}
 	}
 
