@@ -26,7 +26,7 @@ Context* GameContext::update(const sf::Event & event, const sf::Vector2f & mouse
 	}
 	// HUMAN
 	if (game.getState() != GameState::ENDED and game.active_player() != Player::BLACK) {
-		// GRAB PLAYER
+		// GRAB PIECE
 		if (event.type == sf::Event::MouseButtonPressed) {
 			for (auto& piece : gui.getPieces(game.active_player())) {
 				if (euclideanDistance(mouse_pos, piece.getPosition()) <= piece_size) {
@@ -35,7 +35,7 @@ Context* GameContext::update(const sf::Event & event, const sf::Vector2f & mouse
 				}
 			}
 		}
-		// DROP PLAYER
+		// DROP PIECE
 		if (event.type == sf::Event::MouseButtonReleased) {
 			if (held_piece != nullptr) {
 				std::optional<Location> new_location = locationFromPosition(mouse_pos);

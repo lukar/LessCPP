@@ -1,5 +1,5 @@
-#ifndef MENU_CONTEXT_LESSCPP
-#define MENU_CONTEXT_LESSCPP
+#ifndef MAIN_MENU_CONTEXT_LESSCPP
+#define MAIN_MENU_CONTEXT_LESSCPP
 
 #include "const_globals.h"
 #include "helpers.h"
@@ -33,5 +33,5 @@ public:
 };
 
 
-#endif // GAME_CONTEXT_LESSCPP
+#endif // MAIN_MENU_CONTEXT_LESSCPP
 
