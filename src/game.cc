@@ -40,8 +40,6 @@ void GameBase::nextTurn() {
 	}
 }
 
-void GameBase::setGameOver(Player winner) { m_state = GameState::ENDED; m_winning_player = winner; }
-
 // Return number of wall segments between start and end. Locations must be orthogonal and adjacent
 constexpr int GameBase::countInnerWalls(Location const start, Location const end) const {
     

@@ -37,12 +37,12 @@ public:
 	}
 
 	// Getter methods
-	constexpr int white_moves() const { return m_white_moves; }
-	constexpr int black_moves() const { return m_black_moves; }
-	constexpr GameState getState() const { return m_state; }
-	constexpr Player active_player() const { return m_active_player; }
-	constexpr Player winning_player() const { return m_winning_player; }
-	constexpr int moves_left() const { return m_moves_left; }
+	constexpr int           white_moves() const { return m_white_moves; }
+	constexpr int           black_moves() const { return m_black_moves; }
+	constexpr GameState     getState() const { return m_state; }
+	constexpr Player        active_player() const { return m_active_player; }
+	constexpr Player        winning_player() const { return m_winning_player; }
+	constexpr int           moves_left() const { return m_moves_left; }
 	constexpr std::array<Location, 4> & active_pieces() {
 		return m_active_player == Player::WHITE? m_whiteLocations : m_blackLocations;
 	}
@@ -72,9 +72,7 @@ public:
 
 	void nextTurn();
 
-	void setGameOver(Player);
-
-	constexpr int countInnerWalls(Location const, Location const) const;
+	constexpr int countInnerWalls(const Location&, const Location&) const;
 
 	constexpr bool existsPieceAtLocation(Location const) const;
 
