@@ -2,7 +2,7 @@
 #include "ai.h"
 #include <tuple>
 
-GameContext::GameContext() : game(Game(wall_configs)), gui(Gui(wall_configs))
+GameContext::GameContext() : game(wall_configs), gui(wall_configs)
 {
 	// create texture (necessary)
 	rentex.create(window_width, window_height);
