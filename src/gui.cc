@@ -38,3 +38,14 @@ void Gui::draw(sf::RenderTarget &target, sf::RenderStates states) const {
     for (auto &p: m_blackPieces)
         target.draw(p, states);
 }
+
+std::optional<std::pair<uint, Player>> Gui::pieceAtLocation(const Location& location) const
+{
+	for (uint i = 0; i < m_whitePieces.size(); ++i) {
+			if (m_whitePieces[i].getLocation() == location) return {{i, Player::WHITE}};
+	}
+	for (uint i = 0; i < m_blackPieces.size(); ++i) {
+			if (m_blackPieces[i].getLocation() == location) return {{i, Player::BLACK}};
+	}
+	return {};
+}

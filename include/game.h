@@ -95,6 +95,10 @@ public:
 		m_prev_state = m_state;
 		m_state = state;
 	}
+
+protected:
+	constexpr void Preview() { if (m_state != GameState::PREVIEW) setState(GameState::PREVIEW); };
+	constexpr void Resume() { if (m_state == GameState::PREVIEW) setState(m_prev_state); };
 };
 
 class Game : public GameBase
@@ -102,8 +106,9 @@ class Game : public GameBase
 public:
 	std::array<std::array<WallConfig, 3>, 3> m_wall_matrix;
 
-	Path m_history;
-	
+	History m_history; // All moves that were made so far
+	uint m_history_index = 0;
+
 	Game(std::array<WallConfig, 9> wallconfigs) : GameBase(m_wall_matrix) {
 		for (size_t y = 0; y < 3; ++y) {
 			for (size_t x = 0; x < 3; ++x) {
@@ -113,20 +118,33 @@ public:
 	}
 
 	// overload movePiece functions to produce side-effect of logging moves
-	std::optional<Location> movePiece(int piece, Direction direction) {
-		auto result = GameBase::movePiece(piece, direction);
-		if (result) m_history.push_back(std::make_pair(piece, direction));
-		return result;
+	std::optional<Location> movePiece(uint piece, Direction direction) {
+		if (getState() == GameState::PREVIEW) return {};
+		const auto old_location = active_pieces()[piece];
+		const auto new_location = GameBase::movePiece(piece, direction);
+		if (new_location) m_history.push_back({old_location, new_location.value()});
+		return new_location;
 	}
 
 	std::optional<Location> movePiece(Location old_location, Location new_location) {
+		if (getState() == GameState::PREVIEW) return {};
 		auto result = GameBase::movePiece(old_location, new_location);
-		if (result and !(old_location == new_location)) {
-			auto [player, piece] = GameBase::pieceAtLocation(new_location).value();
-			Direction direction = getDirection(old_location, new_location).value();
-			m_history.push_back(std::make_pair(piece, direction));
+		if (result and old_location != new_location) {
+			m_history.push_back({old_location, new_location});
 		}
 		return result;
+	}
+
+	const std::optional<std::pair<Location, Location>> getReversedMove() {
+		if (m_history_index == m_history.size()) return {};
+		Preview();
+		auto [start, end] = m_history.rbegin()[m_history_index++]; 
+		return {{end, start}};
+	}
+
+	const std::optional<std::pair<Location, Location>> getMove() {
+		if (m_history_index == 0) { Resume(); return {}; }
+		return m_history.rbegin()[--m_history_index]; 
 	}
 
 	Game(const Game &) = delete;

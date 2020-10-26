@@ -2,6 +2,8 @@
 #include "ai.h"
 #include <tuple>
 
+#include <iostream>
+
 GameContext::GameContext() : game(wall_configs), gui(wall_configs)
 {
 	// create texture (necessary)
@@ -22,6 +24,26 @@ Context* GameContext::update(const sf::Event & event, const sf::Vector2f & mouse
 	if (event.type == sf::Event::KeyPressed) {
 		if (event.key.code == sf::Keyboard::Q) {
 			quit = true;
+		}
+		else if (event.key.code == sf::Keyboard::Left) {
+			const auto move = game.getReversedMove();
+			if (move) {
+				const auto [old_location, new_location] = move.value();
+				const auto [piece_idx, player] = gui.pieceAtLocation(old_location).value();
+				gui.getPieces(player)[piece_idx].setLocation(new_location);
+			} else {
+				std::cout << "Can't go back. At the first move\n";
+			}
+		}
+		else if (event.key.code == sf::Keyboard::Right) {
+			const auto move = game.getMove();
+			if (move) {
+				const auto [old_location, new_location] = move.value();
+				const auto [piece_idx, player] = gui.pieceAtLocation(old_location).value();
+				gui.getPieces(player)[piece_idx].setLocation(new_location);
+			} else {
+				std::cout << "Can't go forward. At the last move\n";
+			}
 		}
 	}
 	// HUMAN

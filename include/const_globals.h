@@ -14,6 +14,7 @@
 #include <utility>
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
 typedef unsigned int uint;
 
@@ -24,7 +25,7 @@ constexpr Player operator~(const Player& player) {
     else return Player::WHITE;
 }
 
-enum class GameState {ONGOING, LAST_TURN, ENDED};
+enum class GameState {ONGOING, LAST_TURN, ENDED, PREVIEW};
 enum class Direction { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3};
 
 constexpr Direction operator++(Direction& direction) {
@@ -88,6 +89,7 @@ struct Location {
 // piece, direction
 using Move = std::pair<uint, Direction>;
 using Path = std::vector<Move>;
+using History = std::vector<std::pair<Location, Location>>;
 
 template <size_t N> using Locations = std::array<Location, N>;
 
