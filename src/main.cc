@@ -10,9 +10,12 @@
 #include "context.h"
 #include "main_menu_context.h"
 
+#include "osdialog.h"
 
 int main()
 {
+	char* filename = osdialog_file(OSDIALOG_OPEN, NULL, NULL, NULL);
+
 
 	std::stack<Context*> contexts;
 
