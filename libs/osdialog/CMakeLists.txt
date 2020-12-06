@@ -1,0 +1,26 @@
+cmake_minimum_required(VERSION 3.12)
+project(OsDialog C)
+
+
+if(UNIX)
+	set(OD_SOURCE "osdialog_gtk3.c")
+elseif(WIN32)
+	set(OD_SOURCE "osdialog_win.c")
+else()
+	massage(FATAL_ERROR "Operating system is unsupported")
+endif()
+
+add_library(osdialog osdialog.c ${OD_SOURCE})
+#set(CMAKE_REQUIRED_LIBRARIES legacy_stdio_definitions.lib)
+
+if(UNIX)
+	include(FindPkgConfig)
+	pkg_check_modules(GTK REQUIRED gtk+-3.0)
+	target_include_directories(osdialog PRIVATE ${GTK_INCLUDE_DIRS})
+	add_definitions(${GTK_CFLAGS_OTHER})
+	target_link_libraries(osdialog PRIVATE ${GTK_LIBRARIES})
+elseif(WIN32)
+	target_link_libraries(osdialog comdlg32)
+else()
+	massage(FATAL_ERROR "Shouldn't be here -.-''")
+endif()

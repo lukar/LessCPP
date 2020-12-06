@@ -10,10 +10,10 @@
 #include "context.h"
 #include "main_menu_context.h"
 
+#include "osdialog.h"
 
 int main()
 {
-
 	std::stack<Context*> contexts;
 
 	sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Less game", sf::Style::Close);

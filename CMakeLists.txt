@@ -1,9 +1,7 @@
 cmake_minimum_required(VERSION 3.1)
-project(LessCPP)
+project(LessCPP CXX)
 
 set(CMAKE_CXX_STANDARD 17)
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
 
 file(GLOB source_files "src/*")
 
@@ -12,6 +10,7 @@ if(UNIX)
 	set(CMAKE_SKIP_INSTALL_RPATH FALSE)
 elseif(WIN32)
 	set(SFML_STATIC_LIBRARIES TRUE)
+	set(BUILD_SHARED_LIBS FALSE)
 endif()
 
 add_executable(less ${source_files})
@@ -21,8 +20,10 @@ add_subdirectory(libs/nlohmann_json)
 
 add_subdirectory(libs/SFML)
 
-target_link_libraries(less sfml-graphics sfml-audio nlohmann_json::nlohmann_json)
-include_directories(include)
+add_subdirectory(libs/osdialog)
+
+target_link_libraries(less sfml-graphics sfml-audio nlohmann_json::nlohmann_json osdialog)
+include_directories(include libs/osdialog)
 
 file(COPY resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY sounds DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
