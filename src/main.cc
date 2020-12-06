@@ -14,9 +14,6 @@
 
 int main()
 {
-	char* filename = osdialog_file(OSDIALOG_OPEN, NULL, NULL, NULL);
-
-
 	std::stack<Context*> contexts;
 
 	sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Less game", sf::Style::Close);
