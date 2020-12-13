@@ -173,6 +173,7 @@ nlohmann::json GameBase::getPrivateFields() const
 {
 	nlohmann::json fields;
 	fields["moves_left"] = m_moves_left;
+	fields["state"] = m_state;
 	fields["active_player"] = m_active_player;
 	fields["winning_player"] = m_winning_player;
 	fields["white_moves"] = m_white_moves;

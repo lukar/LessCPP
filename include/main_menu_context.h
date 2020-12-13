@@ -1,18 +1,12 @@
 #ifndef MAIN_MENU_CONTEXT_LESSCPP
 #define MAIN_MENU_CONTEXT_LESSCPP
 
-#include "const_globals.h"
-#include "helpers.h"
-#include "less.h"
-#include "ai.h"
-#include <tuple>
-
 #include "context.h"
-#include "game_context.h"
+
+#include "const_globals.h"
+#include "less.h"
 
 #include "menu.h"
-
-#include <array>
 
 class MainMenuContext : public Context {
 private:
@@ -22,6 +16,7 @@ private:
 
 	menu::Button quitButton = menu::Button("Quit", window_width/2 - 15, window_height - 50, 30);
 	menu::Button startGameButton = menu::Button("Start Game", window_width/3 + 50, window_height/3 + 100, 30);
+	menu::Button loadGameButton = menu::Button("Load Game", window_width/3 + 50, window_height/3 + 150, 30);
 
 public:
 

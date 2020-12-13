@@ -7,6 +7,7 @@
 #include "piece.h"
 
 #include <SFML/Graphics.hpp>
+#include "nlohmann/json.hpp"
 
 class Gui : public sf::Drawable
 {
@@ -23,6 +24,7 @@ private:
 
 public:
     Gui(std::array<WallConfig, 9>);
+    Gui(const nlohmann::json &);
     std::array<Piece, 4> & getPieces(Player);
 };
 

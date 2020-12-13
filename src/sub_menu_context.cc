@@ -6,7 +6,7 @@
 #include <ctime>
 #include <iomanip>
 
-std::string getTimeStr(){
+static std::string getTimeStr(){
 	std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 
 	std::array<char, 30> s = {'\0'};

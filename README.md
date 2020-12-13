@@ -8,4 +8,4 @@ Place Visual C++ version of [SFML](https://www.sfml-dev.org/download.php) into t
 ## Linux
 You will require the additional libraries. Install them using (ubuntu/debian):
 
-`sudo apt-get install freeglut3-dev libjpeg-dev libfreetype6-dev libxrandr-dev libglew-dev libsndfile1-dev libopenal-dev`
+`sudo apt-get install freeglut3-dev libjpeg-dev libfreetype6-dev libxrandr-dev libglew-dev libsndfile1-dev libopenal-dev libgtk-3-dev`

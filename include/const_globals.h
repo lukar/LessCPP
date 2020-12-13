@@ -47,37 +47,48 @@ constexpr Direction operator++(Direction& direction) {
 
 struct Location {
 	int x, y;
-    constexpr bool operator==(const Location &rhs) const {return x == rhs.x && y == rhs.y;}
-    bool operator<(const Location &rhs) const {return x*10+y < rhs.x*10 +rhs.y;}
+	constexpr bool operator==(const Location &rhs) const {return x == rhs.x && y == rhs.y;}
+	bool operator<(const Location &rhs) const {return x*10+y < rhs.x*10 +rhs.y;}
 	constexpr std::optional<Location> operator+(const Direction direction) const {
-        Location tmp = *this;
-        if(direction == Direction::UP) {
-            if (tmp.y == 0) return {};
-            tmp.y--;
-        }
-        else if(direction == Direction::DOWN){
-            if (tmp.y == 5) return {};
-            tmp.y++;
-        }
-        else if(direction == Direction::LEFT){
-            if (tmp.x == 0) return {};
-            tmp.x--;
-        }
-        else {  // (direction == Direction::RIGHT)
-            if (tmp.x == 5) return {};
-            tmp.x++;
-        }
-        return tmp;
-    }
+		Location tmp = *this;
+		if(direction == Direction::UP) {
+				if (tmp.y == 0) return {};
+				tmp.y--;
+		}
+		else if(direction == Direction::DOWN){
+				if (tmp.y == 5) return {};
+				tmp.y++;
+		}
+		else if(direction == Direction::LEFT){
+				if (tmp.x == 0) return {};
+				tmp.x--;
+		}
+		else {  // (direction == Direction::RIGHT)
+				if (tmp.x == 5) return {};
+				tmp.x++;
+		}
+		return tmp;
+	}
 
-    constexpr Location operator+(const Location& location) const {
-        return {this->x + location.x, this->y + location.y};
-    }
+	// Location operator=(std::pair<int, int> aPair) {
+	// 	return { aPair.first, aPair.second };
+	// }
 
-    constexpr Location operator-(const Location& location) const {
-        return {this->x - location.x, this->y - location.y};
-    }
+	constexpr Location operator+(const Location& location) const {
+			return {this->x + location.x, this->y + location.y};
+	}
+
+	constexpr Location operator-(const Location& location) const {
+			return {this->x - location.x, this->y - location.y};
+	}
+
+	// Location(std::pair<int, int> aPair) : x(aPair.first), y(aPair.second) {}  
 };
+
+constexpr Location pairToLocation(std::pair<int, int> aPair)
+{
+	return { aPair.first, aPair.second };
+}
 
 // piece, direction
 using Move = std::pair<uint, Direction>;

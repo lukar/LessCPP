@@ -3,17 +3,20 @@ project(LessCPP CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 
-file(GLOB source_files "src/*")
-
 if(UNIX)
 	set(CMAKE_INSTALL_RPATH lib)
+	set(CMAKE_BUILD_RPATH lib)
+	set(CMAKE_BUILD_RPATH_USE_ORIGIN TRUE)
 	set(CMAKE_SKIP_INSTALL_RPATH FALSE)
 elseif(WIN32)
 	set(SFML_STATIC_LIBRARIES TRUE)
 	set(BUILD_SHARED_LIBS FALSE)
 endif()
 
+file(GLOB source_files "src/*")
 add_executable(less ${source_files})
+
+target_compile_options(less PRIVATE -Wall -Wextra -pedantic) 
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(libs/nlohmann_json)
@@ -23,7 +26,10 @@ add_subdirectory(libs/SFML)
 add_subdirectory(libs/osdialog)
 
 target_link_libraries(less sfml-graphics sfml-audio nlohmann_json::nlohmann_json osdialog)
-include_directories(include libs/osdialog)
+target_include_directories(less PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/osdialog>
+)
 
 file(COPY resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY sounds DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

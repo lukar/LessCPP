@@ -12,11 +12,10 @@
 #include "context.h"
 
 #include <array>
+#include "nlohmann/json.hpp"
 
 class GameContext : public Context {
 private:
-
-	std::array<WallConfig, 9> wall_configs = wall::generateNwallconfigs<9>();
 	Game game;
 	Gui gui;
 
@@ -32,9 +31,12 @@ private:
 	sf::Font font;
 	sf::Text text;
 
+	void init();
+
 public:
 
-	GameContext();
+	GameContext(std::array<WallConfig, 9>);
+	GameContext(const nlohmann::json &);
 	GameContext(int quitLevelInc);
 
 	Context* update(const sf::Event &,  const sf::Vector2f & /* Mouse position */) override;

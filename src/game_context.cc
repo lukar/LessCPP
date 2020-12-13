@@ -1,10 +1,10 @@
 #include "game_context.h"
 #include "ai.h"
-#include <tuple>
 
 #include "sub_menu_context.h"
 
-GameContext::GameContext() : game(wall_configs), gui(wall_configs)
+
+void GameContext::init()
 {
 	// create texture (necessary)
 	rentex.create(window_width, window_height);
@@ -16,6 +16,16 @@ GameContext::GameContext() : game(wall_configs), gui(wall_configs)
 	// generate side text
 	font = getFont("resources/Roboto_Medium.ttf");
 	text = initializeText(font, 10, window_height + 10, 10, sf::Color::Green);
+}
+
+GameContext::GameContext(std::array<WallConfig, 9> wall_configs) : game(wall_configs), gui(wall_configs)
+{
+	init();
+}
+
+GameContext::GameContext(const nlohmann::json & game_json) : game(game_json), gui(game_json)
+{
+	init();
 }
 
 Context* GameContext::update(const sf::Event & event, const sf::Vector2f & mouse_pos)

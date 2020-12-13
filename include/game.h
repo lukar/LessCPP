@@ -38,10 +38,28 @@ private:
 		return tmp;
 	}
 
+	Locations<4> generateLocations(std::array<std::pair<int, int>, 4> pairs) {
+		return { 	pairToLocation(pairs[0]),
+							pairToLocation(pairs[1]),
+							pairToLocation(pairs[2]),
+							pairToLocation(pairs[3])
+		};
+	}
+
 public:
 
 	// for Game class
 	GameBase(std::array<std::array<WallConfig, 3>, 3> & wall_matrix) : m_wall_matrix(wall_matrix) {};
+	GameBase(const nlohmann::json & game_json, std::array<std::array<WallConfig, 3>, 3> & wall_matrix) : m_wall_matrix(wall_matrix) {
+		m_moves_left = game_json["moves_left"];
+		m_state = game_json["state"];
+		m_active_player = game_json["active_player"];
+		m_winning_player = game_json["winning_player"];
+		m_white_moves = game_json["white_moves"];
+		m_black_moves = game_json["black_moves"];
+		m_whiteLocations = generateLocations(game_json["whiteLocations"]);
+		m_blackLocations = generateLocations(game_json["blackLocations"]);
+	};
 
 	// for GameRef class
 	GameBase(const GameBase &) = default;
@@ -116,6 +134,14 @@ public:
 		for (size_t y = 0; y < 3; ++y) {
 			for (size_t x = 0; x < 3; ++x) {
 				m_wall_matrix[y][x] = wallconfigs[y*3 + x];
+			}
+		}
+	}
+
+	Game(const nlohmann::json & game_json) : GameBase(game_json, m_wall_matrix) {
+		for (size_t y = 0; y < 3; ++y) {
+			for (size_t x = 0; x < 3; ++x) {
+				m_wall_matrix[y][x] = game_json["wall_matrix"][y][x];
 			}
 		}
 	}
