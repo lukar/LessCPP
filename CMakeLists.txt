@@ -16,8 +16,6 @@ endif()
 file(GLOB source_files "src/*")
 add_executable(less ${source_files})
 
-target_compile_options(less PRIVATE -Wall -Wextra -pedantic) 
-
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(libs/nlohmann_json)
 
@@ -25,7 +23,7 @@ add_subdirectory(libs/SFML)
 
 add_subdirectory(libs/osdialog)
 
-target_link_libraries(less sfml-graphics sfml-audio nlohmann_json::nlohmann_json osdialog)
+target_link_libraries(less sfml-graphics sfml-audio sfml-network nlohmann_json::nlohmann_json osdialog)
 target_include_directories(less PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/osdialog>

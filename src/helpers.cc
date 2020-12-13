@@ -33,5 +33,15 @@ Location locationFromPosition(const sf::Vector2f& position) {
     };
 }
 
+void udpSendStr(	std::string data_string,
+					sf::IpAddress recipient,
+					unsigned short port) {
+
+	if (socket.send(data_string.c_str(), data_string.length(), recipient, port) != sf::Socket::Done)
+	{
+		// error...
+	}
+}
+
 
 

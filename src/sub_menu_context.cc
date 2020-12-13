@@ -5,6 +5,9 @@
 #include <chrono>
 #include <ctime>
 #include <iomanip>
+#include "helpers.h"
+
+
 
 static std::string getTimeStr(){
 	std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -32,6 +35,9 @@ Context* SubMenuContext::update(const sf::Event & event, const sf::Vector2f & mo
 			std::ofstream of(getTimeStr() + ".json");
 			of << std::setw(4) << m_game.getJsonRepresentation();
 		}
+		else if (sendGameButton.contains(mouse_pos)) {
+			udpSendStr(m_game.getJsonRepresentation().dump());
+		}
 	}
 	if (event.type == sf::Event::KeyPressed) {
 	}
@@ -45,7 +51,7 @@ sf::Texture SubMenuContext::render(const sf::Vector2f & mouse_pos) {
 	rentex.draw(returnButton);
 	rentex.draw(continueButton);
 	rentex.draw(saveGameButton);
-
+	rentex.draw(sendGameButton);
 	rentex.display();
 
 	return rentex.getTexture();

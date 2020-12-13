@@ -1,8 +1,7 @@
 #include "game_context.h"
 #include "ai.h"
-
 #include "sub_menu_context.h"
-
+#include "helpers.h"
 
 void GameContext::init()
 {
@@ -30,6 +29,7 @@ GameContext::GameContext(const nlohmann::json & game_json) : game(game_json), gu
 
 Context* GameContext::update(const sf::Event & event, const sf::Vector2f & mouse_pos)
 {
+
 	// END GAME?
 	if (event.type == sf::Event::KeyPressed) {
 		if (event.key.code == sf::Keyboard::Q) {
@@ -57,6 +57,7 @@ Context* GameContext::update(const sf::Event & event, const sf::Vector2f & mouse
 					if (game.movePiece(held_piece->getLocation(), new_location.value())) {
 						held_piece->setLocation(new_location.value());
 						sound_drop.play();
+						udpSendStr(game.getJsonRepresentation().dump());
 					}
 					else {
 						sound_illegal.play();
@@ -80,7 +81,6 @@ Context* GameContext::update(const sf::Event & event, const sf::Vector2f & mouse
 			gui.getPieces(Player::BLACK)[piece].resetPosition();
 		}
 	}
-
 	return nullptr;
 }
 

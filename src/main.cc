@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
+
 #include <iostream>
 #include <stack>
 
@@ -12,7 +13,9 @@
 
 #include "osdialog.h"
 
-int main()
+
+
+int main(int argc, char** argv)
 {
 	std::stack<Context*> contexts;
 

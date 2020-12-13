@@ -17,6 +17,7 @@ private:
 	menu::Button returnButton = menu::Button("Return to Menu", window_width/2 - 200, window_height - 50, 30);
 	menu::Button continueButton = menu::Button("Continue", window_width/2 + 60, window_height - 50, 30);
 	menu::Button saveGameButton = menu::Button("Save Game", window_width/3 + 50, window_height/3 + 100, 30);
+	menu::Button sendGameButton = menu::Button("Send Game", window_width / 3 + 50, window_height / 3 + 150, 30);
 
 	sf::Texture m_pretext;
 	const Game & m_game;

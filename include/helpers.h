@@ -4,7 +4,7 @@
 
 #ifndef LESSCPP_HELPERS_H
 #define LESSCPP_HELPERS_H
-
+#include <SFML/Network.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 #include <cmath>
@@ -48,5 +48,6 @@ constexpr T cabs(T num) {
 	if ( num < 0 ) return -num;
 	else return num;
 }
-
+static sf::UdpSocket socket;
+void udpSendStr(std::string data_string, sf::IpAddress recipient = "127.0.0.1", unsigned short port = 5555);
 #endif //LESSCPP_HELPERS_H
