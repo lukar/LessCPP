@@ -70,10 +70,6 @@ struct Location {
 		return tmp;
 	}
 
-	// Location operator=(std::pair<int, int> aPair) {
-	// 	return { aPair.first, aPair.second };
-	// }
-
 	constexpr Location operator+(const Location& location) const {
 			return {this->x + location.x, this->y + location.y};
 	}
@@ -82,13 +78,7 @@ struct Location {
 			return {this->x - location.x, this->y - location.y};
 	}
 
-	// Location(std::pair<int, int> aPair) : x(aPair.first), y(aPair.second) {}  
 };
-
-constexpr Location pairToLocation(std::pair<int, int> aPair)
-{
-	return { aPair.first, aPair.second };
-}
 
 // piece, direction
 using Move = std::pair<uint, Direction>;

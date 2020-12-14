@@ -27,24 +27,6 @@ private:
 
 	void setPieceLocation(uint, const Location&);
 
-	// Converts the locations array into an array of pairs (need for json output)
-	template <std::size_t Size>
-	std::array<std::pair<int, int>, Size> paired(Locations<Size> locations) const
-	{
-		std::array<std::pair<int, int>, Size> tmp;
-		for (std::size_t i = 0; i < Size; ++i) {
-			tmp[i] = std::make_pair(locations[i].x, locations[i].y);
-		}
-		return tmp;
-	}
-
-	Locations<4> generateLocations(std::array<std::pair<int, int>, 4> pairs) {
-		return { 	pairToLocation(pairs[0]),
-							pairToLocation(pairs[1]),
-							pairToLocation(pairs[2]),
-							pairToLocation(pairs[3])
-		};
-	}
 
 public:
 
@@ -57,8 +39,8 @@ public:
 		m_winning_player = game_json["winning_player"];
 		m_white_moves = game_json["white_moves"];
 		m_black_moves = game_json["black_moves"];
-		m_whiteLocations = generateLocations(game_json["whiteLocations"]);
-		m_blackLocations = generateLocations(game_json["blackLocations"]);
+		m_whiteLocations = locationsFromPairs<4>(game_json["whiteLocations"]);
+		m_blackLocations = locationsFromPairs<4>(game_json["blackLocations"]);
 	};
 
 	// for GameRef class

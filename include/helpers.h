@@ -49,4 +49,24 @@ constexpr T cabs(T num) {
 	else return num;
 }
 
+template <std::size_t N>
+constexpr Locations<N> locationsFromPairs(std::array<std::pair<int, int>, N> pairs) {
+	Locations<N> tmp{};
+	for (std::size_t i = 0; i < N; ++i) {
+		tmp[i] = { pairs[i].first, pairs[i].second };
+	}
+	return tmp;
+}
+
+// Converts the locations array into an array of pairs (need for json output)
+template <std::size_t N>
+constexpr std::array<std::pair<int, int>, N> pairsFromLocations(Locations<N> locations)
+{
+	std::array<std::pair<int, int>, N> tmp{};
+	for (std::size_t i = 0; i < N; ++i) {
+		tmp[i] = std::make_pair(locations[i].x, locations[i].y);
+	}
+	return tmp;
+}
+
 #endif //LESSCPP_HELPERS_H

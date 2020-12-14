@@ -1,4 +1,5 @@
 #include "gui.h"
+#include "helpers.h"
 
 Gui::Gui(std::array<WallConfig, 9> wallconfigs)
 {
@@ -37,12 +38,14 @@ Gui::Gui(const nlohmann::json & game_json)
     }
 
     // generate pieces
+		const auto whiteLocations = locationsFromPairs<4>(game_json["whiteLocations"]);
     for( size_t i = 0; i < m_whitePieces.size(); ++i ) {
-        m_whitePieces[i]= Piece(pairToLocation(game_json["whiteLocations"][i]), WHITE);
+        m_whitePieces[i]= Piece(whiteLocations[i], WHITE);
     }
 
+		const auto blackLocations = locationsFromPairs<4>(game_json["blackLocations"]);
     for( size_t i = 0; i < m_blackPieces.size(); ++i ) {
-        m_blackPieces[i]= Piece(pairToLocation(game_json["blackLocations"][i]), BLACK);
+        m_blackPieces[i]= Piece(blackLocations[i], BLACK);
     }
 
 }

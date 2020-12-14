@@ -1,6 +1,5 @@
 #include "const_globals.h"
 #include "game.h"
-#include "helpers.h"
 #include "wall.h"
 
 #include <array>
@@ -178,8 +177,8 @@ nlohmann::json GameBase::getPrivateFields() const
 	fields["winning_player"] = m_winning_player;
 	fields["white_moves"] = m_white_moves;
 	fields["black_moves"] = m_black_moves;
-	fields["whiteLocations"] = paired(m_whiteLocations);
-	fields["blackLocations"] = paired(m_blackLocations);
+	fields["whiteLocations"] = pairsFromLocations(m_whiteLocations);
+	fields["blackLocations"] = pairsFromLocations(m_blackLocations);
 
 	return fields;
 }
