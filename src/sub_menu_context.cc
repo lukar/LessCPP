@@ -2,9 +2,11 @@
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include <array>
+
 #include <chrono>
 #include <ctime>
 #include <iomanip>
+#include "osdialog.h"
 
 static std::string getTimeStr(){
 	std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -29,8 +31,14 @@ Context* SubMenuContext::update(const sf::Event & event, const sf::Vector2f & mo
 		if (returnButton.contains(mouse_pos)) quit = true;
 		else if (continueButton.contains(mouse_pos)) { quitLevel = 1; quit = true; }
 		else if (saveGameButton.contains(mouse_pos)) {
-			std::ofstream of(getTimeStr() + ".json");
-			of << std::setw(4) << m_game.getJsonRepresentation();
+			osdialog_filters* filters = osdialog_filters_parse("json:json");
+			char* filename = osdialog_file(OSDIALOG_SAVE, ".json", std::string(getTimeStr() + ".json").c_str(), filters);
+
+			if (filename != nullptr) {
+				std::ofstream of(filename);
+				of << std::setw(4) << m_game.getJsonRepresentation();
+				free(filename);
+			}
 		}
 	}
 	if (event.type == sf::Event::KeyPressed) {
