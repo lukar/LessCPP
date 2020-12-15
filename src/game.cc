@@ -19,7 +19,7 @@ void GameBase::nextTurn() {
 	if (piecesInLocations(m_blackLocations, whiteStart) or m_state == GameState::LAST_TURN) {
 		m_state = GameState::ENDED;
 	} else if (piecesInLocations(m_whiteLocations, blackStart)) {
-		m_state = GameState::LAST_TURN;
+		setState(GameState::LAST_TURN);
 		m_moves_left = 3 - m_moves_left;
 	} else {
 		m_moves_left = 3;
@@ -177,8 +177,8 @@ nlohmann::json GameBase::getPrivateFields() const
 	fields["winning_player"] = m_winning_player;
 	fields["white_moves"] = m_white_moves;
 	fields["black_moves"] = m_black_moves;
-	fields["whiteLocations"] = pairsFromLocations(m_whiteLocations);
-	fields["blackLocations"] = pairsFromLocations(m_blackLocations);
+	fields["whiteLocations"] = m_whiteLocations;
+	fields["blackLocations"] = m_blackLocations;
 
 	return fields;
 }

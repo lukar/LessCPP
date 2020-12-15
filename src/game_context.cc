@@ -4,6 +4,8 @@
 #include "sub_menu_context.h"
 
 
+#include <iostream>
+
 void GameContext::init()
 {
 	// create texture (necessary)
@@ -35,6 +37,26 @@ Context* GameContext::update(const sf::Event & event, const sf::Vector2f & mouse
 		if (event.key.code == sf::Keyboard::Q) {
 			// quit = true;
 			return new SubMenuContext(quitLevel, rentex.getTexture(), game);
+		}
+		else if (event.key.code == sf::Keyboard::Left) {
+			const auto move = game.getReversedMove();
+			if (move) {
+				const auto [old_location, new_location] = move.value();
+				const auto [piece_idx, player] = gui.pieceAtLocation(old_location).value();
+				gui.getPieces(player)[piece_idx].setLocation(new_location);
+			} else {
+				std::cout << "Can't go back. At the first move\n";
+			}
+		}
+		else if (event.key.code == sf::Keyboard::Right) {
+			const auto move = game.getMove();
+			if (move) {
+				const auto [old_location, new_location] = move.value();
+				const auto [piece_idx, player] = gui.pieceAtLocation(old_location).value();
+				gui.getPieces(player)[piece_idx].setLocation(new_location);
+			} else {
+				std::cout << "Can't go forward. At the last move\n";
+			}
 		}
 	}
 	// HUMAN

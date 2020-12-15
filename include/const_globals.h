@@ -14,6 +14,9 @@
 #include <utility>
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
+
+#include "nlohmann/json.hpp"
 
 typedef unsigned int uint;
 
@@ -24,7 +27,7 @@ constexpr Player operator~(const Player& player) {
     else return Player::WHITE;
 }
 
-enum class GameState {ONGOING, LAST_TURN, ENDED};
+enum class GameState {ONGOING, LAST_TURN, ENDED, PREVIEW};
 enum class Direction { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3};
 
 constexpr Direction operator++(Direction& direction) {
@@ -47,7 +50,8 @@ constexpr Direction operator++(Direction& direction) {
 
 struct Location {
 	int x, y;
-	constexpr bool operator==(const Location &rhs) const {return x == rhs.x && y == rhs.y;}
+	constexpr bool operator==(const Location &rhs) const {return x == rhs.x and y == rhs.y;}
+	constexpr bool operator!=(const Location &rhs) const {return x != rhs.x or y != rhs.y;}
 	bool operator<(const Location &rhs) const {return x*10+y < rhs.x*10 +rhs.y;}
 	constexpr std::optional<Location> operator+(const Direction direction) const {
 		Location tmp = *this;
@@ -77,12 +81,24 @@ struct Location {
 	constexpr Location operator-(const Location& location) const {
 			return {this->x - location.x, this->y - location.y};
 	}
-
 };
+
+static void to_json(nlohmann::json & j, const Location & location)
+{
+	j = nlohmann::json::array({location.x, location.y});
+}
+
+static void from_json(const nlohmann::json & j, Location & location)
+{
+	location.x = j.at(0);
+	location.y = j.at(1);
+}
 
 // piece, direction
 using Move = std::pair<uint, Direction>;
 using Path = std::vector<Move>;
+using Link = std::pair<Location, Location>;
+using History = std::vector<Link>;
 
 template <size_t N> using Locations = std::array<Location, N>;
 

@@ -43,30 +43,23 @@ constexpr bool piecesInLocations(const Locations<4>& pieces, const Locations<4>&
     return count == 4;
 }
 
+constexpr std::optional<Direction> getDirection(Location oldL, Location newL) {
+	int dx = newL.x - oldL.x;
+	int dy = newL.y - oldL.y;
+
+	if (dx != 0 && dy != 0) return {};
+
+	if (dx > 0) return Direction::RIGHT;
+	else if (dx < 0) return Direction::LEFT;
+	else if (dy > 0) return Direction::DOWN;
+	else if (dy < 0) return Direction::UP;
+	else return {};
+}
+
 template <typename T>
 constexpr T cabs(T num) {
 	if ( num < 0 ) return -num;
 	else return num;
-}
-
-template <std::size_t N>
-constexpr Locations<N> locationsFromPairs(std::array<std::pair<int, int>, N> pairs) {
-	Locations<N> tmp{};
-	for (std::size_t i = 0; i < N; ++i) {
-		tmp[i] = { pairs[i].first, pairs[i].second };
-	}
-	return tmp;
-}
-
-// Converts the locations array into an array of pairs (need for json output)
-template <std::size_t N>
-constexpr std::array<std::pair<int, int>, N> pairsFromLocations(Locations<N> locations)
-{
-	std::array<std::pair<int, int>, N> tmp{};
-	for (std::size_t i = 0; i < N; ++i) {
-		tmp[i] = std::make_pair(locations[i].x, locations[i].y);
-	}
-	return tmp;
 }
 
 #endif //LESSCPP_HELPERS_H

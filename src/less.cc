@@ -5,18 +5,21 @@ using namespace std::string_literals;
 
 std::string get_side_text(Game const& game) {
 	std::string displayText;
-	if ( game.getState() != GameState::ENDED ) {
+	if ( game.getState() == GameState::ONGOING or game.getState() == GameState::LAST_TURN ) {
 		displayText += "Remaining moves: "s + std::to_string(game.moves_left()) + "\n"s;
 		displayText += "Turn: "s + (game.active_player() == Player::WHITE ? "White"s : "Black"s) + "\n"s;
 		displayText += "White total moves : "s + std::to_string(game.white_moves()) + "\n"s;
 		displayText += "Black total moves : "s + std::to_string(game.black_moves()) + "\n"s;
-	} else {
+	} else if (game.getState() == GameState::ENDED) {
 		displayText += "GAME OVER\n"s;
 		if (game.winning_player() == Player::NONE){
 			displayText += "It's a tie!"s;
 		} else {
 			displayText += (game.winning_player() == Player::WHITE ? "White"s : "Black"s) + " wins"s;
 		}
+	} else if (game.getState() == GameState::PREVIEW) {
+		displayText += "PREVIEW\n"s;
+		displayText += "moves back: "s + std::to_string(game.m_history_index);
 	}
 	return displayText;
 }

@@ -38,14 +38,12 @@ Gui::Gui(const nlohmann::json & game_json)
     }
 
     // generate pieces
-		const auto whiteLocations = locationsFromPairs<4>(game_json["whiteLocations"]);
     for( size_t i = 0; i < m_whitePieces.size(); ++i ) {
-        m_whitePieces[i]= Piece(whiteLocations[i], WHITE);
+        m_whitePieces[i]= Piece(game_json["whiteLocations"][i], WHITE);
     }
 
-		const auto blackLocations = locationsFromPairs<4>(game_json["blackLocations"]);
     for( size_t i = 0; i < m_blackPieces.size(); ++i ) {
-        m_blackPieces[i]= Piece(blackLocations[i], BLACK);
+        m_blackPieces[i]= Piece(game_json["blackLocations"][i], BLACK);
     }
 
 }
@@ -64,4 +62,15 @@ void Gui::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 
     for (auto &p: m_blackPieces)
         target.draw(p, states);
+}
+
+std::optional<std::pair<uint, Player>> Gui::pieceAtLocation(const Location& location) const
+{
+	for (uint i = 0; i < m_whitePieces.size(); ++i) {
+			if (m_whitePieces[i].getLocation() == location) return {{i, Player::WHITE}};
+	}
+	for (uint i = 0; i < m_blackPieces.size(); ++i) {
+			if (m_blackPieces[i].getLocation() == location) return {{i, Player::BLACK}};
+	}
+	return {};
 }
