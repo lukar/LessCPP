@@ -1,5 +1,4 @@
 #include "sub_menu_context.h"
-#include <nlohmann/json.hpp>
 #include <fstream>
 #include <array>
 
@@ -20,17 +19,16 @@ SubMenuContext::SubMenuContext(int preQuitLevel, sf::Texture pretext, const Game
 	: m_pretext(pretext), m_game(game)
 {
 	quitLevel = preQuitLevel + 1;
-	rentex.create(window_width, window_height);
 
 	text.setString("Pause");
 }
 
-Context* SubMenuContext::update(const sf::Event & event, const sf::Vector2f & mouse_pos)
+Context* SubMenuContext::processEvent(const sf::Event & event)
 {
 	if (event.type == sf::Event::MouseButtonPressed) {
-		if (returnButton.contains(mouse_pos)) quit = true;
-		else if (continueButton.contains(mouse_pos)) { quitLevel = 1; quit = true; }
-		else if (saveGameButton.contains(mouse_pos)) {
+		if (returnButton.contains(m_mousepos)) quit = true;
+		else if (continueButton.contains(m_mousepos)) { quitLevel = 1; quit = true; }
+		else if (saveGameButton.contains(m_mousepos)) {
 			osdialog_filters* filters = osdialog_filters_parse("json:json");
 			char* filename = osdialog_file(OSDIALOG_SAVE, ".json", std::string(getTimeStr() + ".json").c_str(), filters);
 
@@ -46,7 +44,7 @@ Context* SubMenuContext::update(const sf::Event & event, const sf::Vector2f & mo
 	return nullptr;
 }
 
-sf::Texture SubMenuContext::render(const sf::Vector2f & mouse_pos) {
+sf::Texture SubMenuContext::render() {
 	rentex.clear();
 
 	rentex.draw(text);

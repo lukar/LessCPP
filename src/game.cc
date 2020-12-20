@@ -40,7 +40,7 @@ void GameBase::nextTurn() {
 }
 
 // Return number of wall segments between start and end. Locations must be orthogonal and adjacent
-constexpr int GameBase::countInnerWalls(const Location& start, const Location& end) const {
+int GameBase::countInnerWalls(const Location& start, const Location& end) const {
     
     // differences
 	const int dx = end.x - start.x;
@@ -69,7 +69,7 @@ constexpr int GameBase::countInnerWalls(const Location& start, const Location& e
 }
 
 // For AI
-constexpr std::optional<int> GameBase::moveCost(const Location& old_location, const Direction direction) const {
+std::optional<int> GameBase::moveCost(const Location& old_location, const Direction direction) const {
 	if (std::optional<Location> new_location = old_location + direction) {
 			return countInnerWalls(old_location, new_location.value());
 	}
@@ -77,7 +77,7 @@ constexpr std::optional<int> GameBase::moveCost(const Location& old_location, co
 }
 
 // For human
-constexpr std::optional<int> GameBase::moveCost(const Location& oldL, const Location& newL) const {
+std::optional<int> GameBase::moveCost(const Location& oldL, const Location& newL) const {
 
 	if (oldL == newL) return 0;
 

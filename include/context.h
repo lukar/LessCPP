@@ -15,13 +15,19 @@ protected:
 
 	bool quit = false;
 	int quitLevel = 1;
+	float m_dt;
+	sf::Vector2f m_mousepos;
 
 public:
 
 	virtual ~Context() = default;
+	Context() {
+		rentex.create(window_width, window_height);
+	}
 
-	virtual Context* update(const sf::Event &,  const sf::Vector2f & /* Mouse position */) = 0;
-	virtual sf::Texture render(const sf::Vector2f &) = 0;
+	virtual void update(const float /* delta time */, const sf::Vector2f & /* Mouse position */) = 0;
+	virtual Context* processEvent(const sf::Event &) = 0;
+	virtual sf::Texture render() = 0;
 
 	bool isQuitting() const { return quit; }
 	int getQuitLevel() const { return quitLevel; }

@@ -9,16 +9,20 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <optional>
-#include <set>
-#include "const_globals.h"
-
+#include "location.h"
 
 template<typename T, typename R>
-float euclideanDistance(const sf::Vector2<T> &pointA, const sf::Vector2<R> &pointB) {
+constexpr float euclideanDistance(const sf::Vector2<T> &pointA, const sf::Vector2<R> &pointB) {
 	return sqrt(
 					pow(pointA.x - pointB.x, 2) +
 					pow(pointA.y - pointB.y, 2)
 	);
+}
+
+template <typename T>
+constexpr T cabs(T num) {
+	if ( num < 0 ) return -num;
+	else return num;
 }
 
 sf::Vector2f getMousePosition(sf::RenderWindow const &);
@@ -29,37 +33,9 @@ sf::Vector2f positionFromLocation(const Location&);
 
 Location locationFromPosition(const sf::Vector2f&);
 
-constexpr bool piecesInLocations(const Locations<4>& pieces, const Locations<4>& locations) {
-//    return std::all_of(pieces.begin(), pieces.end(), [=](const Location & piece) {
-//        return std::find(locations.begin(), locations.end(), piece) != locations.end();
-//    });
-//    return std::set<Location>(pieces.begin(), pieces.end()) == std::set<Location>(locations.begin(), locations.end());
-    uint count = 0;
-    for (size_t i = 0; i < 4; ++i) {
-        for (size_t j = 0; j < 4; ++j) {
-            if (pieces[i] == locations[j]) ++count;
-        }
-    }
-    return count == 4;
-}
+bool piecesInLocations(const Locations<4>& pieces, const Locations<4>& locations);
 
-constexpr std::optional<Direction> getDirection(Location oldL, Location newL) {
-	int dx = newL.x - oldL.x;
-	int dy = newL.y - oldL.y;
+std::optional<Direction> getDirection(Location oldL, Location newL);
 
-	if (dx != 0 && dy != 0) return {};
-
-	if (dx > 0) return Direction::RIGHT;
-	else if (dx < 0) return Direction::LEFT;
-	else if (dy > 0) return Direction::DOWN;
-	else if (dy < 0) return Direction::UP;
-	else return {};
-}
-
-template <typename T>
-constexpr T cabs(T num) {
-	if ( num < 0 ) return -num;
-	else return num;
-}
 
 #endif //LESSCPP_HELPERS_H

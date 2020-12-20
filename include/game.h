@@ -54,20 +54,20 @@ public:
 	}
 
 	// Getter methods
-	constexpr int           white_moves() const { return m_white_moves; }
-	constexpr int           black_moves() const { return m_black_moves; }
-	constexpr GameState     getState() const { return m_state; }
-	constexpr Player        active_player() const { return m_active_player; }
-	constexpr Player        winning_player() const { return m_winning_player; }
-	constexpr int           moves_left() const { return m_moves_left; }
-	constexpr Locations<4>& active_pieces() {
+	int           white_moves() const { return m_white_moves; }
+	int           black_moves() const { return m_black_moves; }
+	GameState     getState() const { return m_state; }
+	Player        active_player() const { return m_active_player; }
+	Player        winning_player() const { return m_winning_player; }
+	int           moves_left() const { return m_moves_left; }
+	Locations<4>& active_pieces() {
 		return m_active_player == Player::WHITE? m_whiteLocations : m_blackLocations;
 	}
 
 
 	std::optional<int> getPieceNumber(const Location&);
 
-	constexpr Locations<4> getPieces(Player player) const {
+	Locations<4> getPieces(Player player) const {
 		if (player == Player::WHITE) {
 				return m_whiteLocations;
 		} else {
@@ -75,7 +75,7 @@ public:
 		}
 	}
 
-	constexpr std::optional<std::tuple<Player, int>> pieceAtLocation(const Location& location) const {
+	std::optional<std::tuple<Player, int>> pieceAtLocation(const Location& location) const {
 		for (int piece = 0; piece < 4; ++piece) {
 				if (m_whiteLocations[piece] == location) return {{Player::WHITE, piece}};
 		}
@@ -89,13 +89,13 @@ public:
 
 	void nextTurn();
 
-	constexpr int countInnerWalls(const Location&, const Location&) const;
+	int countInnerWalls(const Location&, const Location&) const;
 
-	constexpr bool existsPieceAtLocation(const Location&) const;
+	bool existsPieceAtLocation(const Location&) const;
 
-	constexpr std::optional<int> moveCost (const Location&, const Direction) const;
+	std::optional<int> moveCost (const Location&, const Direction) const;
 
-	constexpr std::optional<int> moveCost (const Location&, const Location&) const;
+	std::optional<int> moveCost (const Location&, const Location&) const;
 
 	Location getPieceLocation(uint);
 
@@ -108,13 +108,13 @@ public:
 protected:
 
 	nlohmann::json getPrivateFields() const;
-	constexpr void setState(GameState state) {
+	void setState(GameState state) {
 		m_prev_state = m_state;
 		m_state = state;
 	}
 
-	constexpr void Preview() { if (m_state != GameState::PREVIEW) setState(GameState::PREVIEW); };
-	constexpr void Resume() { if (m_state == GameState::PREVIEW) setState(m_prev_state); };
+	void Preview() { if (m_state != GameState::PREVIEW) setState(GameState::PREVIEW); };
+	void Resume() { if (m_state == GameState::PREVIEW) setState(m_prev_state); };
 };
 
 class Game : public GameBase

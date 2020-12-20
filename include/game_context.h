@@ -23,15 +23,13 @@ private:
 
 	// game sounds
 	std::deque<sf::SoundBuffer> soundBuffers;
-	sf::Sound sound_pickup;
-	sf::Sound sound_drop;
-	sf::Sound sound_illegal;
+	sf::Sound sound_pickup = getSound("sounds/sfx_menu_move2.wav", soundBuffers);
+	sf::Sound sound_drop = getSound("sounds/sfx_menu_move3.wav", soundBuffers);
+	sf::Sound sound_illegal = getSound("sounds/sfx_sounds_error10.wav", soundBuffers);
 
 	// side text
-	sf::Font font;
-	sf::Text text;
-
-	void init();
+	sf::Font font = getFont("resources/Roboto_Medium.ttf");
+	sf::Text text = initializeText(font, 10, window_height + 10, 10, sf::Color::Green);
 
 public:
 
@@ -39,8 +37,9 @@ public:
 	GameContext(const nlohmann::json &);
 	GameContext(int quitLevelInc);
 
-	Context* update(const sf::Event &,  const sf::Vector2f & /* Mouse position */) override;
-	sf::Texture render(const sf::Vector2f &) override;
+	void update(const float dt, const sf::Vector2f & mousepos) override { m_dt = dt; m_mousepos = mousepos; };
+	Context* processEvent(const sf::Event &) override;
+	sf::Texture render() override;
 
 };
 

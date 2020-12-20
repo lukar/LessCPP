@@ -3,6 +3,7 @@
 //
 
 #include "helpers.h"
+#include "const_globals.h"
 
 extern sf::RenderWindow window;
 
@@ -31,4 +32,31 @@ Location locationFromPosition(const sf::Vector2f& position) {
 		static_cast<int>(position.x / (block_size / 2)),
 		static_cast<int>(position.y / (block_size / 2))
     };
+}
+
+bool piecesInLocations(const Locations<4>& pieces, const Locations<4>& locations) {
+//    return std::all_of(pieces.begin(), pieces.end(), [=](const Location & piece) {
+//        return std::find(locations.begin(), locations.end(), piece) != locations.end();
+//    });
+//    return std::set<Location>(pieces.begin(), pieces.end()) == std::set<Location>(locations.begin(), locations.end());
+    uint count = 0;
+    for (size_t i = 0; i < 4; ++i) {
+        for (size_t j = 0; j < 4; ++j) {
+            if (pieces[i] == locations[j]) ++count;
+        }
+    }
+    return count == 4;
+}
+
+std::optional<Direction> getDirection(Location oldL, Location newL) {
+	int dx = newL.x - oldL.x;
+	int dy = newL.y - oldL.y;
+
+	if (dx != 0 && dy != 0) return {};
+
+	if (dx > 0) return Direction::RIGHT;
+	else if (dx < 0) return Direction::LEFT;
+	else if (dy > 0) return Direction::DOWN;
+	else if (dy < 0) return Direction::UP;
+	else return {};
 }
