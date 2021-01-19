@@ -16,7 +16,6 @@ private:
 	std::array<std::array<WallConfig, 3>, 3> & m_wall_matrix;
 
 	int m_moves_left = 3;
-	GameState m_state = GameState::ONGOING;
 	Player m_active_player = Player::WHITE;
 	Player m_winning_player = Player::NONE;
 	int m_white_moves = 0;
@@ -25,26 +24,11 @@ private:
 	Locations<4> m_whiteLocations = whiteStart;
 	Locations<4> m_blackLocations = blackStart;
 
+	GameState m_state = GameState::ONGOING;
+	GameState m_prev_state = GameState::ONGOING;
+
 	void setPieceLocation(uint, const Location&);
 
-	// Converts the locations array into an array of pairs (need for json output)
-	template <std::size_t Size>
-	std::array<std::pair<int, int>, Size> paired(Locations<Size> locations) const
-	{
-		std::array<std::pair<int, int>, Size> tmp;
-		for (std::size_t i = 0; i < Size; ++i) {
-			tmp[i] = std::make_pair(locations[i].x, locations[i].y);
-		}
-		return tmp;
-	}
-
-	Locations<4> generateLocations(std::array<std::pair<int, int>, 4> pairs) {
-		return { 	pairToLocation(pairs[0]),
-							pairToLocation(pairs[1]),
-							pairToLocation(pairs[2]),
-							pairToLocation(pairs[3])
-		};
-	}
 
 public:
 
@@ -57,8 +41,8 @@ public:
 		m_winning_player = game_json["winning_player"];
 		m_white_moves = game_json["white_moves"];
 		m_black_moves = game_json["black_moves"];
-		m_whiteLocations = generateLocations(game_json["whiteLocations"]);
-		m_blackLocations = generateLocations(game_json["blackLocations"]);
+		m_whiteLocations = game_json["whiteLocations"];
+		m_blackLocations = game_json["blackLocations"];
 	};
 
 	// for GameRef class
@@ -70,20 +54,20 @@ public:
 	}
 
 	// Getter methods
-	constexpr int           white_moves() const { return m_white_moves; }
-	constexpr int           black_moves() const { return m_black_moves; }
-	constexpr GameState     getState() const { return m_state; }
-	constexpr Player        active_player() const { return m_active_player; }
-	constexpr Player        winning_player() const { return m_winning_player; }
-	constexpr int           moves_left() const { return m_moves_left; }
-	constexpr Locations<4>& active_pieces() {
+	int           white_moves() const { return m_white_moves; }
+	int           black_moves() const { return m_black_moves; }
+	GameState     getState() const { return m_state; }
+	Player        active_player() const { return m_active_player; }
+	Player        winning_player() const { return m_winning_player; }
+	int           moves_left() const { return m_moves_left; }
+	Locations<4>& active_pieces() {
 		return m_active_player == Player::WHITE? m_whiteLocations : m_blackLocations;
 	}
 
 
 	std::optional<int> getPieceNumber(const Location&);
 
-	constexpr Locations<4> getPieces(Player player) const {
+	Locations<4> getPieces(Player player) const {
 		if (player == Player::WHITE) {
 				return m_whiteLocations;
 		} else {
@@ -91,7 +75,7 @@ public:
 		}
 	}
 
-	constexpr std::optional<std::tuple<Player, int>> pieceAtLocation(const Location& location) const {
+	std::optional<std::tuple<Player, int>> pieceAtLocation(const Location& location) const {
 		for (int piece = 0; piece < 4; ++piece) {
 				if (m_whiteLocations[piece] == location) return {{Player::WHITE, piece}};
 		}
@@ -105,13 +89,13 @@ public:
 
 	void nextTurn();
 
-	constexpr int countInnerWalls(const Location&, const Location&) const;
+	int countInnerWalls(const Location&, const Location&) const;
 
-	constexpr bool existsPieceAtLocation(const Location&) const;
+	bool existsPieceAtLocation(const Location&) const;
 
-	constexpr std::optional<int> moveCost (const Location&, const Direction) const;
+	std::optional<int> moveCost (const Location&, const Direction) const;
 
-	constexpr std::optional<int> moveCost (const Location&, const Location&) const;
+	std::optional<int> moveCost (const Location&, const Location&) const;
 
 	Location getPieceLocation(uint);
 
@@ -124,12 +108,23 @@ public:
 protected:
 
 	nlohmann::json getPrivateFields() const;
+	void setState(GameState state) {
+		m_prev_state = m_state;
+		m_state = state;
+	}
+
+	void Preview() { if (m_state != GameState::PREVIEW) setState(GameState::PREVIEW); };
+	void Resume() { if (m_state == GameState::PREVIEW) setState(m_prev_state); };
 };
 
-class Game : public GameBase {
+class Game : public GameBase
+{
 public:
 	std::array<std::array<WallConfig, 3>, 3> m_wall_matrix;
-	
+
+	History m_history; // All moves that were made so far
+	uint m_history_index = 0;
+
 	Game(std::array<WallConfig, 9> wallconfigs) : GameBase(m_wall_matrix) {
 		for (size_t y = 0; y < 3; ++y) {
 			for (size_t x = 0; x < 3; ++x) {
@@ -139,26 +134,54 @@ public:
 	}
 
 	Game(const nlohmann::json & game_json) : GameBase(game_json, m_wall_matrix) {
-		for (size_t y = 0; y < 3; ++y) {
-			for (size_t x = 0; x < 3; ++x) {
-				m_wall_matrix[y][x] = game_json["wall_matrix"][y][x];
-			}
-		}
+		m_wall_matrix = game_json["wall_matrix"];
+		m_history = game_json["history"].get<History>();
 	}
 
 	nlohmann::json getJsonRepresentation() const {
 		nlohmann::json fields = getPrivateFields();
 		fields["wall_matrix"] = m_wall_matrix;
+		fields["history"] = m_history;
 
 		return fields;
 	}
 
+	// overload movePiece functions to produce side-effect of logging moves
+	std::optional<Location> movePiece(uint piece, Direction direction) {
+		if (getState() == GameState::PREVIEW) return {};
+		const auto old_location = active_pieces()[piece];
+		const auto new_location = GameBase::movePiece(piece, direction);
+		if (new_location) m_history.push_back({old_location, new_location.value()});
+		return new_location;
+	}
+
+	std::optional<Location> movePiece(Location old_location, Location new_location) {
+		if (getState() == GameState::PREVIEW) return {};
+		auto result = GameBase::movePiece(old_location, new_location);
+		if (result and old_location != new_location) {
+			m_history.push_back({old_location, new_location});
+		}
+		return result;
+	}
+
+	const std::optional<std::pair<Location, Location>> getReversedMove() {
+		if (m_history_index == m_history.size()) return {};
+		Preview();
+		auto [start, end] = m_history.rbegin()[m_history_index++]; 
+		return {{end, start}};
+	}
+
+	const std::optional<std::pair<Location, Location>> getMove() {
+		if (m_history_index == 0) { Resume(); return {}; }
+		return m_history.rbegin()[--m_history_index]; 
+	}
 
 	Game(const Game &) = delete;
 
 };
 
-class GameRef : public GameBase {
+class GameRef : public GameBase
+{
 public:
 
 	GameRef(const GameBase & ref) : GameBase(ref) {};

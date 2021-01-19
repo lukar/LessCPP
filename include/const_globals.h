@@ -1,11 +1,5 @@
-//
-// Created by aviany on 5/9/19.
-//
-
 #ifndef LESSCPP_CONST_GLOBALS_H
 #define LESSCPP_CONST_GLOBALS_H
-
-#include <SFML/Graphics.hpp>
 
 #include <array>
 #include <optional>
@@ -13,91 +7,8 @@
 #include <ciso646>
 #include <utility>
 
-#include <SFML/Graphics.hpp>
+#include "location.h"
 
-typedef unsigned int uint;
-
-enum class Player {WHITE, BLACK, NONE};
-
-constexpr Player operator~(const Player& player) {
-    if (player == Player::WHITE) return Player::BLACK;
-    else return Player::WHITE;
-}
-
-enum class GameState {ONGOING, LAST_TURN, ENDED};
-enum class Direction { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3};
-
-constexpr Direction operator++(Direction& direction) {
-    switch (direction) {
-        case Direction::UP:
-            direction = Direction::DOWN;
-            break;
-        case Direction::DOWN:
-            direction = Direction::LEFT;
-            break;
-        case Direction::LEFT:
-            direction = Direction::RIGHT;
-            break;
-        case Direction::RIGHT:
-            direction = Direction::UP;
-            break;
-    }
-    return direction;
-}
-
-struct Location {
-	int x, y;
-	constexpr bool operator==(const Location &rhs) const {return x == rhs.x && y == rhs.y;}
-	bool operator<(const Location &rhs) const {return x*10+y < rhs.x*10 +rhs.y;}
-	constexpr std::optional<Location> operator+(const Direction direction) const {
-		Location tmp = *this;
-		if(direction == Direction::UP) {
-				if (tmp.y == 0) return {};
-				tmp.y--;
-		}
-		else if(direction == Direction::DOWN){
-				if (tmp.y == 5) return {};
-				tmp.y++;
-		}
-		else if(direction == Direction::LEFT){
-				if (tmp.x == 0) return {};
-				tmp.x--;
-		}
-		else {  // (direction == Direction::RIGHT)
-				if (tmp.x == 5) return {};
-				tmp.x++;
-		}
-		return tmp;
-	}
-
-	// Location operator=(std::pair<int, int> aPair) {
-	// 	return { aPair.first, aPair.second };
-	// }
-
-	constexpr Location operator+(const Location& location) const {
-			return {this->x + location.x, this->y + location.y};
-	}
-
-	constexpr Location operator-(const Location& location) const {
-			return {this->x - location.x, this->y - location.y};
-	}
-
-	// Location(std::pair<int, int> aPair) : x(aPair.first), y(aPair.second) {}  
-};
-
-constexpr Location pairToLocation(std::pair<int, int> aPair)
-{
-	return { aPair.first, aPair.second };
-}
-
-// piece, direction
-using Move = std::pair<uint, Direction>;
-using Path = std::vector<Move>;
-
-template <size_t N> using Locations = std::array<Location, N>;
-
-typedef std::array<int, 3> WallSeg;
-typedef std::array<WallSeg, 3> WallConfig;
 
 // individual color pieces starting positions
 constexpr Locations<4> whiteStart = {{{0, 0},{1, 0},{0, 1},{1, 1}}};

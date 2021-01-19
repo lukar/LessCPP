@@ -1,6 +1,5 @@
 #include "const_globals.h"
 #include "game.h"
-#include "helpers.h"
 #include "wall.h"
 
 #include <array>
@@ -20,7 +19,7 @@ void GameBase::nextTurn() {
 	if (piecesInLocations(m_blackLocations, whiteStart) or m_state == GameState::LAST_TURN) {
 		m_state = GameState::ENDED;
 	} else if (piecesInLocations(m_whiteLocations, blackStart)) {
-		m_state = GameState::LAST_TURN;
+		setState(GameState::LAST_TURN);
 		m_moves_left = 3 - m_moves_left;
 	} else {
 		m_moves_left = 3;
@@ -41,7 +40,7 @@ void GameBase::nextTurn() {
 }
 
 // Return number of wall segments between start and end. Locations must be orthogonal and adjacent
-constexpr int GameBase::countInnerWalls(const Location& start, const Location& end) const {
+int GameBase::countInnerWalls(const Location& start, const Location& end) const {
     
     // differences
 	const int dx = end.x - start.x;
@@ -70,7 +69,7 @@ constexpr int GameBase::countInnerWalls(const Location& start, const Location& e
 }
 
 // For AI
-constexpr std::optional<int> GameBase::moveCost(const Location& old_location, const Direction direction) const {
+std::optional<int> GameBase::moveCost(const Location& old_location, const Direction direction) const {
 	if (std::optional<Location> new_location = old_location + direction) {
 			return countInnerWalls(old_location, new_location.value());
 	}
@@ -78,7 +77,7 @@ constexpr std::optional<int> GameBase::moveCost(const Location& old_location, co
 }
 
 // For human
-constexpr std::optional<int> GameBase::moveCost(const Location& oldL, const Location& newL) const {
+std::optional<int> GameBase::moveCost(const Location& oldL, const Location& newL) const {
 
 	if (oldL == newL) return 0;
 
@@ -178,8 +177,8 @@ nlohmann::json GameBase::getPrivateFields() const
 	fields["winning_player"] = m_winning_player;
 	fields["white_moves"] = m_white_moves;
 	fields["black_moves"] = m_black_moves;
-	fields["whiteLocations"] = paired(m_whiteLocations);
-	fields["blackLocations"] = paired(m_blackLocations);
+	fields["whiteLocations"] = m_whiteLocations;
+	fields["blackLocations"] = m_blackLocations;
 
 	return fields;
 }

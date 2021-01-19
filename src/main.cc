@@ -26,10 +26,11 @@ int main(int argc, char** argv)
 	contexts.push(new MainMenuContext());
 
 	sf::Event event;
-	sf::Texture texture;
-	if (!texture.create(window_width, window_height)) exit(1);
+	sf::Clock dtClock;
+	float dt;
 
 	while (window.isOpen()) {
+		dt = dtClock.getElapsedTime().asSeconds();
 
 		if (contexts.top()->isQuitting()) {
 			for (int i = contexts.top()->getQuitLevel(); i > 0; --i) {
@@ -39,15 +40,15 @@ int main(int argc, char** argv)
 			if (contexts.size() == 0) break;
 		}
 
-		const auto mouse_pos = getMousePosition(window);
+		contexts.top()->update(dt, getMousePosition(window));
 		while (window.pollEvent(event)) {
-			Context* newcontext = contexts.top()->update(event, mouse_pos);
+			Context* newcontext = contexts.top()->processEvent(event);
 			if (newcontext != nullptr) contexts.push(newcontext);
 		}
 
 		window.clear();
 
-		window.draw(sf::Sprite(contexts.top()->render(mouse_pos)));
+		window.draw(sf::Sprite(contexts.top()->render()));
 
 		window.display();
 	}

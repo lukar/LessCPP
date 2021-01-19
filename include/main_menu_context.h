@@ -20,11 +20,11 @@ private:
 
 public:
 
-	MainMenuContext();
+	MainMenuContext() = default;
 
-	Context* update(const sf::Event &,  const sf::Vector2f & /* Mouse position */) override;
-	sf::Texture render(const sf::Vector2f &) override;
-
+	void update(const float dt, const sf::Vector2f & mousepos) override { m_dt = dt; m_mousepos = mousepos; };
+	Context* processEvent(const sf::Event &) override;
+	sf::Texture render() override;
 };
 
 

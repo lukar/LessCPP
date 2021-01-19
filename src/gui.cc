@@ -1,4 +1,5 @@
 #include "gui.h"
+#include "helpers.h"
 
 Gui::Gui(std::array<WallConfig, 9> wallconfigs)
 {
@@ -38,11 +39,11 @@ Gui::Gui(const nlohmann::json & game_json)
 
     // generate pieces
     for( size_t i = 0; i < m_whitePieces.size(); ++i ) {
-        m_whitePieces[i]= Piece(pairToLocation(game_json["whiteLocations"][i]), WHITE);
+        m_whitePieces[i]= Piece(game_json["whiteLocations"][i], WHITE);
     }
 
     for( size_t i = 0; i < m_blackPieces.size(); ++i ) {
-        m_blackPieces[i]= Piece(pairToLocation(game_json["blackLocations"][i]), BLACK);
+        m_blackPieces[i]= Piece(game_json["blackLocations"][i], BLACK);
     }
 
 }
@@ -61,4 +62,15 @@ void Gui::draw(sf::RenderTarget &target, sf::RenderStates states) const {
 
     for (auto &p: m_blackPieces)
         target.draw(p, states);
+}
+
+std::optional<std::pair<uint, Player>> Gui::pieceAtLocation(const Location& location) const
+{
+	for (uint i = 0; i < m_whitePieces.size(); ++i) {
+			if (m_whitePieces[i].getLocation() == location) return {{i, Player::WHITE}};
+	}
+	for (uint i = 0; i < m_blackPieces.size(); ++i) {
+			if (m_blackPieces[i].getLocation() == location) return {{i, Player::BLACK}};
+	}
+	return {};
 }

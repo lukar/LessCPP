@@ -9,16 +9,12 @@
 #include "osdialog.h"
 #include "nlohmann/json.hpp"
 
-MainMenuContext::MainMenuContext() {
-	rentex.create(window_width, window_height);
-}
-
-Context* MainMenuContext::update(const sf::Event & event, const sf::Vector2f & mouse_pos)
+Context* MainMenuContext::processEvent(const sf::Event & event)
 {
 	if (event.type == sf::Event::MouseButtonPressed) {
-		if (quitButton.contains(mouse_pos)) quit = true;
-		else if (startGameButton.contains(mouse_pos)) return new GameContext(wall::generateNwallconfigs<9>());
-		else if (loadGameButton.contains(mouse_pos)) {
+		if (quitButton.contains(m_mousepos)) quit = true;
+		else if (startGameButton.contains(m_mousepos)) return new GameContext(wall::generateNwallconfigs<9>());
+		else if (loadGameButton.contains(m_mousepos)) {
 			osdialog_filters* filters = osdialog_filters_parse("json:json");
 			char* filename = osdialog_file(OSDIALOG_OPEN, ".json", "Select a json file", filters);
 
@@ -39,7 +35,7 @@ Context* MainMenuContext::update(const sf::Event & event, const sf::Vector2f & m
 	return nullptr;
 }
 
-sf::Texture MainMenuContext::render([[maybe_unused]] const sf::Vector2f & mouse_pos) {
+sf::Texture MainMenuContext::render() {
 	text.setString("Less Game");
 
 	rentex.clear();
