@@ -17,6 +17,15 @@ Context* GameContext::processEvent(const sf::Event & event)
 		if (event.key.code == sf::Keyboard::Q) {
 			// quit = true;
 			return new SubMenuContext(quitLevel, rentex.getTexture(), game);
+		} else if (event.key.code == sf::Keyboard::P) {
+			// quit = true;
+			PvP = !PvP; // toggle
+			std::cout << "PvP = " << PvP <<"\n";
+		} else if (event.key.code == sf::Keyboard::O) {
+			// quit = true;
+			if (Player::BLACK== multiplayer_opponent) multiplayer_opponent = Player::WHITE;
+			else multiplayer_opponent = Player::BLACK;
+			std::cout << "multiplayer_opponent = " << multiplayer_opponent << "\n";
 		}
 		else if (event.key.code == sf::Keyboard::Left) {
 			const auto move = game.getReversedMove();
@@ -40,7 +49,7 @@ Context* GameContext::processEvent(const sf::Event & event)
 		}
 	}
 	// HUMAN
-	if ((game.getState() != GameState::ENDED) and game.active_player() != Player::BLACK) {
+	if ((game.getState() != GameState::ENDED) and ((game.active_player() != Player::BLACK) or PvP)) { // PvP -> player vs player
 		// GRAB PIECE
 		if (event.type == sf::Event::MouseButtonPressed) {
 			for (auto& piece : gui.getPieces(game.active_player())) {
@@ -74,8 +83,18 @@ Context* GameContext::processEvent(const sf::Event & event)
 		}
 	}
 	//// AI
-	else if (game.getState() != GameState::ENDED and game.active_player() == Player::BLACK) {
+	else if (game.getState() != GameState::ENDED and game.active_player() == Player::BLACK and PvP == false) {
 		const auto & [path, eval] = recurseFindOptimal(game, Player::BLACK, 1, 0, 100);
+		for (auto [piece, direction] : path) {
+			if (game.active_player() != Player::BLACK) break;
+			auto newlocation = game.movePiece(piece, direction);
+			gui.getPieces(Player::BLACK)[piece].setLocation(newlocation.value());
+			gui.getPieces(Player::BLACK)[piece].resetPosition();
+		}
+	}
+	//// Multiplayer - opponent
+	else if (game.getState() != GameState::ENDED and game.active_player() == multiplayer_opponent) {
+		path = 
 		for (auto [piece, direction] : path) {
 			if (game.active_player() != Player::BLACK) break;
 			auto newlocation = game.movePiece(piece, direction);

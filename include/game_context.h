@@ -31,6 +31,9 @@ private:
 	sf::Font font = getFont("resources/Roboto_Medium.ttf");
 	sf::Text text = initializeText(font, 10, window_height + 10, 10, sf::Color::Green);
 
+	bool PvP = false;
+	Player multiplayer_opponent = Player::BLACK;
+
 public:
 
 	GameContext(std::array<WallConfig, 9>);
