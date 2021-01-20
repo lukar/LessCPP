@@ -39,7 +39,7 @@ Context* SubMenuContext::processEvent(const sf::Event & event)
 				free(filename);
 			}
 		}
-		else if (sendGameButton.contains(mouse_pos)) {
+		else if (sendGameButton.contains(m_mousepos)) {
 			udpSendStr(m_game.getJsonRepresentation().dump());
 		}
 	}
