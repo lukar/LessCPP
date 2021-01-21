@@ -3,6 +3,7 @@
 #include "sub_menu_context.h"
 #include "helpers.h"
 
+
 #include <iostream>
 
 GameContext::GameContext(std::array<WallConfig, 9> wall_configs) : game(wall_configs), gui(wall_configs) {}
@@ -11,10 +12,38 @@ GameContext::GameContext(const nlohmann::json & game_json) : game(game_json), gu
 
 Context* GameContext::processEvent(const sf::Event & event)
 {
-
-	// END GAME?
 	if (event.type == sf::Event::KeyPressed) {
-		if (event.key.code == sf::Keyboard::Q) {
+		if (event.key.code == sf::Keyboard::S) {
+		// NETWORKING
+		// temporary; to be moved to main menu - Join game
+		// bind the socket to a port
+		if (socket_recieve_game_context.bind(5555) != sf::Socket::Done)
+		{
+			// error...
+		}
+		std::cout << "Socket recieve - game context context bound to :" << socket_recieve_game_context.getLocalPort() << "\n";
+		char data[100];
+		socket_recieve_game_context.setBlocking(true);
+
+		std::size_t received = 0;
+		if (socket_recieve_game_context.receive(data, 100, received, sender, port) != sf::Socket::Done) {
+			// error...
+			std::cout << "Error recieve\n";
+		}
+		if (received > 0) {
+			socket_recieve_game_context.unbind();
+			std::cout << "Received " << received << " bytes from " << sender << " on port " << port << std::endl;
+			if (strncmp("init", data, 4) == 0) {
+				std::cout << "Init recieved\n";
+				sleep(1000); // miliseconds
+				std::cout << "sending ...\n";
+				udpSendStr(game.getJsonRepresentation().dump(),"127.0.0.1",5554);
+				std::cout << "Sent!\n";
+			}
+		}
+		
+		// END GAME?
+		} else if (event.key.code == sf::Keyboard::Q) {
 			// quit = true;
 			return new SubMenuContext(quitLevel, rentex.getTexture(), game);
 		} else if (event.key.code == sf::Keyboard::P) {
@@ -23,9 +52,14 @@ Context* GameContext::processEvent(const sf::Event & event)
 			std::cout << "PvP = " << PvP <<"\n";
 		} else if (event.key.code == sf::Keyboard::O) {
 			// quit = true;
-			if (Player::BLACK== multiplayer_opponent) multiplayer_opponent = Player::WHITE;
-			else multiplayer_opponent = Player::BLACK;
-			std::cout << "multiplayer_opponent = " << multiplayer_opponent << "\n";
+			if (Player::BLACK == multiplayer_opponent) {
+				multiplayer_opponent = Player::WHITE;
+				std::cout << "multiplayer_opponent = WHITE\n";
+			}
+			else {
+				multiplayer_opponent = Player::BLACK;
+				std::cout << "multiplayer_opponent = BLACK\n";
+			}
 		}
 		else if (event.key.code == sf::Keyboard::Left) {
 			const auto move = game.getReversedMove();
@@ -93,7 +127,7 @@ Context* GameContext::processEvent(const sf::Event & event)
 		}
 	}
 	//// Multiplayer - opponent
-	else if (game.getState() != GameState::ENDED and game.active_player() == multiplayer_opponent) {
+	/*else if (game.getState() != GameState::ENDED and game.active_player() == multiplayer_opponent) {
 		path = 
 		for (auto [piece, direction] : path) {
 			if (game.active_player() != Player::BLACK) break;
@@ -101,7 +135,7 @@ Context* GameContext::processEvent(const sf::Event & event)
 			gui.getPieces(Player::BLACK)[piece].setLocation(newlocation.value());
 			gui.getPieces(Player::BLACK)[piece].resetPosition();
 		}
-	}
+	}*/
 	return nullptr;
 }
 

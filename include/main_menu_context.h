@@ -7,6 +7,8 @@
 #include "less.h"
 
 #include "menu.h"
+#include <SFML/Network.hpp>
+#include "helpers.h"
 
 class MainMenuContext : public Context {
 private:
@@ -17,6 +19,12 @@ private:
 	menu::Button quitButton = menu::Button("Quit", window_width/2 - 15, window_height - 50, 30);
 	menu::Button startGameButton = menu::Button("Start Game", window_width/3 + 50, window_height/3 + 100, 30);
 	menu::Button loadGameButton = menu::Button("Load Game", window_width/3 + 50, window_height/3 + 150, 30);
+
+	
+	// UDP socket:
+	sf::IpAddress sender = "0.0.0.0";
+	unsigned short port = 5554;
+	sf::UdpSocket socket_recieve;
 
 public:
 

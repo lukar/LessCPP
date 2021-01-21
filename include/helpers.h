@@ -40,4 +40,6 @@ std::optional<Direction> getDirection(Location oldL, Location newL);
 static sf::UdpSocket socket;
 void udpSendStr(std::string data_string, sf::IpAddress recipient = "127.0.0.1", unsigned short port = 5555);
 
+void sleep(unsigned milliseconds);
+
 #endif //LESSCPP_HELPERS_H
