@@ -34,30 +34,9 @@ Context* MainMenuContext::processEvent(const sf::Event & event)
 	}
 	if (event.type == sf::Event::KeyPressed) {
 		if (event.key.code == sf::Keyboard::J) {
-			udpSendStr("init");
+			char data[10000];
+			get_game(data, sizeof(data));
 
-			// temporary; to be moved to main menu - Join game
-			// bind the socket to a port
-			if (socket_recieve.bind(5554) != sf::Socket::Done)
-			{
-				// error...
-			}
-			std::cout << "Socket recieve - main menu context bound to :" << socket_recieve.getLocalPort() << "\n";
-			char data[100000];
-			socket_recieve.setBlocking(true);
-			
-			std::size_t received = 0;
-			if (socket_recieve.receive(data, 100000, received, sender, port) != sf::Socket::Done) {
-				// error...
-				std::cout << "Error recieve\n";
-			}
-			if (received > 0) {
-				socket_recieve.unbind();
-				std::cout << "Received " << received << " bytes from " << sender << " on port " << port << std::endl;
-				if (4 >= strlen(data) && (strncmp("init", data, 4) == 0)) {
-					std::cout << "Game recieved\n";
-				}
-			}
 
 			std::stringstream ss;
 			ss << data;

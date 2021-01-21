@@ -4,6 +4,8 @@
 
 #include "helpers.h"
 #include "const_globals.h"
+#include <iostream>
+#include "osdialog.h"
 
 extern sf::RenderWindow window;
 
@@ -32,6 +34,10 @@ Location locationFromPosition(const sf::Vector2f& position) {
 		static_cast<int>(position.x / (block_size / 2)),
 		static_cast<int>(position.y / (block_size / 2))
     };
+}
+
+void udpSendStr_player2(std::string data_string) {
+	udpSendStr(data_string, ip_player2, port_player2);
 }
 
 void udpSendStr(	std::string data_string,
@@ -87,3 +93,96 @@ void sleep(unsigned milliseconds)
 	usleep(milliseconds * 1000); // takes microseconds
 }
 #endif
+
+void host_game(std::string data_string) {
+	// NETWORKING
+	// temporary; to be moved to main menu - Join game
+	// bind the socket to a port
+	if (socket_recieve.bind(port_recieve) != sf::Socket::Done)
+	{
+		// error...
+		// if port not ok, find new port
+		if (port_recieve == socket_recieve.getLocalPort())
+			std::cout << "Port " << port_recieve << " already bound\n";
+		std::cout << "Unable to bind port" << port_recieve << "\n";
+	}
+	port_recieve = socket_recieve.getLocalPort();
+	std::cout << "Socket recieve - game context context bound to :" << port_recieve << "\n";
+	char data[100];
+	socket_recieve.setBlocking(true);
+
+	std::size_t received = 0;
+	if (socket_recieve.receive(data, 100, received, sender, port_sent_from) != sf::Socket::Done) {
+		// error...
+		std::cout << "Error recieve\n";
+	}
+	ip_player2 = sender;
+	if (received > 0) {
+		std::cout << "Received " << received << " bytes from " << sender << " on port " << port_sent_from << std::endl;
+		if (strncmp("init", data, 4) == 0) {
+			std::cout << "Init recieved\n";
+			std::cout << "message: " << data << "recieved\n";
+			int a = 0;
+			std::sscanf(data,"init %d %*s", &a);
+			port_player2 = a;			
+			std::cout << "sending to:" << ip_player2 << " " << port_player2 << "\n";
+			sleep(1000); // miliseconds
+			udpSendStr_player2(data_string);
+			std::cout << "Sent!\n";
+		}
+	}
+
+}
+
+void get_game(char* data, int length) {
+
+	if (socket_recieve.bind(port_recieve) != sf::Socket::Done)
+	{
+		// error...
+		// if port not ok, find new port
+		if (port_recieve == socket_recieve.getLocalPort())
+			std::cout << "Port " << port_recieve << " already bound\n";
+		else
+			std::cout << "Unable to bind port" << port_recieve << "\n";
+	}
+	if (socket_recieve.bind(0) != sf::Socket::Done)
+	{
+		// error...
+		// if port not ok, find new port
+		if (port_recieve == socket_recieve.getLocalPort())
+			std::cout << "Port " << port_recieve << " already bound\n";
+		else
+			std::cout << "Unable to bind port" << port_recieve << "\n";
+	}
+	port_recieve = socket_recieve.getLocalPort();
+	std::cout << "Socket recieve - game context context bound to :" << port_recieve << "\n";
+
+	if (port_player2 == 0) {
+		std::string port_str;
+		std::cout << "Please, enter port of player2:\n" ;
+		std::getline(std::cin, port_str);
+		port_player2 = std::stoi(port_str);
+	}
+	//if (ip_player2 == 0) ip_player2 = "127.0.0.1";
+
+	std::string message = "init " + std::to_string(port_recieve) + " ";
+	udpSendStr_player2(message);
+	// temporary; to be moved to main menu - Join game
+	// bind the socket to a port
+
+	std::cout << "Socket recieve - main menu context bound to :" << socket_recieve.getLocalPort() << "\n";
+
+	socket_recieve.setBlocking(true);
+
+	std::size_t received = 0;
+	if (socket_recieve.receive(data, length, received, sender, port_sent_from) != sf::Socket::Done) {
+		// error...
+		std::cout << "Error recieve\n";
+	}
+	if (received > 0) {
+		std::cout << "Received " << received << " bytes from " << sender << " on port " << port_sent_from << std::endl;
+		if (4 >= strlen(data) && (strncmp("init", data, 4) == 0)) {
+			std::cout << "Game recieved\n";
+		}
+	}
+}

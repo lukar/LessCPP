@@ -34,11 +34,6 @@ private:
 	bool PvP = false;
 	Player multiplayer_opponent = Player::BLACK;
 
-	// UDP socket:
-	sf::IpAddress sender = "0.0.0.0";
-	unsigned short port = 5554;
-	sf::UdpSocket socket_recieve_game_context;
-
 public:
 
 	GameContext(std::array<WallConfig, 9>);

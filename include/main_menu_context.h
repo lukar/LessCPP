@@ -20,11 +20,7 @@ private:
 	menu::Button startGameButton = menu::Button("Start Game", window_width/3 + 50, window_height/3 + 100, 30);
 	menu::Button loadGameButton = menu::Button("Load Game", window_width/3 + 50, window_height/3 + 150, 30);
 
-	
-	// UDP socket:
-	sf::IpAddress sender = "0.0.0.0";
-	unsigned short port = 5554;
-	sf::UdpSocket socket_recieve;
+
 
 public:
 

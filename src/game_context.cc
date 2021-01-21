@@ -14,33 +14,7 @@ Context* GameContext::processEvent(const sf::Event & event)
 {
 	if (event.type == sf::Event::KeyPressed) {
 		if (event.key.code == sf::Keyboard::S) {
-		// NETWORKING
-		// temporary; to be moved to main menu - Join game
-		// bind the socket to a port
-		if (socket_recieve_game_context.bind(5555) != sf::Socket::Done)
-		{
-			// error...
-		}
-		std::cout << "Socket recieve - game context context bound to :" << socket_recieve_game_context.getLocalPort() << "\n";
-		char data[100];
-		socket_recieve_game_context.setBlocking(true);
-
-		std::size_t received = 0;
-		if (socket_recieve_game_context.receive(data, 100, received, sender, port) != sf::Socket::Done) {
-			// error...
-			std::cout << "Error recieve\n";
-		}
-		if (received > 0) {
-			socket_recieve_game_context.unbind();
-			std::cout << "Received " << received << " bytes from " << sender << " on port " << port << std::endl;
-			if (strncmp("init", data, 4) == 0) {
-				std::cout << "Init recieved\n";
-				sleep(1000); // miliseconds
-				std::cout << "sending ...\n";
-				udpSendStr(game.getJsonRepresentation().dump(),"127.0.0.1",5554);
-				std::cout << "Sent!\n";
-			}
-		}
+			host_game(game.getJsonRepresentation().dump());
 		
 		// END GAME?
 		} else if (event.key.code == sf::Keyboard::Q) {
@@ -102,7 +76,7 @@ Context* GameContext::processEvent(const sf::Event & event)
 					if (game.movePiece(held_piece->getLocation(), new_location.value())) {
 						held_piece->setLocation(new_location.value());
 						sound_drop.play();
-						udpSendStr(game.getJsonRepresentation().dump());
+						//udpSendStr(game.getJsonRepresentation().dump());
 					}
 					else {
 						sound_illegal.play();
