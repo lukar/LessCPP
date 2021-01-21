@@ -7,7 +7,14 @@
 #include <iostream>
 #include "osdialog.h"
 
-extern sf::RenderWindow window;
+sf::UdpSocket socket;
+sf::UdpSocket socket_recieve;
+
+sf::IpAddress ip_player2 = "127.0.0.1";
+unsigned short port_player2 = 0;
+
+sf::IpAddress sender = "0.0.0.0";
+unsigned short port_recieve = 5554;
 
 sf::Vector2f getMousePosition(sf::RenderWindow  const& window) {
 	return static_cast<sf::Vector2f>(sf::Mouse::getPosition(window));
@@ -34,10 +41,6 @@ Location locationFromPosition(const sf::Vector2f& position) {
 		static_cast<int>(position.x / (block_size / 2)),
 		static_cast<int>(position.y / (block_size / 2))
     };
-}
-
-void udpSendStr_player2(std::string data_string) {
-	udpSendStr(data_string, ip_player2, port_player2);
 }
 
 void udpSendStr(	std::string data_string,
@@ -94,7 +97,14 @@ void sleep(unsigned milliseconds)
 }
 #endif
 
-void host_game(std::string data_string) {
+void host_game(std::string data_string,
+	sf::UdpSocket &socket_recieve,
+	sf::IpAddress& sender,
+	unsigned short &port_recieve,
+	sf::IpAddress &ip_player2,
+	unsigned short &port_player2) {
+
+	static unsigned short port_sent_from = 0;
 	// NETWORKING
 	// temporary; to be moved to main menu - Join game
 	// bind the socket to a port
@@ -126,15 +136,22 @@ void host_game(std::string data_string) {
 			std::sscanf(data,"init %d %*s", &a);
 			port_player2 = a;			
 			std::cout << "sending to:" << ip_player2 << " " << port_player2 << "\n";
-			sleep(1000); // miliseconds
-			udpSendStr_player2(data_string);
+			sleep(2000); // miliseconds
+			udpSendStr(data_string, ip_player2, port_player2);
 			std::cout << "Sent!\n";
 		}
 	}
 
 }
 
-void get_game(char* data, int length) {
+void get_game(char* data, int length,
+	sf::UdpSocket &socket_recieve,
+	sf::IpAddress& sender,
+	unsigned short &port_recieve,
+	sf::IpAddress &ip_player2,
+	unsigned short &port_player2) {
+
+	static unsigned short port_sent_from = 0;
 
 	if (socket_recieve.bind(port_recieve) != sf::Socket::Done)
 	{
@@ -166,7 +183,7 @@ void get_game(char* data, int length) {
 	//if (ip_player2 == 0) ip_player2 = "127.0.0.1";
 
 	std::string message = "init " + std::to_string(port_recieve) + " ";
-	udpSendStr_player2(message);
+	udpSendStr(message, ip_player2,port_player2);
 	// temporary; to be moved to main menu - Join game
 	// bind the socket to a port
 
@@ -185,4 +202,20 @@ void get_game(char* data, int length) {
 			std::cout << "Game recieved\n";
 		}
 	}
+}
+
+void udpSendStr_player2(std::string data_string) {
+	udpSendStr(data_string, ip_player2, port_player2);
+}
+void get_game(char* data, int length) {
+	get_game(data, length, socket, sender, port_recieve, ip_player2, port_player2);
+}
+
+void host_game(std::string data_string) {
+	host_game(data_string,
+		socket,
+		sender,
+		port_recieve,
+		ip_player2,
+		port_player2);
 }

@@ -9,6 +9,7 @@
 GameContext::GameContext(std::array<WallConfig, 9> wall_configs) : game(wall_configs), gui(wall_configs) {}
 
 GameContext::GameContext(const nlohmann::json & game_json) : game(game_json), gui(game_json) {}
+//GameContext::GameContext(sf::IpAddress game_host_ip, unsigned short game_host_port) {}
 
 Context* GameContext::processEvent(const sf::Event & event)
 {

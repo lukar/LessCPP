@@ -37,7 +37,6 @@ Context* MainMenuContext::processEvent(const sf::Event & event)
 			char data[10000];
 			get_game(data, sizeof(data));
 
-
 			std::stringstream ss;
 			ss << data;
 			nlohmann::json game_json{};

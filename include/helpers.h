@@ -37,21 +37,25 @@ bool piecesInLocations(const Locations<4>& pieces, const Locations<4>& locations
 
 std::optional<Direction> getDirection(Location oldL, Location newL);
 
-static sf::UdpSocket socket;
-
-
-static sf::IpAddress ip_player2("127.0.0.1");
-static unsigned short port_player2 = 0;
-void udpSendStr(std::string data_string, sf::IpAddress recipient = "127.0.0.1", unsigned short port = 5555);
-void udpSendStr_player2(std::string data_string);
-// UDP socket:
-static sf::IpAddress sender = "0.0.0.0";
-static unsigned short port_sent_from = 0;
-static unsigned short port_recieve = 5554;
-static sf::UdpSocket socket_recieve;
-void host_game(std::string data_string);
-void get_game(char* data, int length);
-
 void sleep(unsigned milliseconds);
+
+
+
+void udpSendStr(std::string data_string, sf::IpAddress recipient = "127.0.0.1", unsigned short port = 5555);
+void host_game(std::string data_string);
+void host_game(std::string data_string,
+	sf::UdpSocket& socket,
+	sf::IpAddress& sender,
+	unsigned short& port_recieve,
+	sf::IpAddress& ip_player2,
+	unsigned short& port_player2);
+void get_game(char* data, int length);
+void get_game(char* data, int length,
+	sf::UdpSocket& socket_recieve,
+	sf::IpAddress& sender,
+	unsigned short& port_recieve,
+	sf::IpAddress& ip_player2,
+	unsigned short& port_player2);
+
 
 #endif //LESSCPP_HELPERS_H
