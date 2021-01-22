@@ -48,14 +48,14 @@ Context* GameContext::processBackgroundTask() {
 	//// Multiplayer - opponent - Update Player 2 moves
 	if (game.getState() != GameState::ENDED and game.active_player() == opponent_color) {
 		if (game.getState() == GameState::PREVIEW) return nullptr; /*TODO: not reliable*/
-		auto optional_link = wait_move(tcp_socket);
-		if (!optional_link)
-			return nullptr; // error reading socket
-		auto link = optional_link.value();
-		if (game.movePiece(link.first, link.second)) {
-			const auto [piece_idx, player] = gui.pieceAtLocation(link.first).value();
-			gui.getPieces(player)[piece_idx].setLocation(link.second);
-			sound_drop.play();
+		
+		if (auto optional_link = wait_move(tcp_socket)) {
+			auto link = optional_link.value();
+			if (game.movePiece(link.first, link.second)) {
+				const auto [piece_idx, player] = gui.pieceAtLocation(link.first).value();
+				gui.getPieces(player)[piece_idx].setLocation(link.second);
+				sound_drop.play();
+			}
 		}
 	}
 	return nullptr;
