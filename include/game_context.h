@@ -31,12 +31,15 @@ private:
 	sf::Font font = getFont("resources/Roboto_Medium.ttf");
 	sf::Text text = initializeText(font, 10, window_height + 10, 10, sf::Color::Green);
 
-	bool local_PvP = false;
+	bool ai_enable = false;
+	bool multiplayer_game_ready = false;
 	Player opponent_color = Player::BLACK;
 	sf::IpAddress ip_player2="0.0.0.0";
 	unsigned short tcp_port = 53012;
 	sf::TcpListener listener;
 	sf::TcpSocket tcp_socket;
+	void processBackgroundEvents();
+	
 public:
 
 	GameContext(std::array<WallConfig, 9>);
@@ -45,7 +48,9 @@ public:
 	GameContext(int quitLevelInc);
 
 	void update(const float dt, const sf::Vector2f & mousepos) override { m_dt = dt; m_mousepos = mousepos; };
-	Context* processEvent(const sf::Event &) override;
+
+	Context* processEvent(const sf::Event& event, bool bg) override;
+	
 	sf::Texture render() override;
 
 };

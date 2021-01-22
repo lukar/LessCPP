@@ -20,14 +20,16 @@ private:
 	menu::Button startGameButton = menu::Button("Start Game", window_width/3 + 50, window_height/3 + 100, 30);
 	menu::Button loadGameButton = menu::Button("Load Game", window_width/3 + 50, window_height/3 + 150, 30);
 
-
+	sf::IpAddress ip_player2 = "127.0.0.1";
+	unsigned short tcp_port = 53012;
+	Context* join_game(void);
 
 public:
 
 	MainMenuContext() = default;
 
 	void update(const float dt, const sf::Vector2f & mousepos) override { m_dt = dt; m_mousepos = mousepos; };
-	Context* processEvent(const sf::Event &) override;
+	Context* processEvent(const sf::Event &, bool bg) override;
 	sf::Texture render() override;
 };
 

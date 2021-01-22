@@ -21,14 +21,36 @@ GameContext::GameContext(const nlohmann::json& game_json, sf::IpAddress ip_playe
 		std::cout << "Tcp socket connected " << status << "\n";
 	}
 	tcp_socket.setBlocking(false);
-	local_PvP = false;
+	ai_enable = false;
 	opponent_color = Player::WHITE;
+	multiplayer_game_ready = true;
 }
 
-Context* GameContext::processEvent(const sf::Event & event)
+void GameContext::processBackgroundEvents() { 
+	//// Multiplayer - opponent - Update Player 2 moves
+	if (game.getState() != GameState::ENDED and game.active_player() == opponent_color) {
+		auto locations = wait_move(tcp_socket);
+		if (std::get<2>(locations)==false)
+			return; // error reading socket
+		
+		if (game.movePiece(std::get<0>(locations), std::get<1>(locations))) {
+			const auto [piece_idx, player] = gui.pieceAtLocation(std::get<0>(locations)).value();
+			gui.getPieces(player)[piece_idx].setLocation(std::get<1>(locations));
+			sound_drop.play();
+		}
+	}
+	return;
+}
+
+Context* GameContext::processEvent(const sf::Event & event,bool bg)
 {
+	if (bg) {
+		processBackgroundEvents(); //(networking)
+		return nullptr;
+	}
 	if (event.type == sf::Event::KeyPressed) {
 		if (event.key.code == sf::Keyboard::S) {
+			ai_enable = false;
 			// bind the listener to a port
 			if (listener.listen(tcp_port) != sf::Socket::Done) { /*connection from main menu*/
 				// error...
@@ -42,6 +64,7 @@ Context* GameContext::processEvent(const sf::Event & event)
 			}
 			std::cout << "Tcp socket connected\n";
 			tcp_socket.setBlocking(false);
+			multiplayer_game_ready = true;
 		
 		// END GAME?
 		} else if (event.key.code == sf::Keyboard::Q) {
@@ -49,11 +72,11 @@ Context* GameContext::processEvent(const sf::Event & event)
 			return new SubMenuContext(quitLevel, rentex.getTexture(), game);
 		} else if (event.key.code == sf::Keyboard::P) {
 			if (ip_player2 != sf::IpAddress::Any) {
-				local_PvP = false;
+				ai_enable = false;
 				std::cout << "You are in a multiplayer game; local_PvP = false\n ";
 			} else {
-			local_PvP = !local_PvP; // toggle
-			std::cout << "local_PvP = " << local_PvP <<"\n";
+				ai_enable = !ai_enable; // toggle
+			std::cout << "local_PvP = " << ai_enable <<"\n";
 			}
 		} 
 		else if (event.key.code == sf::Keyboard::Left) {
@@ -77,20 +100,11 @@ Context* GameContext::processEvent(const sf::Event & event)
 			}
 		}
 	}
-	
-	//// Multiplayer - opponent - Update Player 2 moves
-	if (game.getState() != GameState::ENDED and game.active_player() == opponent_color) {
-		auto locations = wait_move(tcp_socket);
 
-		if (game.movePiece(std::get<0>(locations), std::get<1>(locations))) {
-			const auto [piece_idx, player] = gui.pieceAtLocation(std::get<0>(locations)).value();
-			gui.getPieces(player)[piece_idx].setLocation(std::get<1>(locations));
-			sound_drop.play();
-		}
-	}// HUMAN - Playr 1
-	else if ((game.getState() != GameState::ENDED) and ((game.active_player() != opponent_color) or local_PvP)) { // PvP -> player vs player
+	// HUMAN - Playr 1
+	if ((game.getState() != GameState::ENDED) and (game.active_player() != opponent_color)) { // PvP -> player vs player
 		// GRAB PIECE
-		if (event.type == sf::Event::MouseButtonPressed and held_piece == nullptr) {
+		if (event.type == sf::Event::MouseButtonPressed) {
 			for (auto& piece : gui.getPieces(game.active_player())) {
 				if (euclideanDistance(m_mousepos, piece.getPosition()) <= piece_size) {
 					sound_pickup.play();
@@ -123,7 +137,7 @@ Context* GameContext::processEvent(const sf::Event & event)
 		}
 	}
 	//// AI
-	else if (game.getState() != GameState::ENDED and game.active_player() == Player::BLACK and local_PvP == false) {
+	else if (game.getState() != GameState::ENDED and game.active_player() == Player::BLACK and ai_enable == true) {
 		const auto & [path, eval] = recurseFindOptimal(game, Player::BLACK, 1, 0, 100);
 		for (auto [piece, direction] : path) {
 			if (game.active_player() != Player::BLACK) break;

@@ -11,8 +11,10 @@
 #include "nlohmann/json.hpp"
 #include <iostream>
 
-Context* MainMenuContext::processEvent(const sf::Event & event)
+
+Context* MainMenuContext::processEvent(const sf::Event & event, bool bg)
 {
+	if (bg) {return nullptr;}
 	if (event.type == sf::Event::MouseButtonPressed) {
 		if (quitButton.contains(m_mousepos)) quit = true;
 		else if (startGameButton.contains(m_mousepos)) return new GameContext(wall::generateNwallconfigs<9>());
@@ -33,22 +35,23 @@ Context* MainMenuContext::processEvent(const sf::Event & event)
 	}
 	if (event.type == sf::Event::KeyPressed) {
 		if (event.key.code == sf::Keyboard::J) {
-			sf::IpAddress ip_player2="127.0.0.1";
-			unsigned short tcp_port=53012;
-			std::string json_string;
-			json_string=get_game_tcp_packets(ip_player2, tcp_port);
-
-			std::stringstream ss;
-			ss << json_string;
-			nlohmann::json game_json{};
-			ss >> game_json;
-			auto* tmp = new GameContext(game_json, ip_player2, tcp_port);
-			return tmp;
+			return join_game();
 		}
 	}
 
 
 	return nullptr;
+}
+
+Context* MainMenuContext::join_game(void) {
+	std::string json_string;
+	json_string = get_game_tcp_packets(ip_player2, tcp_port);
+	std::stringstream ss;
+	ss << json_string;
+	nlohmann::json game_json{};
+	ss >> game_json;
+	auto* tmp = new GameContext(game_json, ip_player2, tcp_port);
+	return tmp;
 }
 
 sf::Texture MainMenuContext::render() {

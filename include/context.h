@@ -26,7 +26,7 @@ public:
 	}
 
 	virtual void update(const float /* delta time */, const sf::Vector2f & /* Mouse position */) = 0;
-	virtual Context* processEvent(const sf::Event &) = 0;
+	virtual Context* processEvent(const sf::Event &, bool bg) = 0;
 	virtual sf::Texture render() = 0;
 
 	bool isQuitting() const { return quit; }

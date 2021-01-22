@@ -47,6 +47,6 @@ sf::IpAddress host_game_tcp_packets(std::string data_string,
 void send_move(sf::TcpSocket& tcp_socket,
 	Location location_old,
 	Location location_new);
-std::tuple<Location, Location> wait_move(sf::TcpSocket& tcp_socket);
+std::tuple<Location, Location,bool> wait_move(sf::TcpSocket& tcp_socket);
 
 #endif //LESSCPP_HELPERS_H

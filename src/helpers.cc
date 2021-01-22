@@ -144,11 +144,13 @@ void send_move(sf::TcpSocket& tcp_socket,
 	tcp_socket.send(packet);
 }
 
-std::tuple<Location, Location> wait_move(sf::TcpSocket& tcp_socket) {
+std::tuple<Location, Location,bool> wait_move(sf::TcpSocket& tcp_socket) {
 	Location location_old;
 	Location location_new;
 	sf::Packet packet;
-	tcp_socket.receive(packet);
+	if (tcp_socket.receive(packet)) {
+		return std::tuple<Location, Location, bool>{location_old, location_new, false};
+	}
 	packet >> location_old.x >> location_old.y >> location_new.x >> location_new.y;
-	return std::tuple<Location, Location>{location_old, location_new};
+	return std::tuple<Location, Location, bool>{location_old, location_new, true};
 }
