@@ -7,13 +7,8 @@
 #include <iostream>
 #include "osdialog.h"
 
-sf::UdpSocket socket;
-sf::UdpSocket socket_recieve;
-
 sf::IpAddress ip_player2 = "127.0.0.1";
 unsigned short port_player2 = 0;
-
-sf::IpAddress sender = "0.0.0.0";
 unsigned short port_recieve = 5554;
 
 sf::Vector2f getMousePosition(sf::RenderWindow  const& window) {
@@ -46,11 +41,12 @@ Location locationFromPosition(const sf::Vector2f& position) {
 void udpSendStr(	std::string data_string,
 					sf::IpAddress recipient,
 					unsigned short port) {
-
+	sf::UdpSocket socket;
 	if (socket.send(data_string.c_str(), data_string.length(), recipient, port) != sf::Socket::Done)
 	{
 		// error...
 	}
+	socket.unbind();
 }
 
 bool piecesInLocations(const Locations<4>& pieces, const Locations<4>& locations) {
@@ -97,13 +93,12 @@ void sleep(unsigned milliseconds)
 }
 #endif
 
-void host_game(std::string data_string,
+sf::IpAddress host_game(std::string data_string,
 	sf::UdpSocket &socket_recieve,
-	sf::IpAddress& sender,
 	unsigned short &port_recieve,
 	sf::IpAddress &ip_player2,
 	unsigned short &port_player2) {
-
+	sf::IpAddress sender = "0.0.0.0";
 	static unsigned short port_sent_from = 0;
 	// NETWORKING
 	// temporary; to be moved to main menu - Join game
@@ -141,15 +136,15 @@ void host_game(std::string data_string,
 			std::cout << "Sent!\n";
 		}
 	}
-
+	return ip_player2;
 }
 
 void get_game(char* data, int length,
 	sf::UdpSocket &socket_recieve,
-	sf::IpAddress& sender,
 	unsigned short &port_recieve,
 	sf::IpAddress &ip_player2,
 	unsigned short &port_player2) {
+	sf::IpAddress sender = "0.0.0.0";
 
 	static unsigned short port_sent_from = 0;
 
@@ -208,14 +203,14 @@ void udpSendStr_player2(std::string data_string) {
 	udpSendStr(data_string, ip_player2, port_player2);
 }
 void get_game(char* data, int length) {
-	get_game(data, length, socket, sender, port_recieve, ip_player2, port_player2);
+	sf::UdpSocket socket;
+	get_game(data, length, socket, port_recieve, ip_player2, port_player2);
+	socket.unbind();
 }
 
-void host_game(std::string data_string) {
-	host_game(data_string,
-		socket,
-		sender,
-		port_recieve,
-		ip_player2,
-		port_player2);
+sf::IpAddress host_game(std::string data_string) {
+	sf::UdpSocket socket;
+	auto retv = host_game(data_string,		socket,		port_recieve,		ip_player2,		port_player2);
+	socket.unbind();
+	return retv;
 }

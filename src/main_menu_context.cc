@@ -25,8 +25,7 @@ Context* MainMenuContext::processEvent(const sf::Event & event)
 				nlohmann::json game_json{};
 				
 				game_file >> game_json;
-
-				auto * tmp = new GameContext(game_json);
+				auto* tmp = new GameContext(game_json);
 				free(filename);
 				return tmp;
 			}
@@ -41,7 +40,7 @@ Context* MainMenuContext::processEvent(const sf::Event & event)
 			ss << data;
 			nlohmann::json game_json{};
 			ss >> game_json;
-			auto* tmp = new GameContext(game_json);
+			auto* tmp = new GameContext(game_json, "127.0.0.1", 53012);
 			return tmp;
 		}
 	}

@@ -9,13 +9,33 @@
 GameContext::GameContext(std::array<WallConfig, 9> wall_configs) : game(wall_configs), gui(wall_configs) {}
 
 GameContext::GameContext(const nlohmann::json & game_json) : game(game_json), gui(game_json) {}
-//GameContext::GameContext(sf::IpAddress game_host_ip, unsigned short game_host_port) {}
+GameContext::GameContext(const nlohmann::json& game_json, sf::IpAddress ip_player2, unsigned short tcp_port = 53000) : game(game_json), gui(game_json) {
+	ip_player2 = ip_player2;
+	tcp_port = tcp_port;
+	std::cout << "Initializing cp socket\n";
+	sleep(500);
+	sf::Socket::Status status = tcp_socket.connect(ip_player2, tcp_port);
+
+	if (status != sf::Socket::Done)	{
+		std::cout << "Error connecting tcp - constructor " << status <<"\n";
+	}	else {
+		std::cout << "Tcp socket connected " << status << "\n";
+	}
+}
 
 Context* GameContext::processEvent(const sf::Event & event)
 {
 	if (event.type == sf::Event::KeyPressed) {
 		if (event.key.code == sf::Keyboard::S) {
 			host_game(game.getJsonRepresentation().dump());
+			// bind the listener to a port
+			if (listener.listen(tcp_port) != sf::Socket::Done) {
+				// error...
+			}
+			if (listener.accept(tcp_socket) != sf::Socket::Done) {
+				// error...
+			}
+			std::cout << "Tcp socket connected\n";
 		
 		// END GAME?
 		} else if (event.key.code == sf::Keyboard::Q) {

@@ -33,12 +33,15 @@ private:
 
 	bool PvP = false;
 	Player multiplayer_opponent = Player::BLACK;
-
+	sf::IpAddress ip_player2="0.0.0.0";
+	unsigned short tcp_port = 53012;
+	sf::TcpListener listener;
+	sf::TcpSocket tcp_socket;
 public:
 
 	GameContext(std::array<WallConfig, 9>);
 	GameContext(const nlohmann::json &);
-	GameContext(sf::IpAddress ip_player2, unsigned short port_player2);
+	GameContext(const nlohmann::json& ,sf::IpAddress ip_player2, unsigned short tcp_port);
 	GameContext(int quitLevelInc);
 
 	void update(const float dt, const sf::Vector2f & mousepos) override { m_dt = dt; m_mousepos = mousepos; };
