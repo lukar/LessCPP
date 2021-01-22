@@ -47,6 +47,7 @@ GameContext::GameContext(std::array<WallConfig, 9> wall_configs, unsigned short 
 Context* GameContext::processBackgroundTask() {
 	//// Multiplayer - opponent - Update Player 2 moves
 	if (game.getState() != GameState::ENDED and game.active_player() == opponent_color) {
+		if (game.getState() == GameState::PREVIEW) return nullptr; /*TODO: not reliable*/
 		auto optional_link = wait_move(tcp_socket);
 		if (!optional_link)
 			return nullptr; // error reading socket

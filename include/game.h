@@ -164,14 +164,14 @@ public:
 		return result;
 	}
 
-	const std::optional<std::pair<Location, Location>> getReversedMove() {
+	const std::optional<Link> getReversedMove() {
 		if (m_history_index == m_history.size()) return {};
 		Preview();
 		auto [start, end] = m_history.rbegin()[m_history_index++]; 
 		return {{end, start}};
 	}
 
-	const std::optional<std::pair<Location, Location>> getMove() {
+	const std::optional<Link> getMove() {
 		if (m_history_index == 0) { Resume(); return {}; }
 		return m_history.rbegin()[--m_history_index]; 
 	}
