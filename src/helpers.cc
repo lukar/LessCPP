@@ -106,14 +106,14 @@ std::string get_game_tcp_packets(sf::IpAddress& ip_player2,	unsigned short& tcp_
 	sf::TcpSocket tcp_socket;
 	if (true) {
 		std::string ip_str;
-		std::cout << "Please, enter port of player2: (default " << ip_player2 << ")\n";
+		std::cout << "Please, enter ip of player 2: (default " << ip_player2 << ")\n";
 		std::getline(std::cin, ip_str);
 		if (ip_str.length() > 0)
 			ip_player2 = ip_str;
 	}
 	if (true) {
 		std::string port_str;
-		std::cout << "Please, enter port of player2: (default " << tcp_port << ")\n";
+		std::cout << "Please, enter port of player 2: (default " << tcp_port << ")\n";
 		std::getline(std::cin, port_str);
 		if(port_str.length()>0)
 			tcp_port = std::stoi(port_str);
