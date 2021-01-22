@@ -79,15 +79,9 @@ void sleep(unsigned milliseconds)
 #endif
 
 sf::IpAddress host_game_tcp_packets(std::string data_string,
-	unsigned short& port_tcp_listener) {
+	sf::TcpListener & listener) {
 	sf::TcpSocket tcp_socket;
-	//tcp_socket.setBlocking(true);
-	sf::TcpListener listener;
-	sf::IpAddress sender = "0.0.0.0";
-	// bind the listener to a port
-	if (listener.listen(port_tcp_listener) != sf::Socket::Done) {
-		std::cout << "Error accepr socket\n"; return 0;
-	}
+
 	if (listener.accept(tcp_socket) != sf::Socket::Done) {
 		std::cout << "Error accepr socket\n"; return 0;
 	}
@@ -111,22 +105,19 @@ sf::IpAddress host_game_tcp_packets(std::string data_string,
 std::string get_game_tcp_packets(sf::IpAddress& ip_player2,	unsigned short& tcp_port) {
 	sf::TcpSocket tcp_socket;
 	//if (ip_player2 == 0) ip_player2 = "127.0.0.1";
-	if (tcp_port == 0) {
+	if (true) {
 		std::string port_str;
-		std::cout << "Please, enter port of player2:\n53012";
+		std::cout << "Please, enter port of player2: (default " << tcp_port << ")\n";
 		std::getline(std::cin, port_str);
-		//if(port_str.length()>0) 	
-		tcp_port = std::stoi(port_str);
-		//else tcp_port= 53012
+		if(port_str.length()>0)
+			tcp_port = std::stoi(port_str);
 	}
 	sf::Socket::Status status = tcp_socket.connect(ip_player2, tcp_port);
 
 	if (status != sf::Socket::Done) {
-		std::cout << "Error connecting tcp - constructor " << status << "\n";
+		std::cout << "Error connecting tcp - get_game_tcp_packets " << status << "\n"; assert(0);
 	}
-	else {
-		std::cout << "Tcp socket connected " << status << "\n";
-	}
+	std::cout << "Tcp socket connected - get_game_tcp_packets " << status << "\n";
 
 	sf::Packet packet;
 	std::string message = "init";

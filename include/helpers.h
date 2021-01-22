@@ -42,6 +42,6 @@ void sleep(unsigned milliseconds);
 std::string get_game_tcp_packets(sf::IpAddress& ip_player2,
 	unsigned short& tcp_port);
 sf::IpAddress host_game_tcp_packets(std::string data_string,
-	unsigned short& port_tcp_listener);
+	sf::TcpListener& listener);
 
 #endif //LESSCPP_HELPERS_H

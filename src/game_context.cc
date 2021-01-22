@@ -13,7 +13,6 @@ GameContext::GameContext(const nlohmann::json& game_json, sf::IpAddress ip_playe
 	ip_player2 = ip_player2;
 	tcp_port = tcp_port;
 	std::cout << "Initializing cp socket\n";
-	sleep(500);
 	sf::Socket::Status status = tcp_socket.connect(ip_player2, tcp_port);
 
 	if (status != sf::Socket::Done)	{
@@ -27,9 +26,12 @@ Context* GameContext::processEvent(const sf::Event & event)
 {
 	if (event.type == sf::Event::KeyPressed) {
 		if (event.key.code == sf::Keyboard::S) {
-			ip_player2 = host_game_tcp_packets(game.getJsonRepresentation().dump(), tcp_port);
 			// bind the listener to a port
-			if (listener.listen(tcp_port) != sf::Socket::Done) {
+			if (listener.listen(tcp_port) != sf::Socket::Done) { /*connection from main menu*/
+				// error...
+			}
+			ip_player2 = host_game_tcp_packets(game.getJsonRepresentation().dump(), listener);
+			if (listener.listen(tcp_port) != sf::Socket::Done) { /*connection from game context*/
 				// error...
 			}
 			if (listener.accept(tcp_socket) != sf::Socket::Done) {
