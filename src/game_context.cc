@@ -27,7 +27,7 @@ Context* GameContext::processEvent(const sf::Event & event)
 {
 	if (event.type == sf::Event::KeyPressed) {
 		if (event.key.code == sf::Keyboard::S) {
-			host_game(game.getJsonRepresentation().dump());
+			ip_player2 = host_game_tcp_packets(game.getJsonRepresentation().dump(), tcp_port);
 			// bind the listener to a port
 			if (listener.listen(tcp_port) != sf::Socket::Done) {
 				// error...

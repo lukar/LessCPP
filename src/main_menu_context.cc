@@ -33,14 +33,16 @@ Context* MainMenuContext::processEvent(const sf::Event & event)
 	}
 	if (event.type == sf::Event::KeyPressed) {
 		if (event.key.code == sf::Keyboard::J) {
-			char data[10000];
-			get_game(data, sizeof(data));
+			sf::IpAddress ip_player2="127.0.0.1";
+			unsigned short tcp_port=53012;
+			std::string json_string;
+			json_string=get_game_tcp_packets(ip_player2, tcp_port);
 
 			std::stringstream ss;
-			ss << data;
+			ss << json_string;
 			nlohmann::json game_json{};
 			ss >> game_json;
-			auto* tmp = new GameContext(game_json, "127.0.0.1", 53012);
+			auto* tmp = new GameContext(game_json, ip_player2, tcp_port);
 			return tmp;
 		}
 	}

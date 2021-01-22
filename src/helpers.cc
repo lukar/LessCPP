@@ -214,3 +214,64 @@ sf::IpAddress host_game(std::string data_string) {
 	socket.unbind();
 	return retv;
 }
+
+sf::IpAddress host_game_tcp_packets(std::string data_string,
+	unsigned short& port_tcp_listener) {
+	sf::TcpSocket tcp_socket;
+	//tcp_socket.setBlocking(true);
+	sf::TcpListener listener;
+	sf::IpAddress sender = "0.0.0.0";
+	// bind the listener to a port
+	if (listener.listen(port_tcp_listener) != sf::Socket::Done) {
+		std::cout << "Error accepr socket\n"; return 0;
+	}
+	if (listener.accept(tcp_socket) != sf::Socket::Done) {
+		std::cout << "Error accepr socket\n"; return 0;
+	}
+	std::cout << "Tcp socket connected\n";
+
+	sf::Packet packet;
+	tcp_socket.receive(packet);
+	std::string s;
+	std::string substring="init";
+	packet >> s;
+	packet.clear();
+	if (s.find(substring) != std::string::npos) {
+		std::cout << substring << " found!" << '\n';
+		packet << data_string;
+		tcp_socket.send(packet);
+		std::cout << "Sent!\n";
+	}
+	return tcp_socket.getRemoteAddress();
+}
+
+std::string get_game_tcp_packets(sf::IpAddress& ip_player2,	unsigned short& tcp_port) {
+	sf::TcpSocket tcp_socket;
+	//if (ip_player2 == 0) ip_player2 = "127.0.0.1";
+	if (tcp_port == 0) {
+		std::string port_str;
+		std::cout << "Please, enter port of player2:\n53012";
+		std::getline(std::cin, port_str);
+		//if(port_str.length()>0) 	
+		tcp_port = std::stoi(port_str);
+		//else tcp_port= 53012
+	}
+	sf::Socket::Status status = tcp_socket.connect(ip_player2, tcp_port);
+
+	if (status != sf::Socket::Done) {
+		std::cout << "Error connecting tcp - constructor " << status << "\n";
+	}
+	else {
+		std::cout << "Tcp socket connected " << status << "\n";
+	}
+
+	sf::Packet packet;
+	std::string message = "init";
+	packet << message;
+	tcp_socket.send(packet); packet.clear();
+
+	tcp_socket.receive(packet);
+	std::string json_string;
+	packet >> json_string;
+	return json_string;
+}
