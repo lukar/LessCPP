@@ -30,6 +30,7 @@ public:
 
 	void update(const float dt, const sf::Vector2f & mousepos) override { m_dt = dt; m_mousepos = mousepos; };
 	Context* processEvent(const sf::Event &, bool bg) override;
+	Context* processBackgroundEvent(void) override;
 	sf::Texture render() override;
 };
 

@@ -42,6 +42,10 @@ void GameContext::processBackgroundEvents() {
 	return;
 }
 
+Context* GameContext::processBackgroundEvent() {
+	processBackgroundEvents(); //(networking)
+	return nullptr;
+}
 Context* GameContext::processEvent(const sf::Event & event,bool bg)
 {
 	if (bg) {
