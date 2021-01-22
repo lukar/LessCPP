@@ -42,8 +42,10 @@ private:
 public:
 
 	GameContext(std::array<WallConfig, 9>);
+	GameContext(std::array<WallConfig, 9> wall_configs, unsigned short tcp_port /*53012*/);
 	GameContext(const nlohmann::json &);
 	GameContext(const nlohmann::json& ,sf::IpAddress ip_player2, unsigned short tcp_port);
+	
 	GameContext(int quitLevelInc);
 
 	void update(const float dt, const sf::Vector2f & mousepos) override { m_dt = dt; m_mousepos = mousepos; };

@@ -23,12 +23,10 @@ Context* MainMenuContext::processEvent(const sf::Event & event)
 
 			if (filename != nullptr) {
 				std::ifstream game_file(filename);
-				nlohmann::json game_json{};
-				
-				game_file >> game_json;
-				auto* tmp = new GameContext(game_json);
 				free(filename);
-				return tmp;
+				nlohmann::json game_json{};
+				game_file >> game_json;
+				return new GameContext(game_json);
 			}
 		};
 	}
@@ -37,20 +35,34 @@ Context* MainMenuContext::processEvent(const sf::Event & event)
 			return join_game();
 		}
 	}
+	if (event.type == sf::Event::KeyPressed) {
+		if (event.key.code == sf::Keyboard::H) {
+			return host_game();
+		}
+	}
 
 
 	return nullptr;
 }
 
+Context* MainMenuContext::host_game(void) {
+	if (false) {
+		std::string port_str;
+		std::cout << "Please, enter port of player 2: (default " << tcp_port << ")\n";
+		std::getline(std::cin, port_str);
+		if (port_str.length() > 0)
+			tcp_port = std::stoi(port_str);
+	}
+	return new GameContext(wall::generateNwallconfigs<9>(), tcp_port /*53012*/);
+}
+
 Context* MainMenuContext::join_game(void) {
-	std::string json_string;
-	json_string = get_game_tcp_packets(ip_player2, tcp_port);
+	std::string json_string = get_game_tcp_packets(ip_player2, tcp_port);
 	std::stringstream ss;
 	ss << json_string;
 	nlohmann::json game_json{};
 	ss >> game_json;
-	auto* tmp = new GameContext(game_json, ip_player2, tcp_port);
-	return tmp;
+	return new GameContext(game_json, ip_player2, tcp_port);
 }
 
 sf::Texture MainMenuContext::render() {

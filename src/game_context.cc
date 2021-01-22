@@ -25,6 +25,24 @@ GameContext::GameContext(const nlohmann::json& game_json, sf::IpAddress ip_playe
 	opponent_color = Player::WHITE;
 	multiplayer_game_ready = true;
 }
+GameContext::GameContext(std::array<WallConfig, 9> wall_configs, unsigned short tcp_port /*53012*/) : game(wall_configs), gui(wall_configs) {
+	tcp_port = tcp_port;
+	ai_enable = false;
+	// bind the listener to a port
+	if (listener.listen(tcp_port) != sf::Socket::Done) { /*connection from main menu*/
+		// error...
+	}
+	ip_player2 = host_game_tcp_packets(game.getJsonRepresentation().dump(), listener);
+	if (listener.listen(tcp_port) != sf::Socket::Done) { /*connection from game context*/
+		// error...
+	}
+	if (listener.accept(tcp_socket) != sf::Socket::Done) {
+		// error...
+	}
+	std::cout << "Tcp socket connected\n";
+	tcp_socket.setBlocking(false);
+	multiplayer_game_ready = true;
+}
 
 Context* GameContext::processBackgroundTask() {
 	//// Multiplayer - opponent - Update Player 2 moves
