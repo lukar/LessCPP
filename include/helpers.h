@@ -39,26 +39,6 @@ std::optional<Direction> getDirection(Location oldL, Location newL);
 
 void sleep(unsigned milliseconds);
 
-
-
-void udpSendStr(std::string data_string,
-	sf::IpAddress recipient = "127.0.0.1",
-	unsigned short port = 5555);
-
-sf::IpAddress host_game(std::string data_string);
-sf::IpAddress host_game(std::string data_string,
-	sf::UdpSocket& socket,
-	unsigned short& port_recieve,
-	sf::IpAddress& ip_player2,
-	unsigned short& port_player2);
-
-void get_game(char* data, int length);
-void get_game(char* data, int length,
-	sf::UdpSocket& socket_recieve,
-	unsigned short& port_recieve,
-	sf::IpAddress& ip_player2,
-	unsigned short& port_player2);
-
 std::string get_game_tcp_packets(sf::IpAddress& ip_player2,
 	unsigned short& tcp_port);
 sf::IpAddress host_game_tcp_packets(std::string data_string,

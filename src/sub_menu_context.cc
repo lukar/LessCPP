@@ -1,7 +1,7 @@
 #include "sub_menu_context.h"
 #include <fstream>
 #include <array>
-
+#include <iostream>
 #include <chrono>
 #include <ctime>
 #include <iomanip>
@@ -40,8 +40,7 @@ Context* SubMenuContext::processEvent(const sf::Event & event)
 			}
 		}
 		else if (sendGameButton.contains(m_mousepos)) { // send game -> prepare send game // This goes to game context
-			//game_json_string = m_game.getJsonRepresentation().dump();
-			udpSendStr(m_game.getJsonRepresentation().dump());
+			std::cout << "send game - Functionality obsolete\n";
 		}
 	}
 	if (event.type == sf::Event::KeyPressed) {
