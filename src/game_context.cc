@@ -31,7 +31,7 @@ Context* GameContext::processBackgroundTask() {
 	if (game.getState() != GameState::ENDED and game.active_player() == opponent_color) {
 		auto optional_link = wait_move(tcp_socket);
 		if (!optional_link)
-			return; // error reading socket
+			return nullptr; // error reading socket
 		auto link = optional_link.value();
 		if (game.movePiece(link.first, link.second)) {
 			const auto [piece_idx, player] = gui.pieceAtLocation(link.first).value();
