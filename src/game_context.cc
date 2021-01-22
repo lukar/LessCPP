@@ -26,8 +26,7 @@ GameContext::GameContext(const nlohmann::json& game_json, sf::IpAddress ip_playe
 	multiplayer_game_ready = true;
 }
 
-
-void GameContext::processBackgroundEvents() { 
+Context* GameContext::processBackgroundTask() {
 	//// Multiplayer - opponent - Update Player 2 moves
 	if (game.getState() != GameState::ENDED and game.active_player() == opponent_color) {
 		auto optional_link = wait_move(tcp_socket);
@@ -40,11 +39,6 @@ void GameContext::processBackgroundEvents() {
 			sound_drop.play();
 		}
 	}
-	return;
-}
-
-Context* GameContext::processBackgroundTask() {
-	processBackgroundEvents(); //(networking)
 	return nullptr;
 }
 Context* GameContext::processEvent(const sf::Event & event)

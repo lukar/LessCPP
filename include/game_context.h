@@ -38,7 +38,6 @@ private:
 	unsigned short tcp_port = 53012;
 	sf::TcpListener listener;
 	sf::TcpSocket tcp_socket;
-	void processBackgroundEvents();
 	
 public:
 
