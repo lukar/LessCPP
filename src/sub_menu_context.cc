@@ -25,9 +25,8 @@ SubMenuContext::SubMenuContext(int preQuitLevel, sf::Texture pretext, const Game
 }
 
 Context* SubMenuContext::processBackgroundEvent(){ return nullptr; }
-Context* SubMenuContext::processEvent(const sf::Event & event,bool bg)
+Context* SubMenuContext::processEvent(const sf::Event & event)
 {
-	if (bg) { return nullptr; }
 	if (event.type == sf::Event::MouseButtonPressed) {
 		if (returnButton.contains(m_mousepos)) quit = true;
 		else if (continueButton.contains(m_mousepos)) { quitLevel = 1; quit = true; }

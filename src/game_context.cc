@@ -46,12 +46,8 @@ Context* GameContext::processBackgroundEvent() {
 	processBackgroundEvents(); //(networking)
 	return nullptr;
 }
-Context* GameContext::processEvent(const sf::Event & event,bool bg)
+Context* GameContext::processEvent(const sf::Event & event)
 {
-	if (bg) {
-		processBackgroundEvents(); //(networking)
-		return nullptr;
-	}
 	if (event.type == sf::Event::KeyPressed) {
 		if (event.key.code == sf::Keyboard::S) {
 			ai_enable = false;
