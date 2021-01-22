@@ -90,7 +90,7 @@ Context* GameContext::processEvent(const sf::Event & event)
 	}// HUMAN - Playr 1
 	else if ((game.getState() != GameState::ENDED) and ((game.active_player() != opponent_color) or local_PvP)) { // PvP -> player vs player
 		// GRAB PIECE
-		if (event.type == sf::Event::MouseButtonPressed) {
+		if (event.type == sf::Event::MouseButtonPressed and held_piece == nullptr) {
 			for (auto& piece : gui.getPieces(game.active_player())) {
 				if (euclideanDistance(m_mousepos, piece.getPosition()) <= piece_size) {
 					sound_pickup.play();

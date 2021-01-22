@@ -40,10 +40,10 @@ int main(int argc, char** argv)
 		}
 
 		contexts.top()->update(dt, getMousePosition(window));
-		while (window.pollEvent(event)) {
+		do {
 			Context* newcontext = contexts.top()->processEvent(event);
 			if (newcontext != nullptr) contexts.push(newcontext);
-		}
+		} while (window.pollEvent(event));
 
 		window.clear();
 
