@@ -16,7 +16,7 @@ Context* MainMenuContext::processEvent(const sf::Event & event)
 {
 	if (event.type == sf::Event::MouseButtonPressed) {
 		if (quitButton.contains(m_mousepos)) quit = true;
-		else if (startGameButton.contains(m_mousepos)) return new GameContext(wall::generateNwallconfigs<9>());
+		else if (startGameButton.contains(m_mousepos)) return new GameContext(wall::generateNwallconfigs<9>(),GameMode::SINGLEPLAYER);
 		else if (loadGameButton.contains(m_mousepos)) {
 			osdialog_filters* filters = osdialog_filters_parse("json:json");
 			char* filename = osdialog_file(OSDIALOG_OPEN, ".json", "Select a json file", filters);
@@ -26,7 +26,7 @@ Context* MainMenuContext::processEvent(const sf::Event & event)
 				free(filename);
 				nlohmann::json game_json{};
 				game_file >> game_json;
-				return new GameContext(game_json);
+				return new GameContext(game_json, GameMode::SINGLEPLAYER);
 			}
 		};
 	}
@@ -40,7 +40,6 @@ Context* MainMenuContext::processEvent(const sf::Event & event)
 			return host_game();
 		}
 	}
-
 
 	return nullptr;
 }

@@ -14,7 +14,14 @@
 #include <array>
 #include "nlohmann/json.hpp"
 
+enum class GameMode {
+	SINGLEPLAYER,
+	LOCAL_PVP,
+	MULTIPLAYER
+};
+
 class GameContext : public Context {
+
 private:
 	Game game;
 	Gui gui;
@@ -34,16 +41,18 @@ private:
 	bool ai_enable = false;
 	bool multiplayer_game_ready = false;
 	Player opponent_color = Player::BLACK;
-	sf::IpAddress ip_player2="0.0.0.0";
-	unsigned short tcp_port = 53012;
+	sf::IpAddress m_ip_player2="0.0.0.0";
+	unsigned short m_tcp_port = 53012;
 	sf::TcpListener listener;
 	sf::TcpSocket tcp_socket;
+
+	const GameMode m_game_mode;
 	
 public:
 
-	GameContext(std::array<WallConfig, 9>);
+	GameContext(std::array<WallConfig, 9>, GameMode game_mode);
 	GameContext(std::array<WallConfig, 9> wall_configs, unsigned short tcp_port /*53012*/);
-	GameContext(const nlohmann::json &);
+	GameContext(const nlohmann::json &, GameMode game_mode);
 	GameContext(const nlohmann::json& ,sf::IpAddress ip_player2, unsigned short tcp_port);
 	
 	GameContext(int quitLevelInc);
