@@ -31,8 +31,8 @@ private:
 	sf::Font font = getFont("resources/Roboto_Medium.ttf");
 	sf::Text text = initializeText(font, 10, window_height + 10, 10, sf::Color::Green);
 
-	bool PvP = false;
-	Player multiplayer_opponent = Player::BLACK;
+	bool local_PvP = false;
+	Player opponent_color = Player::BLACK;
 	sf::IpAddress ip_player2="0.0.0.0";
 	unsigned short tcp_port = 53012;
 	sf::TcpListener listener;

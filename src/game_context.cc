@@ -20,6 +20,9 @@ GameContext::GameContext(const nlohmann::json& game_json, sf::IpAddress ip_playe
 	}	else {
 		std::cout << "Tcp socket connected " << status << "\n";
 	}
+	tcp_socket.setBlocking(false);
+	local_PvP = false;
+	opponent_color = Player::WHITE;
 }
 
 Context* GameContext::processEvent(const sf::Event & event)
@@ -38,26 +41,21 @@ Context* GameContext::processEvent(const sf::Event & event)
 				// error...
 			}
 			std::cout << "Tcp socket connected\n";
+			tcp_socket.setBlocking(false);
 		
 		// END GAME?
 		} else if (event.key.code == sf::Keyboard::Q) {
 			// quit = true;
 			return new SubMenuContext(quitLevel, rentex.getTexture(), game);
 		} else if (event.key.code == sf::Keyboard::P) {
-			// quit = true;
-			PvP = !PvP; // toggle
-			std::cout << "PvP = " << PvP <<"\n";
-		} else if (event.key.code == sf::Keyboard::O) {
-			// quit = true;
-			if (Player::BLACK == multiplayer_opponent) {
-				multiplayer_opponent = Player::WHITE;
-				std::cout << "multiplayer_opponent = WHITE\n";
+			if (ip_player2 != sf::IpAddress::Any) {
+				local_PvP = false;
+				std::cout << "You are in a multiplayer game; local_PvP = false\n ";
+			} else {
+			local_PvP = !local_PvP; // toggle
+			std::cout << "local_PvP = " << local_PvP <<"\n";
 			}
-			else {
-				multiplayer_opponent = Player::BLACK;
-				std::cout << "multiplayer_opponent = BLACK\n";
-			}
-		}
+		} 
 		else if (event.key.code == sf::Keyboard::Left) {
 			const auto move = game.getReversedMove();
 			if (move) {
@@ -79,8 +77,18 @@ Context* GameContext::processEvent(const sf::Event & event)
 			}
 		}
 	}
-	// HUMAN
-	if ((game.getState() != GameState::ENDED) and ((game.active_player() != Player::BLACK) or PvP)) { // PvP -> player vs player
+	
+	//// Multiplayer - opponent - Update Player 2 moves
+	if (game.getState() != GameState::ENDED and game.active_player() == opponent_color) {
+		auto locations = wait_move(tcp_socket);
+
+		if (game.movePiece(std::get<0>(locations), std::get<1>(locations))) {
+			const auto [piece_idx, player] = gui.pieceAtLocation(std::get<0>(locations)).value();
+			gui.getPieces(player)[piece_idx].setLocation(std::get<1>(locations));
+			sound_drop.play();
+		}
+	}// HUMAN - Playr 1
+	else if ((game.getState() != GameState::ENDED) and ((game.active_player() != opponent_color) or local_PvP)) { // PvP -> player vs player
 		// GRAB PIECE
 		if (event.type == sf::Event::MouseButtonPressed) {
 			for (auto& piece : gui.getPieces(game.active_player())) {
@@ -97,6 +105,7 @@ Context* GameContext::processEvent(const sf::Event & event)
 
 				if (new_location) {
 					if (game.movePiece(held_piece->getLocation(), new_location.value())) {
+						send_move(tcp_socket, held_piece->getLocation(), new_location.value());
 						held_piece->setLocation(new_location.value());
 						sound_drop.play();
 						//udpSendStr(game.getJsonRepresentation().dump());
@@ -114,7 +123,7 @@ Context* GameContext::processEvent(const sf::Event & event)
 		}
 	}
 	//// AI
-	else if (game.getState() != GameState::ENDED and game.active_player() == Player::BLACK and PvP == false) {
+	else if (game.getState() != GameState::ENDED and game.active_player() == Player::BLACK and local_PvP == false) {
 		const auto & [path, eval] = recurseFindOptimal(game, Player::BLACK, 1, 0, 100);
 		for (auto [piece, direction] : path) {
 			if (game.active_player() != Player::BLACK) break;
@@ -123,16 +132,7 @@ Context* GameContext::processEvent(const sf::Event & event)
 			gui.getPieces(Player::BLACK)[piece].resetPosition();
 		}
 	}
-	//// Multiplayer - opponent
-	/*else if (game.getState() != GameState::ENDED and game.active_player() == multiplayer_opponent) {
-		path = 
-		for (auto [piece, direction] : path) {
-			if (game.active_player() != Player::BLACK) break;
-			auto newlocation = game.movePiece(piece, direction);
-			gui.getPieces(Player::BLACK)[piece].setLocation(newlocation.value());
-			gui.getPieces(Player::BLACK)[piece].resetPosition();
-		}
-	}*/
+	
 	return nullptr;
 }
 

@@ -129,3 +129,20 @@ std::string get_game_tcp_packets(sf::IpAddress& ip_player2,	unsigned short& tcp_
 	packet >> json_string;
 	return json_string;
 }
+
+void send_move(sf::TcpSocket& tcp_socket,
+	Location location_old,
+	Location location_new) {
+	sf::Packet packet;
+	packet << location_old.x << location_old.y << location_new.x << location_new.y;
+	tcp_socket.send(packet);
+}
+
+std::tuple<Location, Location> wait_move(sf::TcpSocket& tcp_socket) {
+	Location location_old;
+	Location location_new;
+	sf::Packet packet;
+	tcp_socket.receive(packet);
+	packet >> location_old.x >> location_old.y >> location_new.x >> location_new.y;
+	return std::tuple<Location, Location>{location_old, location_new};
+}
