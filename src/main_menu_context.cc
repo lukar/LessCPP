@@ -11,7 +11,7 @@
 #include "nlohmann/json.hpp"
 #include <iostream>
 
-Context* MainMenuContext::processBackgroundEvent() { return nullptr; }
+Context* MainMenuContext::processBackgroundTask() { return nullptr; }
 Context* MainMenuContext::processEvent(const sf::Event & event)
 {
 	if (event.type == sf::Event::MouseButtonPressed) {

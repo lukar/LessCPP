@@ -45,7 +45,7 @@ int main(int argc, char** argv)
 			if (newcontext != nullptr) contexts.push(newcontext);
 		}
 		// background events = true (others are ignored)
-		contexts.top()->processBackgroundEvent(); 
+		contexts.top()->processBackgroundTask(); 
 
 		window.clear();
 

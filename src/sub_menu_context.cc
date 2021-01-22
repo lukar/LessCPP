@@ -24,7 +24,7 @@ SubMenuContext::SubMenuContext(int preQuitLevel, sf::Texture pretext, const Game
 	text.setString("Pause");
 }
 
-Context* SubMenuContext::processBackgroundEvent(){ return nullptr; }
+Context* SubMenuContext::processBackgroundTask(){ return nullptr; }
 Context* SubMenuContext::processEvent(const sf::Event & event)
 {
 	if (event.type == sf::Event::MouseButtonPressed) {

@@ -26,23 +26,24 @@ GameContext::GameContext(const nlohmann::json& game_json, sf::IpAddress ip_playe
 	multiplayer_game_ready = true;
 }
 
+
 void GameContext::processBackgroundEvents() { 
 	//// Multiplayer - opponent - Update Player 2 moves
 	if (game.getState() != GameState::ENDED and game.active_player() == opponent_color) {
-		auto locations = wait_move(tcp_socket);
-		if (std::get<2>(locations)==false)
+		auto optional_link = wait_move(tcp_socket);
+		if (!optional_link)
 			return; // error reading socket
-		
-		if (game.movePiece(std::get<0>(locations), std::get<1>(locations))) {
-			const auto [piece_idx, player] = gui.pieceAtLocation(std::get<0>(locations)).value();
-			gui.getPieces(player)[piece_idx].setLocation(std::get<1>(locations));
+		auto link = optional_link.value();
+		if (game.movePiece(link.first, link.second)) {
+			const auto [piece_idx, player] = gui.pieceAtLocation(link.first).value();
+			gui.getPieces(player)[piece_idx].setLocation(link.second);
 			sound_drop.play();
 		}
 	}
 	return;
 }
 
-Context* GameContext::processBackgroundEvent() {
+Context* GameContext::processBackgroundTask() {
 	processBackgroundEvents(); //(networking)
 	return nullptr;
 }
