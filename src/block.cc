@@ -60,7 +60,6 @@ sf::Vector2f Block::getWallSegOrigin(const WallSeg &wallSeg) const {
 std::vector<sf::RectangleShape> Block::generateWall(const WallConfig &config) const {
     std::vector<sf::RectangleShape> tmp;
     for (auto &w : config) {
-        if (w[0] == -2) continue; // -2 means there is no wall
         sf::RectangleShape a_wall{(w[0] == 1
                                    ? sf::Vector2f(wall_width, block_size / 2 + wall_width / 2)
                                    : sf::Vector2f(block_size / 2 + wall_width / 2, wall_width))};

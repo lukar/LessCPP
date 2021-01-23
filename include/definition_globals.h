@@ -3,6 +3,7 @@
 
 #include <utility>
 #include <vector>
+#include <array>
 
 enum class Direction { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3};
 
@@ -42,6 +43,6 @@ using Path = std::vector<Move>;
 
 
 using WallSeg = std::array<int, 3>;
-using WallConfig = std::array<WallSeg, 3>;
+using WallConfig = std::vector<WallSeg>;
 
 #endif // LESSCPP_DEFINITION_GLOBALS

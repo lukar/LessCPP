@@ -17,62 +17,56 @@ namespace wall {
 	// second number denotes -1 (left/up), 0 (middle), 1 (right/down)
 	// third  number denotes -1 (left/up) or 1 (right/down)
 
-		constexpr WallConfig bFullPlayer = {
+		const WallConfig bFullSide = {
 						{
 										{1, -1, -1},
-										{1, -1, 1},
-										{-2, 0, 0}
+										{1, -1, 1}
 						}
 		};
-		constexpr WallConfig bHalfPlayer = {
+		const WallConfig bHalfSide = {
 						{
-										{1, -1, 1},
-										{-2, 0, 0},
-										{-2, 0, 0}
+										{1, -1, 1}
 
 						}
 
 		};
-		constexpr WallConfig bZigZag = {
+		const WallConfig bZigZag = {
 						{
 										{1, -1, -1},
 										{-1, 0, -1},
 										{1, 0, 1}
 						}
 		};
-		constexpr WallConfig bT_Block = {
+		const WallConfig bT_Block = {
 						{
 										{1, -1, -1},
 										{1, -1, 1},
 										{-1, 0, -1}
 						}
 		};
-		constexpr WallConfig bTopLeft = {
+		const WallConfig bTopLeft = {
 						{
 										{1, -1, -1},
-										{-1, 0, -1},
-										{-2, 0, 0}
+										{-1, 0, -1}
 
 						}
 		};
-		constexpr WallConfig bTopRight = {
+		const WallConfig bTopRight = {
 						{
 										{1, 0, -1},
-										{-1, 0, 1},
-										{-2, 0, 0}
+										{-1, 0, 1}
 						}
 		};
-		constexpr WallConfig bBottomRight = {
+		const WallConfig bBottomRight = {
 						{
 										{1, 0, 1},
-										{-1, 1, 1},
-										{-2, 0, 0}
+										{-1, 1, 1}
 						}
 		};
 
 
-		constexpr std::array<WallConfig, 7> unique_wall_configs{
-						bFullPlayer, bHalfPlayer, bZigZag, bT_Block, bTopLeft, bTopRight, bBottomRight};
+		const std::array<WallConfig, 7> unique_wall_configs{
+						bFullSide, bHalfSide, bZigZag, bT_Block, bTopLeft, bTopRight, bBottomRight};
 
         WallConfig rotateWallConfig(WallConfig wall, uint rotation);
 
@@ -89,7 +83,7 @@ namespace wall {
             return wallconfig;
         }
 
-		constexpr bool hasWallSeg(const WallConfig &config, const WallSeg &seg) {
+		inline bool hasWallSeg(const WallConfig &config, const WallSeg &seg) {
 			for (auto const& w: config) {
 				if (w[0] == seg[0] and w[1] == seg[1] and w[2] == seg[2]) return true;
 			}
