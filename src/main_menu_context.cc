@@ -1,4 +1,5 @@
 #include "main_menu_context.h"
+#include "join_dialog_context.h"
 #include "game_context.h"
 #include "wall.h"
 
@@ -21,6 +22,9 @@ Context* MainMenuContext::processEvent(const sf::Event & event)
 		else if (loadGameButton.contains(m_mousepos)) return load_game();
 		else if (MPHGameButton.contains(m_mousepos)) return host_game();
 		else if (MPCGameButton.contains(m_mousepos)) return join_game();
+	}
+	if (event.type == sf::Event::KeyPressed) {
+		if (event.key.code == sf::Keyboard::J) return new JoinDialogContext();
 	}
 
 	return nullptr;

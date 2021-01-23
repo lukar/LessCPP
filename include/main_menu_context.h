@@ -30,11 +30,6 @@ private:
 	Context* host_game();
 	Context* load_game();
 
-	sf::IpAddress ip_player2 = "127.0.0.1";
-	unsigned short tcp_port = 53012;
-	Context* join_game(void);
-	Context* host_game(void);
-
 public:
 
 	MainMenuContext() = default;
