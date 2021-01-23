@@ -1,6 +1,6 @@
 #include <optional>
 #include "location.h"
-
+#include <ciso646>
 
 
 bool Location::operator==(const Location &rhs) const {

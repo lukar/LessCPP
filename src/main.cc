@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 
+
 #include <iostream>
 #include <stack>
 
@@ -12,7 +13,8 @@
 
 #include "osdialog.h"
 
-int main()
+
+int main(int argc, char** argv)
 {
 	std::stack<Context*> contexts;
 
@@ -42,6 +44,8 @@ int main()
 			Context* newcontext = contexts.top()->processEvent(event);
 			if (newcontext != nullptr) contexts.push(newcontext);
 		}
+		// background events = true (others are ignored)
+		contexts.top()->processBackgroundTask(); 
 
 		window.clear();
 
@@ -52,3 +56,6 @@ int main()
 
 	return 0;
 }
+
+
+

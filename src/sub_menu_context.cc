@@ -1,10 +1,11 @@
 #include "sub_menu_context.h"
 #include <fstream>
 #include <array>
-
+#include <iostream>
 #include <chrono>
 #include <ctime>
 #include <iomanip>
+#include "helpers.h"
 #include "osdialog.h"
 
 static std::string getTimeStr(){
@@ -23,6 +24,7 @@ SubMenuContext::SubMenuContext(int preQuitLevel, sf::Texture pretext, const Game
 	text.setString("Pause");
 }
 
+Context* SubMenuContext::processBackgroundTask(){ return nullptr; }
 Context* SubMenuContext::processEvent(const sf::Event & event)
 {
 	if (event.type == sf::Event::MouseButtonPressed) {
@@ -51,7 +53,6 @@ sf::Texture SubMenuContext::render() {
 	rentex.draw(returnButton);
 	rentex.draw(continueButton);
 	rentex.draw(saveGameButton);
-
 	rentex.display();
 
 	return rentex.getTexture();
