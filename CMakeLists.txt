@@ -3,18 +3,20 @@ project(LessCPP CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 
+file(GLOB source_files "src/*")
+add_executable(less ${source_files})
+
 if(UNIX)
 	set(CMAKE_INSTALL_RPATH lib)
 	set(CMAKE_BUILD_RPATH lib)
 	set(CMAKE_BUILD_RPATH_USE_ORIGIN TRUE)
 	set(CMAKE_SKIP_INSTALL_RPATH FALSE)
+	target_compile_options(less PRIVATE -Wall -Wextra -pedantic) 
 elseif(WIN32)
 	set(SFML_STATIC_LIBRARIES TRUE)
 	set(BUILD_SHARED_LIBS FALSE)
+	target_compile_options(less PRIVATE -Wall -pedantic) 
 endif()
-
-file(GLOB source_files "src/*")
-add_executable(less ${source_files})
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(libs/nlohmann_json)

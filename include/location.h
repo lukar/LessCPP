@@ -4,6 +4,7 @@
 #include "nlohmann/json.hpp"
 
 #include "definition_globals.h"
+#include <ciso646>
 
 
 struct Location {

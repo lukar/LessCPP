@@ -16,35 +16,17 @@ Context* MainMenuContext::processEvent(const sf::Event & event)
 {
 	if (event.type == sf::Event::MouseButtonPressed) {
 		if (quitButton.contains(m_mousepos)) quit = true;
-		else if (startGameButton.contains(m_mousepos)) return new GameContext(wall::generateNwallconfigs<9>(),GameMode::SINGLEPLAYER);
-		else if (loadGameButton.contains(m_mousepos)) {
-			osdialog_filters* filters = osdialog_filters_parse("json:json");
-			char* filename = osdialog_file(OSDIALOG_OPEN, ".json", "Select a json file", filters);
-
-			if (filename != nullptr) {
-				std::ifstream game_file(filename);
-				free(filename);
-				nlohmann::json game_json{};
-				game_file >> game_json;
-				return new GameContext(game_json, GameMode::SINGLEPLAYER);
-			}
-		};
-	}
-	if (event.type == sf::Event::KeyPressed) {
-		if (event.key.code == sf::Keyboard::J) {
-			return join_game();
-		}
-	}
-	if (event.type == sf::Event::KeyPressed) {
-		if (event.key.code == sf::Keyboard::H) {
-			return host_game();
-		}
+		else if (SPGameButton.contains(m_mousepos)) return new GameContext(wall::generateNwallconfigs<9>(), GameMode::SINGLEPLAYER);
+		else if (LPVPGameButton.contains(m_mousepos)) return new GameContext(wall::generateNwallconfigs<9>(), GameMode::LOCAL_PVP);
+		else if (loadGameButton.contains(m_mousepos)) return load_game();
+		else if (MPHGameButton.contains(m_mousepos)) return host_game();
+		else if (MPCGameButton.contains(m_mousepos)) return join_game();
 	}
 
 	return nullptr;
 }
 
-Context* MainMenuContext::host_game(void) {
+Context* MainMenuContext::host_game() {
 	if (false) {
 		std::string port_str;
 		std::cout << "Please, enter port of player 2: (default " << tcp_port << ")\n";
@@ -55,13 +37,26 @@ Context* MainMenuContext::host_game(void) {
 	return new GameContext(wall::generateNwallconfigs<9>(), tcp_port /*53012*/);
 }
 
-Context* MainMenuContext::join_game(void) {
+Context* MainMenuContext::join_game() {
 	std::string json_string = get_game_tcp_packets(ip_player2, tcp_port);
 	std::stringstream ss;
 	ss << json_string;
 	nlohmann::json game_json{};
 	ss >> game_json;
 	return new GameContext(game_json, ip_player2, tcp_port);
+}
+
+Context* MainMenuContext::load_game() {
+	osdialog_filters* filters = osdialog_filters_parse("json:json");
+	char* filename = osdialog_file(OSDIALOG_OPEN, ".json", "Select a json file", filters);
+
+	if (filename != nullptr) {
+		std::ifstream game_file(filename);
+		free(filename);
+		nlohmann::json game_json{};
+		game_file >> game_json;
+		return new GameContext(game_json, GameMode::SINGLEPLAYER);
+	}
 }
 
 sf::Texture MainMenuContext::render() {
@@ -71,10 +66,12 @@ sf::Texture MainMenuContext::render() {
 
 	rentex.draw(text);
 	rentex.draw(quitButton);
-	rentex.draw(startGameButton);
+	rentex.draw(SPGameButton);
+	rentex.draw(LPVPGameButton);
+	rentex.draw(MPHGameButton);
+	rentex.draw(MPCGameButton);
 	rentex.draw(loadGameButton);
 	
-
 	rentex.display();
 
 	return rentex.getTexture();

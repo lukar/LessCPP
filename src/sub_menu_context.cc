@@ -56,7 +56,6 @@ sf::Texture SubMenuContext::render() {
 	rentex.draw(returnButton);
 	rentex.draw(continueButton);
 	rentex.draw(saveGameButton);
-	rentex.draw(sendGameButton);
 	rentex.display();
 
 	return rentex.getTexture();
