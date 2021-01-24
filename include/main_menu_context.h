@@ -23,10 +23,9 @@ private:
 	menu::Button loadGameButton = menu::Button("Load Game", window_width/3 + 50, window_height/3 + 250, 30);
 	menu::Button quitButton = menu::Button("Quit", window_width / 2 - 15, window_height - 50, 30);
 
-
 	sf::IpAddress ip_player2 = "127.0.0.1";
 	unsigned short tcp_port = 53012;
-	Context* join_game();
+
 	Context* host_game();
 	Context* load_game();
 

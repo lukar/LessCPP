@@ -6,7 +6,6 @@
 #include "ai.h"
 #include "helpers.h"
 
-#include <sstream>
 #include <fstream>
 #include "osdialog.h"
 #include "nlohmann/json.hpp"
@@ -21,7 +20,7 @@ Context* MainMenuContext::processEvent(const sf::Event & event)
 		else if (LPVPGameButton.contains(m_mousepos)) return new GameContext(wall::generateNwallconfigs<9>(), GameMode::LOCAL_PVP);
 		else if (loadGameButton.contains(m_mousepos)) return load_game();
 		else if (MPHGameButton.contains(m_mousepos)) return host_game();
-		else if (MPCGameButton.contains(m_mousepos)) return join_game();
+		else if (MPCGameButton.contains(m_mousepos)) return new JoinDialogContext();
 	}
 	if (event.type == sf::Event::KeyPressed) {
 		if (event.key.code == sf::Keyboard::J) return new JoinDialogContext();
@@ -39,15 +38,6 @@ Context* MainMenuContext::host_game() {
 			tcp_port = std::stoi(port_str);
 	}
 	return new GameContext(wall::generateNwallconfigs<9>(), tcp_port /*53012*/);
-}
-
-Context* MainMenuContext::join_game() {
-	std::string json_string = get_game_tcp_packets(ip_player2, tcp_port);
-	std::stringstream ss;
-	ss << json_string;
-	nlohmann::json game_json{};
-	ss >> game_json;
-	return new GameContext(game_json, ip_player2, tcp_port);
 }
 
 Context* MainMenuContext::load_game() {
