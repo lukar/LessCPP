@@ -60,7 +60,7 @@ int sumLocation(const Location& loc) {
 }
 
 int locationDistance(const Location& a, const Location& b) {
-	return cabs(a.x - b.x) + cabs(a.y - b.y);
+	return abs(a.x - b.x) + abs(a.y - b.y);
 }
 
 int evaluation(const GameRef & game) {

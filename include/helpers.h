@@ -19,12 +19,6 @@ constexpr float euclideanDistance(const sf::Vector2<T> &pointA, const sf::Vector
 	);
 }
 
-template <typename T>
-constexpr T cabs(T num) {
-	if ( num < 0 ) return -num;
-	else return num;
-}
-
 sf::Vector2f getMousePosition(sf::RenderWindow const &);
 
 std::optional<Location> getMouseLocation(sf::RenderWindow const&);
