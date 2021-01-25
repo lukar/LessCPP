@@ -10,7 +10,7 @@ GameContext::GameContext(std::array<WallConfig, 9> wall_configs, GameMode game_m
 	: game(wall_configs), gui(wall_configs), m_game_mode(game_mode) {}
 GameContext::GameContext(const nlohmann::json & game_json, GameMode game_mode) 
 	: game(game_json), gui(game_json), m_game_mode(game_mode) {}
-GameContext::GameContext(const nlohmann::json& game_json, sf::IpAddress ip_player2, unsigned short tcp_port = 53000)
+GameContext::GameContext(const nlohmann::json& game_json, sf::IpAddress ip_player2, unsigned short tcp_port /*53012*/)
 	:game(game_json), gui(game_json), m_game_mode(GameMode::MULTIPLAYER)
 {
 	m_ip_player2 = ip_player2;
@@ -26,11 +26,11 @@ GameContext::GameContext(const nlohmann::json& game_json, sf::IpAddress ip_playe
 	tcp_socket.setBlocking(false);
 	opponent_color = Player::WHITE;
 }
+
 GameContext::GameContext(std::array<WallConfig, 9> wall_configs, unsigned short tcp_port /*53012*/)
 	: game(wall_configs), gui(wall_configs), m_game_mode(GameMode::MULTIPLAYER)
 {
 	m_tcp_port = tcp_port;
-	ai_enable = false;
 	// bind the listener to a port
 	if (listener.listen(m_tcp_port) != sf::Socket::Done) { /*connection from main menu*/
 		// error...
@@ -46,10 +46,11 @@ GameContext::GameContext(std::array<WallConfig, 9> wall_configs, unsigned short 
 	tcp_socket.setBlocking(false);
 }
 
-Context* GameContext::processBackgroundTask() {
+Context* GameContext::processBackgroundTask()
+{
 	//// Multiplayer - opponent - Update Player 2 moves
 	if (game.getState() != GameState::ENDED and game.active_player() == opponent_color) {
-		if (game.getState() == GameState::PREVIEW) return nullptr; /*TODO: not reliable*/
+		if (game.getState() == GameState::PREVIEW) return nullptr; /*TODO: check if causes problems ... */
 		
 		if (auto optional_link = wait_move(tcp_socket)) {
 			auto link = optional_link.value();
@@ -62,6 +63,7 @@ Context* GameContext::processBackgroundTask() {
 	}
 	return nullptr;
 }
+
 Context* GameContext::processEvent(const sf::Event & event)
 {
 	if (event.type == sf::Event::KeyPressed) {
@@ -112,7 +114,6 @@ Context* GameContext::processEvent(const sf::Event & event)
 						send_move(tcp_socket, held_piece->getLocation(), new_location.value());
 						held_piece->setLocation(new_location.value());
 						sound_drop.play();
-						//udpSendStr(game.getJsonRepresentation().dump());
 					}
 					else {
 						sound_illegal.play();

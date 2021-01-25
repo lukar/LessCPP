@@ -38,8 +38,6 @@ private:
 	sf::Font font = getFont("resources/Roboto_Medium.ttf");
 	sf::Text text = initializeText(font, 10, window_height + 10, 10, sf::Color::Green);
 
-	bool ai_enable = false;
-	bool multiplayer_game_ready = false;
 	Player opponent_color = Player::BLACK;
 	sf::IpAddress m_ip_player2="0.0.0.0";
 	unsigned short m_tcp_port = 53012;
