@@ -57,6 +57,8 @@ Context* MainMenuContext::load_game() {
 		game_file >> game_json;
 		return new GameContext(game_json, GameMode::SINGLEPLAYER);
 	}
+
+	return nullptr;
 }
 
 sf::Texture MainMenuContext::render() {
