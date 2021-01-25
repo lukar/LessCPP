@@ -37,8 +37,6 @@ bool piecesInLocations(const Locations<4>& pieces, const Locations<4>& locations
 
 std::optional<Direction> getDirection(Location oldL, Location newL);
 
-void sleep(unsigned milliseconds);
-
 std::string get_game_tcp_packets(sf::IpAddress& ip_player2,
 	unsigned short& tcp_port);
 sf::IpAddress host_game_tcp_packets(std::string data_string,
