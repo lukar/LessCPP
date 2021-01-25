@@ -61,23 +61,6 @@ std::optional<Direction> getDirection(Location oldL, Location newL) {
 	else return {};
 }
 
-#ifdef _WIN32
-#define _WINSOCKAPI_   /* Prevent inclusion of winsock.h in windows.h  - from WinSock2.h*/
-#include <windows.h>
-
-void sleep(unsigned milliseconds)
-{
-	Sleep(milliseconds);
-}
-#else
-#include <unistd.h>
-
-void sleep(unsigned milliseconds)
-{
-	usleep(milliseconds * 1000); // takes microseconds
-}
-#endif
-
 sf::IpAddress host_game_tcp_packets(std::string data_string,
 	sf::TcpListener & listener) {
 	sf::TcpSocket tcp_socket;
