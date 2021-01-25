@@ -104,16 +104,19 @@ std::string get_game_tcp_packets(sf::IpAddress& ip_player2,	unsigned short& tcp_
 	sf::Socket::Status status = tcp_socket.connect(ip_player2, tcp_port);
 
 	if (status != sf::Socket::Done) {
-		std::cout << "Error connecting tcp - get_game_tcp_packets " << status << "\n"; assert(0);
+		std::cout << "Error connecting tcp - get_game_tcp_packets " << status << "\n";
+		assert(0);
 	}
 	std::cout << "Tcp socket connected - get_game_tcp_packets " << status << "\n";
 
 	sf::Packet packet;
 	std::string message = "init";
 	packet << message;
-	tcp_socket.send(packet); packet.clear();
+	tcp_socket.send(packet);
+	packet.clear();
 
 	tcp_socket.receive(packet);
+	tcp_socket.disconnect();
 	std::string json_string;
 	packet >> json_string;
 	return json_string;
