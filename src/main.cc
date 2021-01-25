@@ -14,7 +14,7 @@
 #include "osdialog.h"
 
 
-int main(int argc, char** argv)
+int main()
 {
 	std::stack<Context*> contexts;
 
