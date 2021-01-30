@@ -48,17 +48,15 @@ private:
 	
 public:
 
-	GameContext(std::array<WallConfig, 9>, GameMode game_mode);
-	GameContext(std::array<WallConfig, 9> wall_configs, unsigned short tcp_port /*53012*/);
-	GameContext(const nlohmann::json &, GameMode game_mode);
-	GameContext(const nlohmann::json& ,sf::IpAddress ip_player2, unsigned short tcp_port);
-	
-	GameContext(int quitLevelInc);
+    GameContext(Context*, std::array<WallConfig, 9>, GameMode game_mode);
+    GameContext(Context*, std::array<WallConfig, 9> wall_configs, unsigned short tcp_port /*53012*/);
+    GameContext(Context*, const nlohmann::json&, GameMode game_mode);
+    GameContext(Context*, const nlohmann::json& ,sf::IpAddress ip_player2, unsigned short tcp_port);
 
 	void update(const float dt, const sf::Vector2f & mousepos) override { m_dt = dt; m_mousepos = mousepos; };
 
 	Context* processEvent(const sf::Event& event) override;
-	Context* processBackgroundTask(void) override;
+    Context* processBackgroundTask() override;
 	
 	sf::Texture render() override;
 

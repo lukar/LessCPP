@@ -16,11 +16,9 @@ static std::string getTimeStr(){
 	return std::string(s.data());
 }
 
-SubMenuContext::SubMenuContext(int preQuitLevel, sf::Texture pretext, const Game & game)
-	: m_pretext(pretext), m_game(game)
+SubMenuContext::SubMenuContext(Context* previous, sf::Texture pretext, const Game& game)
+    : Context(previous), m_pretext(pretext), m_game(game)
 {
-	quitLevel = preQuitLevel + 1;
-
 	text.setString("Pause");
 }
 
@@ -28,9 +26,9 @@ Context* SubMenuContext::processBackgroundTask(){ return nullptr; }
 Context* SubMenuContext::processEvent(const sf::Event & event)
 {
 	if (event.type == sf::Event::MouseButtonPressed) {
-		if (returnButton.contains(m_mousepos)) quit = true;
-		else if (continueButton.contains(m_mousepos)) { quitLevel = 1; quit = true; }
-		else if (saveGameButton.contains(m_mousepos)) {
+        if (returnButton.contains(m_mousepos)) { setReturnContext(m_previous->m_previous); }
+        else if (continueButton.contains(m_mousepos)) { setReturnContext(m_previous); }
+        else if (saveGameButton.contains(m_mousepos)) {
 			osdialog_filters* filters = osdialog_filters_parse("json:json");
 			char* filename = osdialog_file(OSDIALOG_SAVE, ".json", std::string(getTimeStr() + ".json").c_str(), filters);
 
@@ -39,6 +37,9 @@ Context* SubMenuContext::processEvent(const sf::Event & event)
 				of << std::setw(4) << m_game.getJsonRepresentation();
 				free(filename);
 			}
+		}
+        else if (sendGameButton.contains(m_mousepos)) { // send game -> prepare send game // This goes to game context
+			std::cout << "send game - Functionality obsolete\n";
 		}
 	}
 	if (event.type == sf::Event::KeyPressed) {

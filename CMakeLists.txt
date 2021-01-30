@@ -18,7 +18,6 @@ elseif(WIN32)
 	target_compile_options(less PRIVATE -Wall -pedantic) 
 endif()
 
-
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(libs/nlohmann_json)
 
