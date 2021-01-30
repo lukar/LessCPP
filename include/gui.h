@@ -27,7 +27,7 @@ public:
     Gui(const nlohmann::json &);
     std::array<Piece, 4> & getPieces(Player);
 
-		std::optional<std::pair<uint, Player>> pieceAtLocation(const Location& location) const;
+        std::optional<std::pair<uint, Player>> pieceAtLocation(const Location& location) const;
 };
 
 #endif // GUI_H

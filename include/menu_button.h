@@ -18,20 +18,20 @@ namespace menu
 class Button : public sf::Drawable
 {
 private:
-	void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
+    void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
-	sf::RectangleShape m_frame;
-	sf::RectangleShape m_leftBanner;
-	sf::RectangleShape m_rightBanner;
+    sf::RectangleShape m_frame;
+    sf::RectangleShape m_leftBanner;
+    sf::RectangleShape m_rightBanner;
 
         sf::Text m_text;
 
 
 public:
         Button(std::string text, int xpos, int ypos);
-	Button() = delete;
+    Button() = delete;
 
-	bool contains(sf::Vector2f pos) { return m_frame.getGlobalBounds().contains(pos); }
+    bool contains(sf::Vector2f pos) { return m_frame.getGlobalBounds().contains(pos); }
 
 };
 

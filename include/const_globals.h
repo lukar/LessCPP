@@ -27,11 +27,11 @@ constexpr int window_height = 600;
 
 // fonts
 inline sf::Font getFont(std::string const& filepath) {
-	sf::Font font;
-	if (!font.loadFromFile(filepath)) {
-		throw std::runtime_error("Cannot find the font file " + filepath);
-	}
-	return font;
+    sf::Font font;
+    if (!font.loadFromFile(filepath)) {
+        throw std::runtime_error("Cannot find the font file " + filepath);
+    }
+    return font;
 }
 
 inline const sf::Font mono_font = getFont("resources/Roboto_Mono_Medium_Nerd_Font_Complete.ttf");

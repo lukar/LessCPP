@@ -20,8 +20,8 @@ private:
     menu::Button saveGameButton = menu::Button("Save Game", window_width/3 + 50, window_height/3 + 100);
     menu::Button sendGameButton = menu::Button("Send Game", window_width / 3 + 50, window_height / 3 + 150);
 
-	sf::Texture m_pretext;
-	const Game & m_game;
+    sf::Texture m_pretext;
+    const Game & m_game;
 
 public:
 

@@ -8,15 +8,15 @@
 
 
 struct Location {
-	int x, y;
-	bool operator==(const Location &rhs) const;
-	bool operator!=(const Location &rhs) const;
-	bool operator<(const Location &rhs) const;
-	std::optional<Location> operator+(const Direction direction) const;
+    int x, y;
+    bool operator==(const Location &rhs) const;
+    bool operator!=(const Location &rhs) const;
+    bool operator<(const Location &rhs) const;
+    std::optional<Location> operator+(const Direction direction) const;
 
-	Location operator+(const Location& location) const;
+    Location operator+(const Location& location) const;
 
-	Location operator-(const Location& location) const;
+    Location operator-(const Location& location) const;
 };
 
 template <size_t N> using Locations = std::array<Location, N>;

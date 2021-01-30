@@ -16,22 +16,22 @@
 
 int main()
 {
-	std::stack<Context*> contexts;
+    std::stack<Context*> contexts;
 
-	sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Less game", sf::Style::Close);
-	window.setPosition(sf::Vector2i(0, 0));
-	window.setFramerateLimit(30);
+    sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Less game", sf::Style::Close);
+    window.setPosition(sf::Vector2i(0, 0));
+    window.setFramerateLimit(30);
 
     contexts.push(new MainMenuContext(nullptr));
 
-	sf::Event event;
-	sf::Clock dtClock;
-	float dt;
+    sf::Event event;
+    sf::Clock dtClock;
+    float dt;
 
-	while (window.isOpen()) {
-		dt = dtClock.getElapsedTime().asSeconds();
+    while (window.isOpen()) {
+        dt = dtClock.getElapsedTime().asSeconds();
 
-		if (contexts.top()->isQuitting()) {
+        if (contexts.top()->isQuitting()) {
             Context* return_context = contexts.top()->getReturnContext();
 
             if (return_context == nullptr) break;
@@ -40,25 +40,25 @@ int main()
                 delete contexts.top();
                 contexts.pop();
             }
-		}
+        }
 
-		contexts.top()->update(dt, getMousePosition(window));
-		while (window.pollEvent(event)) {
+        contexts.top()->update(dt, getMousePosition(window));
+        while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) window.close();
-			Context* newcontext = contexts.top()->processEvent(event);
-			if (newcontext != nullptr) contexts.push(newcontext);
-		}
+            Context* newcontext = contexts.top()->processEvent(event);
+            if (newcontext != nullptr) contexts.push(newcontext);
+        }
 
-		contexts.top()->processBackgroundTask(); 
+        contexts.top()->processBackgroundTask(); 
 
-		window.clear();
+        window.clear();
 
-		window.draw(sf::Sprite(contexts.top()->render()));
+        window.draw(sf::Sprite(contexts.top()->render()));
 
-		window.display();
+        window.display();
     }
 
-	return 0;
+    return 0;
 }
 
 

@@ -23,12 +23,12 @@ cat >${filename}.h << EOF
 
 class ${classname} : public Context {
 public:
-	${classname}();
+    ${classname}();
 
-	void update(const float dt, const sf::Vector2f & mousepos) override { m_dt = dt; m_mousepos = mousepos; };
-	Context* processEvent(const sf::Event &) override;
-	Context* processBackgroundTask() override;
-	sf::Texture render() override;
+    void update(const float dt, const sf::Vector2f & mousepos) override { m_dt = dt; m_mousepos = mousepos; };
+    Context* processEvent(const sf::Event &) override;
+    Context* processBackgroundTask() override;
+    sf::Texture render() override;
 };
 
 
@@ -44,15 +44,15 @@ Context* ${classname}::processBackgroundTask() { return nullptr; }
 
 Context* ${classname}::processEvent(const sf::Event & event)
 {
-	return nullptr;
+    return nullptr;
 }
 
 sf::Texture ${classname}::render()
 {
-	rentex.clear();
+    rentex.clear();
 
-	rentex.display();
+    rentex.display();
 
-	return rentex.getTexture();
+    return rentex.getTexture();
 }
 EOF

@@ -9,53 +9,53 @@
 #include "osdialog.h"
 
 static std::string getTimeStr(){
-	std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+    std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 
-	std::array<char, 30> s = {'\0'};
-	std::strftime(s.data(), s.size(), "%Y-%m-%d-%H-%M-%S", std::localtime(&now));
-	return std::string(s.data());
+    std::array<char, 30> s = {'\0'};
+    std::strftime(s.data(), s.size(), "%Y-%m-%d-%H-%M-%S", std::localtime(&now));
+    return std::string(s.data());
 }
 
 SubMenuContext::SubMenuContext(Context* previous, sf::Texture pretext, const Game& game)
     : Context(previous), m_pretext(pretext), m_game(game)
 {
-	text.setString("Pause");
+    text.setString("Pause");
 }
 
 Context* SubMenuContext::processBackgroundTask(){ return nullptr; }
 Context* SubMenuContext::processEvent(const sf::Event & event)
 {
-	if (event.type == sf::Event::MouseButtonPressed) {
+    if (event.type == sf::Event::MouseButtonPressed) {
         if (returnButton.contains(m_mousepos)) { setReturnContext(m_previous->m_previous); }
         else if (continueButton.contains(m_mousepos)) { setReturnContext(m_previous); }
         else if (saveGameButton.contains(m_mousepos)) {
-			osdialog_filters* filters = osdialog_filters_parse("json:json");
-			char* filename = osdialog_file(OSDIALOG_SAVE, ".json", std::string(getTimeStr() + ".json").c_str(), filters);
+            osdialog_filters* filters = osdialog_filters_parse("json:json");
+            char* filename = osdialog_file(OSDIALOG_SAVE, ".json", std::string(getTimeStr() + ".json").c_str(), filters);
 
-			if (filename != nullptr) {
-				std::ofstream of(filename);
-				of << std::setw(4) << m_game.getJsonRepresentation();
-				free(filename);
-			}
-		}
+            if (filename != nullptr) {
+                std::ofstream of(filename);
+                of << std::setw(4) << m_game.getJsonRepresentation();
+                free(filename);
+            }
+        }
         else if (sendGameButton.contains(m_mousepos)) { // send game -> prepare send game // This goes to game context
-			std::cout << "send game - Functionality obsolete\n";
-		}
-	}
-	if (event.type == sf::Event::KeyPressed) {
-	}
-	return nullptr;
+            std::cout << "send game - Functionality obsolete\n";
+        }
+    }
+    if (event.type == sf::Event::KeyPressed) {
+    }
+    return nullptr;
 }
 
 sf::Texture SubMenuContext::render() {
-	rentex.clear();
+    rentex.clear();
 
-	rentex.draw(text);
-	rentex.draw(returnButton);
-	rentex.draw(continueButton);
-	rentex.draw(saveGameButton);
-	rentex.display();
+    rentex.draw(text);
+    rentex.draw(returnButton);
+    rentex.draw(continueButton);
+    rentex.draw(saveGameButton);
+    rentex.display();
 
-	return rentex.getTexture();
+    return rentex.getTexture();
 }
 

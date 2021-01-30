@@ -22,20 +22,20 @@ private:
     menu::Button loadGameButton = menu::Button("Load Game", window_width/3 + 50, window_height/3 + 250);
     menu::Button quitButton = menu::Button("Quit", window_width / 2 - 15, window_height - 50);
 
-	sf::IpAddress ip_player2 = "127.0.0.1";
-	unsigned short tcp_port = 53012;
+    sf::IpAddress ip_player2 = "127.0.0.1";
+    unsigned short tcp_port = 53012;
 
-	Context* host_game();
-	Context* load_game();
+    Context* host_game();
+    Context* load_game();
 
 public:
 
     MainMenuContext(Context* previous) : Context(previous) {}
 
     void update(const float dt, const sf::Vector2f & mousepos) override { m_dt = dt; m_mousepos = mousepos; };
-	Context* processEvent(const sf::Event &) override;
+    Context* processEvent(const sf::Event &) override;
     Context* processBackgroundTask() override;
-	sf::Texture render() override;
+    sf::Texture render() override;
 };
 
 

@@ -24,11 +24,11 @@ private:
 public:
     Context* const m_previous; // being nullptr means there is no previous context
 
-	virtual ~Context() = default;
+    virtual ~Context() = default;
     Context(Context* previous) : m_previous(previous) {
         // force the derived class to always initialize the pointer to previous context
-		rentex.create(window_width, window_height);
-	}
+        rentex.create(window_width, window_height);
+    }
     Context() = delete;
 
     virtual void update(const float /* delta time */, const sf::Vector2f& /* Mouse position */) = 0;

@@ -8,13 +8,13 @@
 #include <sstream>
 
 JoinDialogContext::JoinDialogContext(Context* previous) : Context(previous) {
-	IPTextInput.setPosition(window_width / 3 - 100, window_height / 3 + 100);
+    IPTextInput.setPosition(window_width / 3 - 100, window_height / 3 + 100);
 }
 
 Context* JoinDialogContext::processBackgroundTask() { return nullptr; }
 Context* JoinDialogContext::processEvent(const sf::Event & event)
 {
-	if (event.type == sf::Event::MouseButtonPressed) {
+    if (event.type == sf::Event::MouseButtonPressed) {
         if (quitButton.contains(m_mousepos)) setReturnContext(m_previous);
     }
     else if (event.type == sf::Event::KeyPressed) {
@@ -38,27 +38,27 @@ Context* JoinDialogContext::processEvent(const sf::Event & event)
             IPTextInput.append(static_cast<char>(event.text.unicode));
         }
     }
-	return nullptr;
+    return nullptr;
 }
 
 Context* JoinDialogContext::join_game() {
-	std::string json_string = get_game_tcp_packets(ip_player2, tcp_port);
-	std::stringstream ss;
-	ss << json_string;
-	nlohmann::json game_json{};
-	ss >> game_json;
+    std::string json_string = get_game_tcp_packets(ip_player2, tcp_port);
+    std::stringstream ss;
+    ss << json_string;
+    nlohmann::json game_json{};
+    ss >> game_json;
     return new GameContext(this, game_json, ip_player2, tcp_port);
 }
 
 sf::Texture JoinDialogContext::render() {
-	text.setString("Less Game");
+    text.setString("Less Game");
 
-	rentex.clear();
+    rentex.clear();
 
-	rentex.draw(IPTextInput);
-	rentex.draw(quitButton);
+    rentex.draw(IPTextInput);
+    rentex.draw(quitButton);
 
-	rentex.display();
+    rentex.display();
 
-	return rentex.getTexture();
+    return rentex.getTexture();
 }

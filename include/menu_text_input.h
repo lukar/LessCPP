@@ -14,44 +14,43 @@
 
 namespace menu
 {
-	 
+     
 
 class TextInput : public sf::Drawable
 {
 private:
-	void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
-
-	sf::Text m_nameText;
+    sf::Text m_nameText;
     const size_t m_charWidth;
 
-	sf::Text m_insertText;
-	std::string m_input_string;
-	sf::RectangleShape m_frame;
+    sf::Text m_insertText;
+    std::string m_input_string;
+    sf::RectangleShape m_frame;
 
     size_t m_cursor;
-	sf::RectangleShape m_cursorLine;
+    sf::RectangleShape m_cursorLine;
 
-	std::function<bool(std::string)> m_validator;
+    std::function<bool(std::string)> m_validator;
 
 public:
-	void validate();
-	void backspace();
+    void validate();
+    void backspace();
     void delete_front();
-	void append(char c);
-	std::string getText() {return m_input_string; }
-	void setPosition(int xpos, int ypos);
-	void cursorLeft();
-	void cursorRight();
+    void append(char c);
+    std::string getText() {return m_input_string; }
+    void setPosition(int xpos, int ypos);
+    void cursorLeft();
+    void cursorRight();
 
-	TextInput(std::string nameText,
-                    uint charWidth,
-                    std::string defaultText = "",
-                    std::function<bool(std::string)> validator = [](...){return true;}
-	);
-	TextInput() = delete;
+    TextInput(std::string nameText,
+              uint charWidth,
+              std::string defaultText = "",
+              std::function<bool(std::string)> validator = [](...){return true;}
+    );
+    TextInput() = delete;
 
-	bool contains(sf::Vector2f pos) { return m_frame.getGlobalBounds().contains(pos); }
+    bool contains(sf::Vector2f pos) { return m_frame.getGlobalBounds().contains(pos); }
 
 };
 
