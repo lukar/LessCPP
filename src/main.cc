@@ -22,7 +22,7 @@ int main()
 	window.setPosition(sf::Vector2i(0, 0));
 	window.setFramerateLimit(30);
 
-	contexts.push(new MainMenuContext());
+    contexts.push(new MainMenuContext(nullptr));
 
 	sf::Event event;
 	sf::Clock dtClock;
@@ -32,19 +32,23 @@ int main()
 		dt = dtClock.getElapsedTime().asSeconds();
 
 		if (contexts.top()->isQuitting()) {
-			for (int i = contexts.top()->getQuitLevel(); i > 0; --i) {
-				delete contexts.top();
-				contexts.pop();
-			}
-			if (contexts.size() == 0) break;
+            Context* return_context = contexts.top()->getReturnContext();
+
+            if (return_context == nullptr) break;
+
+            while (contexts.top() != return_context) {
+                delete contexts.top();
+                contexts.pop();
+            }
 		}
 
 		contexts.top()->update(dt, getMousePosition(window));
 		while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) window.close();
 			Context* newcontext = contexts.top()->processEvent(event);
 			if (newcontext != nullptr) contexts.push(newcontext);
 		}
-		// background events = true (others are ignored)
+
 		contexts.top()->processBackgroundTask(); 
 
 		window.clear();
@@ -52,7 +56,7 @@ int main()
 		window.draw(sf::Sprite(contexts.top()->render()));
 
 		window.display();
-	}
+    }
 
 	return 0;
 }

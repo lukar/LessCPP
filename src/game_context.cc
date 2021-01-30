@@ -6,12 +6,12 @@
 
 #include <iostream>
 
-GameContext::GameContext(std::array<WallConfig, 9> wall_configs, GameMode game_mode) 
-	: game(wall_configs), gui(wall_configs), m_game_mode(game_mode) {}
-GameContext::GameContext(const nlohmann::json & game_json, GameMode game_mode) 
-	: game(game_json), gui(game_json), m_game_mode(game_mode) {}
-GameContext::GameContext(const nlohmann::json& game_json, sf::IpAddress ip_player2, unsigned short tcp_port /*53012*/)
-	:game(game_json), gui(game_json), m_game_mode(GameMode::MULTIPLAYER)
+GameContext::GameContext(Context* previous, std::array<WallConfig, 9> wall_configs, GameMode game_mode)
+    : Context(previous), game(wall_configs), gui(wall_configs), m_game_mode(game_mode) {}
+GameContext::GameContext(Context* previous, const nlohmann::json & game_json, GameMode game_mode)
+    : Context(previous), game(game_json), gui(game_json), m_game_mode(game_mode) {}
+GameContext::GameContext(Context* previous, const nlohmann::json& game_json, sf::IpAddress ip_player2, unsigned short tcp_port /*53012*/)
+    : Context(previous), game(game_json), gui(game_json), m_game_mode(GameMode::MULTIPLAYER)
 {
 	m_ip_player2 = ip_player2;
 	m_tcp_port = tcp_port;
@@ -27,8 +27,8 @@ GameContext::GameContext(const nlohmann::json& game_json, sf::IpAddress ip_playe
 	opponent_color = Player::WHITE;
 }
 
-GameContext::GameContext(std::array<WallConfig, 9> wall_configs, unsigned short tcp_port /*53012*/)
-	: game(wall_configs), gui(wall_configs), m_game_mode(GameMode::MULTIPLAYER)
+GameContext::GameContext(Context* previous, std::array<WallConfig, 9> wall_configs, unsigned short tcp_port /*53012*/)
+    : Context(previous), game(wall_configs), gui(wall_configs), m_game_mode(GameMode::MULTIPLAYER)
 {
 	m_tcp_port = tcp_port;
 	// bind the listener to a port
@@ -50,7 +50,7 @@ Context* GameContext::processBackgroundTask()
 {
 	//// Multiplayer - opponent - Update Player 2 moves
 	if (game.getState() != GameState::ENDED and game.active_player() == opponent_color) {
-		if (game.getState() == GameState::PREVIEW) return nullptr; /*TODO: check if causes problems ... */
+        if (game.getState() == GameState::PREVIEW) return nullptr; // TODO: check if causes problems ...
 		
 		if (auto optional_link = wait_move(tcp_socket)) {
 			auto link = optional_link.value();
@@ -68,8 +68,7 @@ Context* GameContext::processEvent(const sf::Event & event)
 {
 	if (event.type == sf::Event::KeyPressed) {
 		if (event.key.code == sf::Keyboard::Q) {
-			// quit = true;
-			return new SubMenuContext(quitLevel, rentex.getTexture(), game);
+            return new SubMenuContext(this, rentex.getTexture(), game);
 		} else if (event.key.code == sf::Keyboard::Left) {
 			const auto move = game.getReversedMove();
 			if (move) {
