@@ -23,13 +23,13 @@ private:
 
 
 	sf::Text m_nameText;
-        const size_t m_charWidth;
+    const size_t m_charWidth;
 
 	sf::Text m_insertText;
 	std::string m_input_string;
 	sf::RectangleShape m_frame;
 
-        size_t m_cursor;
+    size_t m_cursor;
 	sf::RectangleShape m_cursorLine;
 
 	std::function<bool(std::string)> m_validator;
@@ -37,6 +37,7 @@ private:
 public:
 	void validate();
 	void backspace();
+    void delete_front();
 	void append(char c);
 	std::string getText() {return m_input_string; }
 	void setPosition(int xpos, int ypos);

@@ -15,20 +15,28 @@ void TextInput::validate() {
 
 void TextInput::backspace()
 {
-	if(m_cursor>0) {
-		m_input_string.erase(m_cursor, 1);
-		m_input_string.resize(m_input_string.length() - 1);
+    if (m_cursor > 0) {
+        m_input_string.erase(m_cursor - 1, 1);
 		m_cursor--;
-		m_cursorLine.setPosition(m_insertText.findCharacterPos(m_cursor));
+        m_cursorLine.setPosition(m_insertText.findCharacterPos(m_cursor));
 	}
 	m_insertText.setString(m_input_string);
 	validate();
 }
 
+void TextInput::delete_front() // should be called delete, but it's taken
+{
+    if (m_cursor < m_input_string.length()) {
+        m_input_string.erase(m_cursor, 1);
+    }
+    m_insertText.setString(m_input_string);
+    validate();
+}
+
 void TextInput::append(char c)
 {
 	if (m_input_string.length() < m_charWidth) {
-		m_input_string.insert(m_cursor,std::string(1,c));
+        m_input_string.insert(m_cursor, std::string(1,c));
 		m_cursor++;
 		m_insertText.setString(m_input_string);
 		m_cursorLine.setPosition(m_insertText.findCharacterPos(m_cursor));
@@ -37,14 +45,14 @@ void TextInput::append(char c)
 }
 
 void TextInput::cursorLeft() {
-	if (m_cursor > 0) {
+    if (m_cursor > 0) {
 		m_cursor--;
 		m_cursorLine.setPosition(m_insertText.findCharacterPos(m_cursor));
 	}
 }
 
 void TextInput::cursorRight() {
-	if (m_cursor < m_input_string.length()) {
+    if (m_cursor < m_input_string.length()) {
 		m_cursor++;
 		m_cursorLine.setPosition(m_insertText.findCharacterPos(m_cursor));
 	}
@@ -77,7 +85,7 @@ TextInput::TextInput(std::string nameText, uint charWidth, std::string defaultTe
 void TextInput::setPosition(int xpos, int ypos)
 {
 	m_nameText.setPosition(xpos, ypos);
-    m_insertText.setPosition(xpos + (medium_font * (4.0/5.0)) * m_nameText.getString().getSize(), ypos);
+    m_insertText.setPosition(xpos + (medium_font * (4.0f/5.0f)) * m_nameText.getString().getSize(), ypos);
 	m_cursorLine.setPosition(m_insertText.findCharacterPos(m_cursor));
 
 	const sf::FloatRect bounds = m_insertText.getGlobalBounds();

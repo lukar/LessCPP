@@ -15,25 +15,29 @@ Context* JoinDialogContext::processBackgroundTask() { return nullptr; }
 Context* JoinDialogContext::processEvent(const sf::Event & event)
 {
 	if (event.type == sf::Event::MouseButtonPressed) {
-        if (quitButton.contains(m_mousepos)) setReturnContext(nullptr);
-	}
-	else if (event.key.code == sf::Keyboard::BackSpace)
-		IPTextInput.backspace();
-	else if (event.key.code == sf::Keyboard::Enter) {
-		ip_player2 = IPTextInput.getText();
-		return join_game();
-	}
-	else if (event.key.code == sf::Keyboard::Left) {
-		IPTextInput.cursorLeft();
-	}
-	else if (event.key.code == sf::Keyboard::Right) {
-		IPTextInput.cursorRight();
-	}
-	else if (event.type == sf::Event::TextEntered)
-	{
-		if (event.text.unicode < 128)
-			IPTextInput.append(static_cast<char>(event.text.unicode));
-	}
+        if (quitButton.contains(m_mousepos)) setReturnContext(m_previous);
+    }
+    else if (event.type == sf::Event::KeyPressed) {
+        if (event.key.code == sf::Keyboard::BackSpace)
+            IPTextInput.backspace();
+        else if (event.key.code == sf::Keyboard::Delete)
+            IPTextInput.delete_front();
+        else if (event.key.code == sf::Keyboard::Enter) {
+            ip_player2 = IPTextInput.getText();
+            return join_game();
+        }
+        else if (event.key.code == sf::Keyboard::Left) {
+            IPTextInput.cursorLeft();
+        }
+        else if (event.key.code == sf::Keyboard::Right) {
+            IPTextInput.cursorRight();
+        }
+    }
+    else if (event.type == sf::Event::TextEntered) {
+        if (31 < event.text.unicode and event.text.unicode < 126) {
+            IPTextInput.append(static_cast<char>(event.text.unicode));
+        }
+    }
 	return nullptr;
 }
 
