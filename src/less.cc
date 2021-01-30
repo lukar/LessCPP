@@ -31,14 +31,6 @@ sf::Sound getSound(std::string const& filepath, std::deque<sf::SoundBuffer> &sou
 	return sf::Sound(soundBuffers.back());
 }
 
-sf::Font getFont(std::string const& filepath) {
-	sf::Font font;
-	if (!font.loadFromFile(filepath)) {
-		throw std::runtime_error("Cannot find the font file " + filepath);
-	}
-	return font;
-}
-
 sf::Text initializeText(sf::Font const& font, int size, int xpos, int ypos, sf::Color color) {
 	sf::Text text("", font, size);
 	text.setPosition(xpos, ypos);

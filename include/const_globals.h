@@ -9,6 +9,8 @@
 
 #include "location.h"
 
+#include <SFML/Graphics.hpp>
+
 
 // individual color pieces starting positions
 constexpr Locations<4> whiteStart = {{{0, 0},{1, 0},{0, 1},{1, 1}}};
@@ -22,6 +24,22 @@ constexpr float piece_size = 30;
 
 constexpr int window_width = 800;
 constexpr int window_height = 600;
+
+// fonts
+inline sf::Font getFont(std::string const& filepath) {
+	sf::Font font;
+	if (!font.loadFromFile(filepath)) {
+		throw std::runtime_error("Cannot find the font file " + filepath);
+	}
+	return font;
+}
+
+inline const sf::Font mono_font = getFont("resources/Roboto_Mono_Medium_Nerd_Font_Complete.ttf");
+inline const sf::Font font = getFont("resources/Roboto_Medium.ttf");
+
+constexpr uint small_font = 15;
+constexpr uint medium_font = 30;
+constexpr uint large_font = 60;
 
 
 #endif //LESSCPP_CONST_GLOBALS_H
