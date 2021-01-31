@@ -6,7 +6,7 @@ echo "Insert the context name: "
 read context_name
 
 alluppercase=${context_name^^}
-definename=${alluppercase// /_}_CONTEXT_LESSCPP
+definename=LESSCPP_${alluppercase// /_}_CONTEXT
 
 tmp=( $context_name )
 fst_capitalized=${tmp[@]^}
