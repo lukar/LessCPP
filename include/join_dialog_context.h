@@ -18,15 +18,15 @@ private:
     sf::Font font = getFont("resources/Roboto_Medium.ttf");
     sf::Text text = initializeText(font, 60, window_width / 3, window_height / 3, sf::Color::Green);
 
-        menu::TextInput IPTextInput = menu::TextInput("IP", 17, "127.0.0.1",
+    menu::TextInput IPTextInput = menu::TextInput("IP", 15, Medium, "127.0.0.1",
         [](std::string t) { return std::regex_match(t, std::regex("(\\d\\d?\\d?\\.){3}\\d\\d?\\d?")); } );
-        menu::Button quitButton = menu::Button("Quit", window_width / 2 - 15, window_height - 50);
+    menu::Button quitButton = menu::Button("Quit", Medium);
 
     sf::IpAddress ip_player2 = "127.0.0.1";
     unsigned short tcp_port = 53012;
 
     Context* join_game();
-        Context* p_return_context;
+    Context* p_return_context;
 
 public:
 

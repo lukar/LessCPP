@@ -20,6 +20,10 @@ SubMenuContext::SubMenuContext(Context* previous, sf::Texture pretext, const Gam
     : Context(previous), m_pretext(pretext), m_game(game)
 {
     text.setString("Pause");
+
+    returnButton.setPosition(window_width/2 - 200, window_height - 50);
+    continueButton.setPosition(window_width/2 + 60, window_height - 50);
+    saveGameButton.setPosition(window_width/3 + 50, window_height/3 + 100);
 }
 
 Context* SubMenuContext::processBackgroundTask(){ return nullptr; }
@@ -37,9 +41,6 @@ Context* SubMenuContext::processEvent(const sf::Event & event)
                 of << std::setw(4) << m_game.getJsonRepresentation();
                 free(filename);
             }
-        }
-        else if (sendGameButton.contains(m_mousepos)) { // send game -> prepare send game // This goes to game context
-            std::cout << "send game - Functionality obsolete\n";
         }
     }
     if (event.type == sf::Event::KeyPressed) {

@@ -15,12 +15,12 @@ private:
     // side text
     sf::Text text = initializeText(font, large_font, window_width/3, window_height/3, sf::Color::Green);
 
-    menu::Button SPGameButton = menu::Button("Single player", window_width/ 3 - 100, window_height/3 + 100);
-    menu::Button LPVPGameButton = menu::Button("Local PvP", window_width / 3 - 100, window_height / 3 + 150);
-    menu::Button MPHGameButton = menu::Button("Multiplayer Host", window_width / 3 + 200, window_height / 3 + 100);
-    menu::Button MPCGameButton = menu::Button("Multiplayer Client", window_width / 3 + 200, window_height / 3 + 150);
-    menu::Button loadGameButton = menu::Button("Load Game", window_width/3 + 50, window_height/3 + 250);
-    menu::Button quitButton = menu::Button("Quit", window_width / 2 - 15, window_height - 50);
+    menu::Button SPGameButton = menu::Button("Single player", Medium);
+    menu::Button LPVPGameButton = menu::Button("Local PvP", Medium);
+    menu::Button MPHGameButton = menu::Button("Multiplayer Host", Medium);
+    menu::Button MPCGameButton = menu::Button("Multiplayer Client", Medium);
+    menu::Button loadGameButton = menu::Button("Load Game", Medium);
+    menu::Button quitButton = menu::Button("Quit", Medium);
 
     sf::IpAddress ip_player2 = "127.0.0.1";
     unsigned short tcp_port = 53012;
@@ -30,7 +30,7 @@ private:
 
 public:
 
-    MainMenuContext(Context* previous) : Context(previous) {}
+    MainMenuContext(Context* previous);
 
     void update(const float dt, const sf::Vector2f & mousepos) override { m_dt = dt; m_mousepos = mousepos; };
     Context* processEvent(const sf::Event &) override;

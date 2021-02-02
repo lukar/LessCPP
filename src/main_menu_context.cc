@@ -11,6 +11,17 @@
 #include "nlohmann/json.hpp"
 #include <iostream>
 
+
+MainMenuContext::MainMenuContext(Context* previous) : Context(previous)
+{
+    SPGameButton.setPosition(window_width/ 3 - 100, window_height/3 + 100);
+    LPVPGameButton.setPosition(window_width / 3 - 100, window_height / 3 + 150);
+    MPHGameButton.setPosition(window_width / 3 + 200, window_height / 3 + 100);
+    MPCGameButton.setPosition(window_width / 3 + 200, window_height / 3 + 150);
+    loadGameButton.setPosition(window_width/3 + 50, window_height/3 + 250);
+    quitButton.setPosition(window_width / 2 - 15, window_height - 50);
+}
+
 Context* MainMenuContext::processBackgroundTask() { return nullptr; }
 Context* MainMenuContext::processEvent(const sf::Event & event)
 {

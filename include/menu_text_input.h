@@ -5,7 +5,7 @@
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Shape.hpp>
 
-#include "const_globals.h"
+#include "menu_defines.h"
 #include "less.h"
 #include <string>
 
@@ -22,7 +22,7 @@ private:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     sf::Text m_nameText;
-    const size_t m_charWidth;
+    const size_t m_maxLength;
 
     sf::Text m_insertText;
     std::string m_input_string;
@@ -31,7 +31,10 @@ private:
     size_t m_cursor;
     sf::RectangleShape m_cursorLine;
 
-    std::function<bool(std::string)> m_validator;
+    Validator m_validator;
+
+    uint m_chPixelWidth;
+
 
 public:
     void validate();
@@ -39,14 +42,15 @@ public:
     void delete_front();
     void append(char c);
     std::string getText() {return m_input_string; }
-    void setPosition(int xpos, int ypos);
+    void setPosition(uint xpos, uint ypos);
     void cursorLeft();
     void cursorRight();
 
     TextInput(std::string nameText,
               uint charWidth,
+              Settings S,
               std::string defaultText = "",
-              std::function<bool(std::string)> validator = [](...){return true;}
+              std::function<bool(std::string)> V = [](...){return true;}
     );
     TextInput() = delete;
 

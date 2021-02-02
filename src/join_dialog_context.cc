@@ -7,8 +7,11 @@
 #include <fstream>
 #include <sstream>
 
-JoinDialogContext::JoinDialogContext(Context* previous) : Context(previous) {
+JoinDialogContext::JoinDialogContext(Context* previous) : Context(previous)
+{
     IPTextInput.setPosition(window_width / 3 - 100, window_height / 3 + 100);
+
+    quitButton.setPosition(window_width / 2 - 15, window_height - 50);
 }
 
 Context* JoinDialogContext::processBackgroundTask() { return nullptr; }

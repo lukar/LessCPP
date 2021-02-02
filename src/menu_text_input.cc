@@ -35,7 +35,7 @@ void TextInput::delete_front() // should be called delete, but it's taken
 
 void TextInput::append(char c)
 {
-    if (m_input_string.length() < m_charWidth) {
+    if (m_input_string.length() < m_maxLength) {
         m_input_string.insert(m_cursor, std::string(1,c));
         m_cursor++;
         m_insertText.setString(m_input_string);
@@ -58,43 +58,50 @@ void TextInput::cursorRight() {
     }
 }
 
-TextInput::TextInput(std::string nameText, uint charWidth, std::string defaultText, std::function<bool(std::string)> validator)
-: m_nameText(nameText, mono_font, medium_font),
-    m_charWidth(charWidth),
-    m_insertText(defaultText, mono_font, medium_font),
-    m_input_string(defaultText),
-    m_frame({medium_font * (2.0f/3.0f) * m_charWidth, medium_font * 1.5f}),
-    m_cursor(m_input_string.length()),
-    m_cursorLine({medium_font * 0.04f, medium_font * 1.5f}),
-    m_validator(validator)
+TextInput::TextInput(std::string nameText, uint maxLength, Settings S, std::string defaultText, Validator V)
+    :   m_nameText(nameText, S.font, S.chSize),
+        m_maxLength(maxLength),
+        m_insertText(defaultText, S.font, S.chSize),
+        m_input_string(defaultText),
+        m_cursor(m_input_string.length()),
+        m_cursorLine({S.chPixelWidth * 0.1f, static_cast<float>(S.chSize)}),
+        m_validator(V),
+        m_chPixelWidth(S.chPixelWidth)
 {
     // set some default values for text input
     m_nameText.setFillColor(sf::Color::White);
     m_insertText.setFillColor(sf::Color::White);
-    m_cursorLine.setFillColor(sf::Color::Green);
+    m_insertText.setOutlineColor(sf::Color(255,165,0));
 
-
-    m_frame.setFillColor(sf::Color::Black);
+    const sf::FloatRect it_bounds = m_insertText.getGlobalBounds();
+    m_frame = sf::RectangleShape({static_cast<float>((m_chPixelWidth + 1) * m_maxLength),
+                                  3 * it_bounds.height / 2.0f});
+    m_frame.setFillColor(sf::Color::Transparent);
     m_frame.setOutlineColor(sf::Color(255,165,0));
-    m_frame.setOutlineThickness(medium_font / 10.0);
+    m_frame.setOutlineThickness(it_bounds.height / 5.0f);
+
+    // To fix vertical displacement of the cursor
+    m_cursorLine.setOrigin(0, -it_bounds.height / 5);
 
     setPosition(0, 0);
     validate();
 }
 
-void TextInput::setPosition(int xpos, int ypos)
+void TextInput::setPosition(uint xpos, uint ypos)
 {
     m_nameText.setPosition(xpos, ypos);
-    m_insertText.setPosition(xpos + (medium_font * (4.0f/5.0f)) * m_nameText.getString().getSize(), ypos);
+
+    m_insertText.setPosition(xpos + (m_nameText.getString().getSize() + 1) * m_chPixelWidth, ypos);
+    const sf::FloatRect it_bounds = m_insertText.getGlobalBounds();
+
     m_cursorLine.setPosition(m_insertText.findCharacterPos(m_cursor));
 
-    const sf::FloatRect bounds = m_insertText.getGlobalBounds();
-    m_frame.setPosition({ bounds.left - medium_font / 4, bounds.top - medium_font / 3 });
+    m_frame.setPosition({it_bounds.left - m_chPixelWidth / 2,
+                         it_bounds.top - it_bounds.height / 4});
 }
 
 void TextInput::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    // insides are not transparent, so m_frame needs to be drawn first
     target.draw(m_frame, states);
     target.draw(m_nameText, states);
     target.draw(m_insertText, states);
