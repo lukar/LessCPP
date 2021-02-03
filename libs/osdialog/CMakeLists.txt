@@ -24,3 +24,7 @@ elseif(WIN32)
 else()
 	massage(FATAL_ERROR "Shouldn't be here -.-''")
 endif()
+
+target_include_directories(osdialog PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+)

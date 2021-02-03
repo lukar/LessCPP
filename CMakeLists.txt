@@ -28,7 +28,6 @@ add_subdirectory(libs/osdialog)
 target_link_libraries(less sfml-graphics sfml-audio sfml-network nlohmann_json::nlohmann_json osdialog)
 target_include_directories(less PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/libs/osdialog>
 )
 
 file(COPY resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
