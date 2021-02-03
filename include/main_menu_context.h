@@ -13,7 +13,7 @@
 class MainMenuContext : public Context {
 private:
     // side text
-    sf::Text text = initializeText(font, large_font, window_width/3, window_height/3, sf::Color::Green);
+    sf::Text text = initializeText(window_width/3, window_height/3, Large, sf::Color::Green);
 
     widget::Button SPGameButton = widget::Button("Single player", Medium);
     widget::Button LPVPGameButton = widget::Button("Local PvP", Medium);

@@ -27,23 +27,15 @@ constexpr int window_width = 800;
 constexpr int window_height = 600;
 
 // fonts
-inline sf::Font getFont(std::string const& filepath) {
-    sf::Font font;
-    if (!font.loadFromFile(filepath)) {
-        throw std::runtime_error("Cannot find the font file " + filepath);
-    }
-    return font;
-}
-
-inline const sf::Font mono_font = getFont("resources/Roboto_Mono_Medium_Nerd_Font_Complete.ttf");
-inline const sf::Font font = getFont("resources/Roboto_Medium.ttf");
-
+constexpr uint tiny_font = 10;
 constexpr uint small_font = 15;
 constexpr uint medium_font = 30;
 constexpr uint large_font = 60;
 
-inline const widget::Settings Medium(mono_font, medium_font);
-inline const widget::Settings Large(mono_font, large_font);
+inline widget::Settings Tiny{};
+inline widget::Settings Small{};
+inline widget::Settings Medium{};
+inline widget::Settings Large{};
 
 
 #endif //LESSCPP_CONST_GLOBALS_H

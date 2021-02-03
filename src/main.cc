@@ -1,9 +1,7 @@
 #include "const_globals.h"
 
-
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-
 
 #include <iostream>
 #include <stack>
@@ -11,11 +9,18 @@
 #include "context.h"
 #include "main_menu_context.h"
 
-#include "osdialog.h"
 
 
 int main()
 {
+    // begin by initializing globals
+    sf::Font mono_font = getFont("resources/Roboto_Mono_Medium_Nerd_Font_Complete.ttf");
+    Tiny = widget::Settings(mono_font, tiny_font);
+    Small = widget::Settings(mono_font, small_font);
+    Medium = widget::Settings(mono_font, medium_font);
+    Large = widget::Settings(mono_font, large_font);
+
+
     std::stack<Context*> contexts;
 
     sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Less game", sf::Style::Close);

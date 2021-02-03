@@ -4,6 +4,9 @@
 #include <SFML/Graphics.hpp>
 #include <functional>
 
+using uint = unsigned int;
+using Validator = std::function<bool(std::string)>;
+
 namespace widget
 {
 
@@ -20,14 +23,29 @@ struct Settings {
     const uint chSize;
     const uint chPixelWidth;
 
-    Settings(const sf::Font& _font, const uint _chSize)
+    Settings(sf::Font& _font, uint _chSize)
         : font(_font),
           chSize(_chSize),
           chPixelWidth(getChPixelWidth(font, _chSize))
     {}
+
+    // Please forgive me (this replaces the current object instance with the one being passed in)
+    Settings& operator=(const Settings& second)
+    {
+        if (this == &second)
+            return *this;
+        this->~Settings();
+        new(this) Settings(second);
+        return *this;
+    }
+
+    Settings()
+        : font(sf::Font()),
+          chSize(0),
+          chPixelWidth(0)
+    {}
 };
 
-using Validator = std::function<bool(std::string)>;
 
 }
 

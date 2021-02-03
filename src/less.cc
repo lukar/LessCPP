@@ -1,6 +1,5 @@
 #include <less.h>
 
-
 using namespace std::string_literals;
 
 std::string get_side_text(Game const& game) {
@@ -24,6 +23,14 @@ std::string get_side_text(Game const& game) {
     return displayText;
 }
 
+sf::Font getFont(std::string const& filepath) {
+    sf::Font font;
+    if (!font.loadFromFile(filepath)) {
+        throw std::runtime_error("Cannot find the font file " + filepath);
+    }
+    return font;
+}
+
 sf::Sound getSound(std::string const& filepath, std::deque<sf::SoundBuffer> &soundBuffers){
     soundBuffers.emplace_back();
     if (!soundBuffers.back().loadFromFile(filepath))
@@ -31,8 +38,8 @@ sf::Sound getSound(std::string const& filepath, std::deque<sf::SoundBuffer> &sou
     return sf::Sound(soundBuffers.back());
 }
 
-sf::Text initializeText(sf::Font const& font, int size, int xpos, int ypos, sf::Color color) {
-    sf::Text text("", font, size);
+sf::Text initializeText(int xpos, int ypos, const widget::Settings& S, sf::Color color) {
+    sf::Text text("", S.font, S.chSize);
     text.setPosition(xpos, ypos);
     text.setFillColor(color);
 
