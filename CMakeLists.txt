@@ -25,7 +25,9 @@ add_subdirectory(libs/SFML)
 
 add_subdirectory(libs/osdialog)
 
-target_link_libraries(less sfml-graphics sfml-audio sfml-network nlohmann_json::nlohmann_json osdialog)
+add_subdirectory(libs/SFMLWidgets)
+
+target_link_libraries(less sfml-graphics sfml-audio sfml-network nlohmann_json::nlohmann_json osdialog sfml-widgets)
 target_include_directories(less PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )

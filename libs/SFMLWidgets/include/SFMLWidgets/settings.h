@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <functional>
 
-namespace menu
+namespace widget
 {
 
 inline uint getChPixelWidth(const sf::Font& font, uint chSize)

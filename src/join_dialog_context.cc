@@ -54,8 +54,6 @@ Context* JoinDialogContext::join_game() {
 }
 
 sf::Texture JoinDialogContext::render() {
-    text.setString("Less Game");
-
     rentex.clear();
 
     rentex.draw(IPTextInput);

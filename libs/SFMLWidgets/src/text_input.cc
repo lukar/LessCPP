@@ -1,8 +1,8 @@
-#include "menu_text_input.h"
+#include "SFMLWidgets/text_input.h"
 
 #include <iostream>
 
-namespace menu
+namespace widget
 {
 
 void TextInput::validate() {

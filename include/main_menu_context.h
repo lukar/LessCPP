@@ -6,7 +6,7 @@
 #include "const_globals.h"
 #include "less.h"
 
-#include "menu_button.h"
+#include "SFMLWidgets/button.h"
 #include <SFML/Network.hpp>
 #include "helpers.h"
 
@@ -15,12 +15,12 @@ private:
     // side text
     sf::Text text = initializeText(font, large_font, window_width/3, window_height/3, sf::Color::Green);
 
-    menu::Button SPGameButton = menu::Button("Single player", Medium);
-    menu::Button LPVPGameButton = menu::Button("Local PvP", Medium);
-    menu::Button MPHGameButton = menu::Button("Multiplayer Host", Medium);
-    menu::Button MPCGameButton = menu::Button("Multiplayer Client", Medium);
-    menu::Button loadGameButton = menu::Button("Load Game", Medium);
-    menu::Button quitButton = menu::Button("Quit", Medium);
+    widget::Button SPGameButton = widget::Button("Single player", Medium);
+    widget::Button LPVPGameButton = widget::Button("Local PvP", Medium);
+    widget::Button MPHGameButton = widget::Button("Multiplayer Host", Medium);
+    widget::Button MPCGameButton = widget::Button("Multiplayer Client", Medium);
+    widget::Button loadGameButton = widget::Button("Load Game", Medium);
+    widget::Button quitButton = widget::Button("Quit", Medium);
 
     sf::IpAddress ip_player2 = "127.0.0.1";
     unsigned short tcp_port = 53012;

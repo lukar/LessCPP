@@ -10,7 +10,7 @@
 #include "location.h"
 
 #include <SFML/Graphics.hpp>
-#include "menu_defines.h"
+#include "SFMLWidgets/settings.h"
 
 
 // individual color pieces starting positions
@@ -42,8 +42,8 @@ constexpr uint small_font = 15;
 constexpr uint medium_font = 30;
 constexpr uint large_font = 60;
 
-inline const menu::Settings Medium(mono_font, medium_font);
-inline const menu::Settings Large(mono_font, large_font);
+inline const widget::Settings Medium(mono_font, medium_font);
+inline const widget::Settings Large(mono_font, large_font);
 
 
 #endif //LESSCPP_CONST_GLOBALS_H

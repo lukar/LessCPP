@@ -19,9 +19,10 @@ static std::string getTimeStr(){
 SubMenuContext::SubMenuContext(Context* previous, sf::Texture pretext, const Game& game)
     : Context(previous), m_pretext(pretext), m_game(game)
 {
-    text.setString("Pause");
+    text.setPosition(window_width/3, window_height/3);
+    text.setFillColor(sf::Color::Green);
 
-    returnButton.setPosition(window_width/2 - 200, window_height - 50);
+    returnButton.setPosition(window_width/2 - 250, window_height - 50);
     continueButton.setPosition(window_width/2 + 60, window_height - 50);
     saveGameButton.setPosition(window_width/3 + 50, window_height/3 + 100);
 }

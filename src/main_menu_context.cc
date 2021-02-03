@@ -14,10 +14,10 @@
 
 MainMenuContext::MainMenuContext(Context* previous) : Context(previous)
 {
-    SPGameButton.setPosition(window_width/ 3 - 100, window_height/3 + 100);
-    LPVPGameButton.setPosition(window_width / 3 - 100, window_height / 3 + 150);
-    MPHGameButton.setPosition(window_width / 3 + 200, window_height / 3 + 100);
-    MPCGameButton.setPosition(window_width / 3 + 200, window_height / 3 + 150);
+    SPGameButton.setPosition(window_width/ 3 - 150, window_height/3 + 100);
+    LPVPGameButton.setPosition(window_width / 3 - 150, window_height / 3 + 150);
+    MPHGameButton.setPosition(window_width / 3 + 150, window_height / 3 + 100);
+    MPCGameButton.setPosition(window_width / 3 + 150, window_height / 3 + 150);
     loadGameButton.setPosition(window_width/3 + 50, window_height/3 + 250);
     quitButton.setPosition(window_width / 2 - 15, window_height - 50);
 }

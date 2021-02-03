@@ -5,14 +5,13 @@
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Shape.hpp>
 
-#include "menu_defines.h"
-#include "less.h"
+#include "SFMLWidgets/settings.h"
 #include <string>
 
 
 // helper for menu creation
 
-namespace menu
+namespace widget
 {
 
 class Button : public sf::Drawable

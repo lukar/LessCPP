@@ -1,9 +1,9 @@
 
-#include "menu_button.h"
+#include "SFMLWidgets/button.h"
 
 #include <iostream>
 
-namespace menu
+namespace widget
 {
 
 Button::Button(std::string text, Settings S)

@@ -5,19 +5,18 @@
 
 #include "context.h"
 
-#include "menu_button.h"
+#include "SFMLWidgets/button.h"
 #include "game.h"
 
 class SubMenuContext : public Context {
 private:
     Context* p_main_menu_context;      // aka back to main menu
 
-    // side text
-    sf::Text text = initializeText(font, large_font, window_width/3, window_height/3, sf::Color::Green);
+    sf::Text text = sf::Text("Pause", Large.font, Large.chSize);
 
-    menu::Button returnButton = menu::Button("Return to Menu", Medium);
-    menu::Button continueButton = menu::Button("Continue", Medium);
-    menu::Button saveGameButton = menu::Button("Save Game", Medium);
+    widget::Button returnButton = widget::Button("Return to Menu", Medium);
+    widget::Button continueButton = widget::Button("Continue", Medium);
+    widget::Button saveGameButton = widget::Button("Save Game", Medium);
 
     sf::Texture m_pretext;
     const Game & m_game;
