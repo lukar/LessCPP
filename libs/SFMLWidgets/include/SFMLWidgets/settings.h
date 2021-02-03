@@ -14,7 +14,7 @@ inline uint getChPixelWidth(const sf::Font& font, uint chSize)
 {
     const sf::Text text("A", font, chSize);
     const sf::FloatRect text_bounds = text.getGlobalBounds();
-    return text_bounds.width;
+    return static_cast<uint>(text_bounds.width);
 }
 
 
@@ -39,11 +39,14 @@ struct Settings {
         return *this;
     }
 
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wextra"
     Settings()
         : font(sf::Font()),
           chSize(0),
           chPixelWidth(0)
     {}
+    #pragma GCC diagnostic pop
 };
 
 
