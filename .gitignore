@@ -1,18 +1,19 @@
 less
+
 build/*
+build-*/*
 .vs/
-tags
 .idea/
 Debug/
+/out
 cmake-build-debug/
 cmake-build-release/
+
 *.o
 *.log
-CMakeLists.txt.user
-
 *.json
 
-/SFML-*
-/out
 
+CMakeLists.txt.user
 ignore_*
+tags

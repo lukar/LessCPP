@@ -1,6 +1,6 @@
-#include "game_context.h"
+#include "contexts/game_context.h"
 #include "ai.h"
-#include "sub_menu_context.h"
+#include "contexts/sub_menu_context.h"
 #include "helpers.h"
 
 

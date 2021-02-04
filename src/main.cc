@@ -6,8 +6,8 @@
 #include <iostream>
 #include <stack>
 
-#include "context.h"
-#include "main_menu_context.h"
+#include "contexts/context.h"
+#include "contexts/main_menu_context.h"
 
 
 

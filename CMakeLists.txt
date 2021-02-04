@@ -3,48 +3,37 @@ project(LessCPP CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 
-file(GLOB source_files "src/*")
-add_executable(less ${source_files})
-
+# USE RPATH FOR EXECUTABLE (must be defined before add_executable)
 if(UNIX)
-	set(CMAKE_INSTALL_RPATH lib)
-	set(CMAKE_BUILD_RPATH lib)
-	set(CMAKE_BUILD_RPATH_USE_ORIGIN TRUE)
-	set(CMAKE_SKIP_INSTALL_RPATH FALSE)
-	target_compile_options(less PRIVATE -Wall -Wextra -pedantic) 
-elseif(WIN32)
-	set(SFML_STATIC_LIBRARIES TRUE)
-	set(BUILD_SHARED_LIBS FALSE)
-	target_compile_options(less PRIVATE -Wall -pedantic) 
+    set(CMAKE_INSTALL_RPATH "lib")
+    set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+    set(CMAKE_BUILD_RPATH_USE_ORIGIN TRUE)
+    set(CMAKE_SKIP_RPATH FALSE)
 endif()
 
-set(JSON_BuildTests OFF CACHE INTERNAL "")
-add_subdirectory(libs/nlohmann_json)
+file(GLOB sources "src/*")
+file(GLOB context_sources "contexts/src/*")
+add_executable(less ${sources} ${context_sources})
 
-add_subdirectory(libs/SFML)
+if(UNIX)
+    target_compile_options(less PRIVATE -Wall -Wextra -pedantic)
+elseif(WIN32)
+    target_compile_options(less PRIVATE -Wall -pedantic)
+endif()
 
-add_subdirectory(libs/osdialog)
-
-add_subdirectory(libs/SFMLWidgets)
+add_subdirectory(libs)
 
 target_link_libraries(less sfml-graphics sfml-audio sfml-network nlohmann_json::nlohmann_json osdialog sfml-widgets)
 target_include_directories(less PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/contexts/include>
 )
 
+#### COPY ALL RESOURCES TO BUILD DIRECTORY ####
 file(COPY resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY sounds DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-if(WIN32)
-    file(GLOB DLLS "${SFML_FOLDER}/bin/*.dll")
-    file(COPY ${DLLS} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-endif()
-
-# INSTALL
+#### FOR INSTALLING PUT TARGETS AND RESOURCES IN INSTALL DIRECTORY ####
 install(TARGETS less DESTINATION ${CMAKE_INSTALL_PREFIX})
 install(DIRECTORY resources sounds DESTINATION ${CMAKE_INSTALL_PREFIX})
 
-if(UNIX)
-	file(GLOB sfml_libs "${CMAKE_CURRENT_BINARY_DIR}/libs/SFML/lib/*.so*")
-	install(FILES ${sfml_libs} DESTINATION ${CMAKE_INSTALL_PREFIX})
-endif()

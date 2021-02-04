@@ -1,6 +1,6 @@
-#include "main_menu_context.h"
-#include "join_dialog_context.h"
-#include "game_context.h"
+#include "contexts/main_menu_context.h"
+#include "contexts/join_dialog_context.h"
+#include "contexts/game_context.h"
 #include "wall.h"
 
 #include "ai.h"

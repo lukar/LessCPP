@@ -1,7 +1,7 @@
 #ifndef MAIN_MENU_CONTEXT_LESSCPP
 #define MAIN_MENU_CONTEXT_LESSCPP
 
-#include "context.h"
+#include "contexts/context.h"
 
 #include "const_globals.h"
 #include "less.h"

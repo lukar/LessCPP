@@ -1,7 +1,7 @@
 #ifndef JOIN_DIALOG_CONTEXT_LESSCPP
 #define JOIN_DIALOG_CONTEXT_LESSCPP
 
-#include "context.h"
+#include "contexts/context.h"
 
 #include "const_globals.h"
 #include "less.h"

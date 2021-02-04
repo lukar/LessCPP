@@ -3,7 +3,7 @@
 
 #include "const_globals.h"
 
-#include "context.h"
+#include "contexts/context.h"
 
 #include "SFMLWidgets/button.h"
 #include "game.h"

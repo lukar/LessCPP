@@ -1,6 +1,6 @@
-#include "join_dialog_context.h"
-#include "main_menu_context.h"
-#include "game_context.h"
+#include "contexts/join_dialog_context.h"
+#include "contexts/main_menu_context.h"
+#include "contexts/game_context.h"
 #include "helpers.h"
 #include <iostream>
 #include "osdialog.h"
