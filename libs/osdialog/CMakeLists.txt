@@ -27,7 +27,3 @@ endif()
 target_include_directories(osdialog PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
-
-if(UNIX)
-    install(TARGETS osdialog DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_RPATH})
-endif()

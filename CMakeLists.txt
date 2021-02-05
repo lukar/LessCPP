@@ -33,7 +33,18 @@ target_include_directories(less PUBLIC
 file(COPY resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY sounds DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-#### FOR INSTALLING PUT TARGETS AND RESOURCES IN INSTALL DIRECTORY ####
-install(TARGETS less DESTINATION ${CMAKE_INSTALL_PREFIX})
-install(DIRECTORY resources sounds DESTINATION ${CMAKE_INSTALL_PREFIX})
+# define dummy target that can be used to create a folder with necessary files
+add_custom_target(distribute)
+set(DIST_PREFIX ${CMAKE_SOURCE_DIR}/ignore_dist)
 
+#### FOR DISTRIBUTION PUT TARGETS AND RESOURCES IN DIST DIRECTORY ####
+add_custom_command(TARGET distribute POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:less> ${DIST_PREFIX}/$<TARGET_FILE_NAME:less>
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:sfml-graphics> ${DIST_PREFIX}/libs/$<TARGET_FILE_NAME:sfml-graphics>
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:sfml-audio> ${DIST_PREFIX}/libs/$<TARGET_FILE_NAME:sfml-audio>
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:sfml-network> ${DIST_PREFIX}/libs/$<TARGET_FILE_NAME:sfml-network>
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:sfml-widgets> ${DIST_PREFIX}/libs/$<TARGET_FILE_NAME:sfml-widgets>
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:osdialog> ${DIST_PREFIX}/libs/$<TARGET_FILE_NAME:osdialog>
+    COMMAND ${CMAKE_COMMAND} -E copy_directory resources ${DIST_PREFIX}/resources
+    COMMAND ${CMAKE_COMMAND} -E copy_directory sounds ${DIST_PREFIX}/sounds
+)
