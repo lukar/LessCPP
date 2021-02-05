@@ -61,65 +61,28 @@ std::optional<Direction> getDirection(Location oldL, Location newL) {
     else return {};
 }
 
-sf::IpAddress host_game_tcp_packets(std::string data_string,
-    sf::TcpListener & listener) {
-    sf::TcpSocket tcp_socket;
-
-    if (listener.accept(tcp_socket) != sf::Socket::Done) {
-        std::cout << "Error accepr socket\n"; return 0;
-    }
-    std::cout << "Tcp socket connected\n";
-
-    sf::Packet packet;
-    tcp_socket.receive(packet);
-    std::string s;
-    std::string substring="init";
-    packet >> s;
-    packet.clear();
-    if (s.find(substring) != std::string::npos) {
-        std::cout << substring << " found!" << '\n';
-        packet << data_string;
-        tcp_socket.send(packet);
-        std::cout << "Sent!\n";
-    }
-    return tcp_socket.getRemoteAddress();
-}
-
-std::string get_game_tcp_packets(sf::IpAddress& ip_player2,    unsigned short& tcp_port) {
-    sf::TcpSocket tcp_socket;
-    if (false) {
-        std::string ip_str;
-        std::cout << "Please, enter ip of player 2: (default " << ip_player2 << ")\n";
-        std::getline(std::cin, ip_str);
-        if (ip_str.length() > 0)
-            ip_player2 = ip_str;
-    }
-    if (false) {
-        std::string port_str;
-        std::cout << "Please, enter port of player 2: (default " << tcp_port << ")\n";
-        std::getline(std::cin, port_str);
-        if(port_str.length()>0)
-            tcp_port = std::stoi(port_str);
-    }
-    sf::Socket::Status status = tcp_socket.connect(ip_player2, tcp_port);
-
+sf::TcpSocket* connect_to_server(sf::IpAddress url, unsigned short port) {
+    sf::TcpSocket* tcp_socket = new sf::TcpSocket;
+    sf::Socket::Status status = tcp_socket->connect(url, port);
     if (status != sf::Socket::Done) {
         std::cout << "Error connecting tcp - get_game_tcp_packets " << status << "\n";
         assert(0);
     }
     std::cout << "Tcp socket connected - get_game_tcp_packets " << status << "\n";
+    return tcp_socket;
+}
 
+std::string request_room_names(sf::TcpSocket* tcp_socket) {
     sf::Packet packet;
-    std::string message = "init";
-    packet << message;
-    tcp_socket.send(packet);
+    packet << std::string("list_rooms");
+    tcp_socket->send(packet);
     packet.clear();
 
-    tcp_socket.receive(packet);
-    tcp_socket.disconnect();
-    std::string json_string;
-    packet >> json_string;
-    return json_string;
+    tcp_socket->receive(packet);
+    tcp_socket->disconnect();
+    std::string room_names;
+    packet >> room_names;
+    return room_names;
 }
 
 void send_move(sf::TcpSocket& tcp_socket,

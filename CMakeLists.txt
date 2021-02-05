@@ -14,16 +14,20 @@ endif()
 file(GLOB sources "src/*")
 file(GLOB context_sources "contexts/src/*")
 add_executable(less ${sources} ${context_sources})
+add_executable(server server/server.cc)
 
 if(UNIX)
     target_compile_options(less PRIVATE -Wall -Wextra -pedantic)
+    target_compile_options(server PRIVATE -Wall -Wextra -pedantic)
 elseif(WIN32)
     target_compile_options(less PRIVATE -Wall -pedantic)
+    target_compile_options(server PRIVATE -Wall -pedantic)
 endif()
 
 add_subdirectory(libs)
 
 target_link_libraries(less sfml-graphics sfml-audio sfml-network nlohmann_json::nlohmann_json osdialog sfml-widgets)
+target_link_libraries(server sfml-network)
 target_include_directories(less PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/contexts/include>

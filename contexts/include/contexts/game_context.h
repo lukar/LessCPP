@@ -42,16 +42,16 @@ private:
     sf::IpAddress m_ip_player2="0.0.0.0";
     unsigned short m_tcp_port = 53012;
     sf::TcpListener listener;
-    sf::TcpSocket tcp_socket;
+    sf::TcpSocket *tcp_socket;
 
     const GameMode m_game_mode;
     
 public:
 
-    GameContext(Context*, std::array<WallConfig, 9>, GameMode game_mode);
-    GameContext(Context*, std::array<WallConfig, 9> wall_configs, unsigned short tcp_port /*53012*/);
-    GameContext(Context*, const nlohmann::json&, GameMode game_mode);
-    GameContext(Context*, const nlohmann::json& ,sf::IpAddress ip_player2, unsigned short tcp_port);
+    GameContext(Context*, std::array<WallConfig, 9> wall_configs, GameMode game_mode);
+    GameContext(Context*, std::array<WallConfig, 9> wall_configs, sf::TcpSocket* socket, std::string room_name);
+    GameContext(Context*, const nlohmann::json& game_json, GameMode game_mode);
+    GameContext(Context*, const nlohmann::json& game_json, sf::TcpSocket* tcp_soc);
 
     void update(const float dt, const sf::Vector2f & mousepos) override { m_dt = dt; m_mousepos = mousepos; };
 

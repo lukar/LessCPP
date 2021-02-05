@@ -7,45 +7,24 @@
 #include <iostream>
 
 
+
 GameContext::GameContext(Context* previous, std::array<WallConfig, 9> wall_configs, GameMode game_mode)
     : Context(previous), game(wall_configs), gui(wall_configs), m_game_mode(game_mode) {}
 GameContext::GameContext(Context* previous, const nlohmann::json & game_json, GameMode game_mode)
     : Context(previous), game(game_json), gui(game_json), m_game_mode(game_mode) {}
-GameContext::GameContext(Context* previous, const nlohmann::json& game_json, sf::IpAddress ip_player2, unsigned short tcp_port /*53012*/)
-    : Context(previous), game(game_json), gui(game_json), m_game_mode(GameMode::MULTIPLAYER)
-{
-    m_ip_player2 = ip_player2;
-    m_tcp_port = tcp_port;
-    std::cout << "Initializing cp socket\n";
-    sf::Socket::Status status = tcp_socket.connect(ip_player2, m_tcp_port);
 
-    if (status != sf::Socket::Done)    {
-        std::cout << "Error connecting tcp - constructor " << status <<"\n";
-    }    else {
-        std::cout << "Tcp socket connected " << status << "\n";
-    }
-    tcp_socket.setBlocking(false);
-    opponent_color = Player::WHITE;
+
+GameContext::GameContext(Context* previous, std::array<WallConfig, 9> wall_configs, sf::TcpSocket* socket, std::string room_name)
+    : game(wall_configs), gui(wall_configs), m_game_mode(GameMode::MULTIPLAYER), tcp_socket(socket), Context(previous) {
+    sf::Packet packet;
+    packet << std::string("post_game") << room_name << game.getJsonRepresentation().dump();
+    tcp_socket->send(packet);
 }
-
-
-GameContext::GameContext(Context* previous, std::array<WallConfig, 9> wall_configs, unsigned short tcp_port /*53012*/)
-    : Context(previous), game(wall_configs), gui(wall_configs), m_game_mode(GameMode::MULTIPLAYER)
+GameContext::GameContext(Context* previous, const nlohmann::json& game_json, sf::TcpSocket* tcp_soc)
+    : game(game_json), gui(game_json), m_game_mode(GameMode::MULTIPLAYER), tcp_socket(tcp_soc), Context(previous)
 {
-    m_tcp_port = tcp_port;
-    // bind the listener to a port
-    if (listener.listen(m_tcp_port) != sf::Socket::Done) { /*connection from main menu*/
-        // error...
-    }
-    m_ip_player2 = host_game_tcp_packets(game.getJsonRepresentation().dump(), listener);
-    if (listener.listen(m_tcp_port) != sf::Socket::Done) { /*connection from game context*/
-        // error...
-    }
-    if (listener.accept(tcp_socket) != sf::Socket::Done) {
-        // error...
-    }
-    std::cout << "Tcp socket connected\n";
-    tcp_socket.setBlocking(false);
+    tcp_socket->setBlocking(false);
+    opponent_color = Player::WHITE;
 }
 
 Context* GameContext::processBackgroundTask()
@@ -54,7 +33,7 @@ Context* GameContext::processBackgroundTask()
     if (game.getState() != GameState::ENDED and game.active_player() == opponent_color) {
         if (game.getState() == GameState::PREVIEW) return nullptr; // TODO: check if causes problems ...
         
-        if (auto optional_link = wait_move(tcp_socket)) {
+        if (auto optional_link = wait_move(*tcp_socket)) {
             auto link = optional_link.value();
             if (game.movePiece(link.first, link.second)) {
                 const auto [piece_idx, player] = gui.pieceAtLocation(link.first).value();
@@ -112,7 +91,7 @@ Context* GameContext::processEvent(const sf::Event & event)
 
                 if (new_location) {
                     if (game.movePiece(held_piece->getLocation(), new_location.value())) {
-                        send_move(tcp_socket, held_piece->getLocation(), new_location.value());
+                        send_move(*tcp_socket, held_piece->getLocation(), new_location.value());
                         held_piece->setLocation(new_location.value());
                         sound_drop.play();
                     }

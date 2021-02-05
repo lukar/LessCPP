@@ -31,11 +31,8 @@ bool piecesInLocations(const Locations<4>& pieces, const Locations<4>& locations
 
 std::optional<Direction> getDirection(Location oldL, Location newL);
 
-std::string get_game_tcp_packets(sf::IpAddress& ip_player2,
-    unsigned short& tcp_port);
-sf::IpAddress host_game_tcp_packets(std::string data_string,
-    sf::TcpListener& listener);
-
+sf::TcpSocket* connect_to_server(sf::IpAddress url, unsigned short port=53012);
+std::string request_room_names(sf::TcpSocket* tcp_socket);
 void send_move(sf::TcpSocket& tcp_socket,
     Location location_old,
     Location location_new);

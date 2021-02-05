@@ -16,8 +16,7 @@ MainMenuContext::MainMenuContext(Context* previous) : Context(previous)
 {
     SPGameButton.setPosition(window_width/ 3 - 150, window_height/3 + 100);
     LPVPGameButton.setPosition(window_width / 3 - 150, window_height / 3 + 150);
-    MPHGameButton.setPosition(window_width / 3 + 150, window_height / 3 + 100);
-    MPCGameButton.setPosition(window_width / 3 + 150, window_height / 3 + 150);
+    MPSGameButton.setPosition(window_width / 3 + 150, window_height / 3 + 100);
     loadGameButton.setPosition(window_width/3 + 50, window_height/3 + 250);
     quitButton.setPosition(window_width / 2 - 15, window_height - 50);
 }
@@ -30,25 +29,13 @@ Context* MainMenuContext::processEvent(const sf::Event & event)
         else if (SPGameButton.contains(m_mousepos)) return new GameContext(this, wall::generateNwallconfigs<9>(), GameMode::SINGLEPLAYER);
         else if (LPVPGameButton.contains(m_mousepos)) return new GameContext(this, wall::generateNwallconfigs<9>(), GameMode::LOCAL_PVP);
         else if (loadGameButton.contains(m_mousepos)) return load_game();
-        else if (MPHGameButton.contains(m_mousepos)) return host_game();
-        else if (MPCGameButton.contains(m_mousepos)) return new JoinDialogContext(this);
+        else if (MPSGameButton.contains(m_mousepos)) return new JoinDialogContext(this);
     }
     if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::J) return new JoinDialogContext(this);
     }
 
     return nullptr;
-}
-
-Context* MainMenuContext::host_game() {
-    if (false) {
-        std::string port_str;
-        std::cout << "Please, enter port of player 2: (default " << tcp_port << ")\n";
-        std::getline(std::cin, port_str);
-        if (port_str.length() > 0)
-            tcp_port = std::stoi(port_str);
-    }
-    return new GameContext(this, wall::generateNwallconfigs<9>(), tcp_port /*53012*/);
 }
 
 Context* MainMenuContext::load_game() {
@@ -75,8 +62,7 @@ sf::Texture MainMenuContext::render() {
     rentex.draw(quitButton);
     rentex.draw(SPGameButton);
     rentex.draw(LPVPGameButton);
-    rentex.draw(MPHGameButton);
-    rentex.draw(MPCGameButton);
+    rentex.draw(MPSGameButton);
     rentex.draw(loadGameButton);
     
     rentex.display();

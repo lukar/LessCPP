@@ -17,15 +17,13 @@ private:
 
     widget::Button SPGameButton = widget::Button("Single player", Medium);
     widget::Button LPVPGameButton = widget::Button("Local PvP", Medium);
-    widget::Button MPHGameButton = widget::Button("Multiplayer Host", Medium);
-    widget::Button MPCGameButton = widget::Button("Multiplayer Client", Medium);
+    widget::Button MPSGameButton = widget::Button("Connect to server", Medium);
     widget::Button loadGameButton = widget::Button("Load Game", Medium);
     widget::Button quitButton = widget::Button("Quit", Medium);
 
     sf::IpAddress ip_player2 = "127.0.0.1";
     unsigned short tcp_port = 53012;
 
-    Context* host_game();
     Context* load_game();
 
 public:

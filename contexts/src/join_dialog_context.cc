@@ -1,6 +1,8 @@
 #include "contexts/join_dialog_context.h"
 #include "contexts/main_menu_context.h"
 #include "contexts/game_context.h"
+#include "contexts/server_room_context.h"
+
 #include "helpers.h"
 #include <iostream>
 #include "osdialog.h"
@@ -27,7 +29,7 @@ Context* JoinDialogContext::processEvent(const sf::Event & event)
             IPTextInput.delete_front();
         else if (event.key.code == sf::Keyboard::Enter) {
             ip_player2 = IPTextInput.getText();
-            return join_game();
+            return new ServerRoomContext(this, connect_to_server(ip_player2, tcp_port));
         }
         else if (event.key.code == sf::Keyboard::Left) {
             IPTextInput.cursorLeft();
@@ -42,15 +44,6 @@ Context* JoinDialogContext::processEvent(const sf::Event & event)
         }
     }
     return nullptr;
-}
-
-Context* JoinDialogContext::join_game() {
-    std::string json_string = get_game_tcp_packets(ip_player2, tcp_port);
-    std::stringstream ss;
-    ss << json_string;
-    nlohmann::json game_json{};
-    ss >> game_json;
-    return new GameContext(this, game_json, ip_player2, tcp_port);
 }
 
 sf::Texture JoinDialogContext::render() {
