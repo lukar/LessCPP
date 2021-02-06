@@ -33,6 +33,7 @@ private:
     Validator m_validator;
 
     uint m_chPixelWidth;
+    uint m_chSize;
 
 
 public:

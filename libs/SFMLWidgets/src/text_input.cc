@@ -64,24 +64,25 @@ TextInput::TextInput(std::string nameText, uint maxLength, Settings S, std::stri
         m_insertText(defaultText, S.font, S.chSize),
         m_input_string(defaultText),
         m_cursor(m_input_string.length()),
-        m_cursorLine({S.chPixelWidth * 0.1f, static_cast<float>(S.chSize)}),
+        m_cursorLine({S.chPixelWidth * 0.2f, (3.0f/2.0f)*static_cast<float>(S.chSize)}),
         m_validator(V),
-        m_chPixelWidth(S.chPixelWidth)
+        m_chPixelWidth(S.chPixelWidth),
+        m_chSize(S.chSize)
 {
     // set some default values for text input
+    m_cursorLine.setFillColor(sf::Color::Green);
     m_nameText.setFillColor(sf::Color::White);
     m_insertText.setFillColor(sf::Color::White);
     m_insertText.setOutlineColor(sf::Color(255,165,0));
 
-    const sf::FloatRect it_bounds = m_insertText.getGlobalBounds();
     m_frame = sf::RectangleShape({static_cast<float>((m_chPixelWidth + 1) * m_maxLength),
-                                  3 * it_bounds.height / 2.0f});
+                                  3 * m_chSize / 2.0f});
     m_frame.setFillColor(sf::Color::Transparent);
     m_frame.setOutlineColor(sf::Color(255,165,0));
-    m_frame.setOutlineThickness(it_bounds.height / 5.0f);
+    m_frame.setOutlineThickness(m_chSize / 5.0f);
 
     // To fix vertical displacement of the cursor
-    m_cursorLine.setOrigin(0, -it_bounds.height / 5);
+    m_cursorLine.setOrigin(0, m_chSize / 15);
 
     setPosition(0, 0);
     validate();
@@ -91,13 +92,13 @@ void TextInput::setPosition(uint xpos, uint ypos)
 {
     m_nameText.setPosition(xpos, ypos);
 
-    m_insertText.setPosition(xpos + (m_nameText.getString().getSize() + 1) * m_chPixelWidth, ypos);
-    const sf::FloatRect it_bounds = m_insertText.getGlobalBounds();
+    auto it_relXpos = (m_nameText.getString().getSize() + 1) * m_chPixelWidth;
+    m_insertText.setPosition(xpos + it_relXpos, ypos);
 
     m_cursorLine.setPosition(m_insertText.findCharacterPos(m_cursor));
 
-    m_frame.setPosition({it_bounds.left - m_chPixelWidth / 2,
-                         it_bounds.top - it_bounds.height / 4});
+    m_frame.setPosition({xpos + it_relXpos - m_chPixelWidth / 2.0f,
+                         ypos - 2.0f});
 }
 
 void TextInput::draw(sf::RenderTarget& target, sf::RenderStates states) const
