@@ -13,9 +13,9 @@ void GameRoom::exchange_packets() {
 }
 
 
-void GameRoom::connect_p2(sf::TcpSocket* tcp_socket_p2) {
+void GameRoom::connect_p2(std::unique_ptr<sf::TcpSocket> tcp_socket_p2) {
     sf::Packet packet;
-    m_tcp_socket_p2 = tcp_socket_p2;
+    m_tcp_socket_p2 = std::move(tcp_socket_p2);
     m_p2_connected = true;
     packet << m_game_json;
     m_tcp_socket_p2->send(packet);
