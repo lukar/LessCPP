@@ -2,42 +2,13 @@
 #include <iostream>
 #include <string>
 
+#include <server/game_room.h>
+
+
 int main() {
 	unsigned short tcp_port = 53012;
 	sf::TcpListener listener;
-	listener.setBlocking(false);	
-
-	class GameRoom {
-		std::string m_room_name;
-		std::string m_game_json;
-		bool m_p2_connected = false;
-		sf::TcpSocket* m_tcp_socket_p1; // White by default
-		sf::TcpSocket* m_tcp_socket_p2; // Black by default
-	public:
-		std::string get_room_name() { return  m_room_name; }
-		void exchange_packets() {
-			if (!m_p2_connected) return; /* no second player */
-
-			sf::Packet packet;
-			if (m_tcp_socket_p1->receive(packet)) {/* no data */ }
-			else { m_tcp_socket_p2->send(packet); }
-			packet.clear();
-			if (m_tcp_socket_p2->receive(packet)) {/* no data */ }
-			else { m_tcp_socket_p1->send(packet); }
-			packet.clear();
-		}
-		GameRoom(sf::TcpSocket* tcp_socket_p1, std::string game_name, std::string game_json)
-			: m_tcp_socket_p1(tcp_socket_p1), m_room_name(game_name), m_game_json(game_json) {}
-
-		void connect_p2(sf::TcpSocket* tcp_socket_p2) {
-			sf::Packet packet;
-			m_tcp_socket_p2 = tcp_socket_p2;
-			m_p2_connected = true;
-			packet << m_game_json;
-			m_tcp_socket_p2->send(packet);
-		}
-	};
-
+    listener.setBlocking(false);
 
 	std::vector<GameRoom*> all_rooms;
 	std::vector<sf::TcpSocket*> unclassified_sockets;

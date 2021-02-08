@@ -14,7 +14,7 @@ endif()
 file(GLOB sources "src/*")
 file(GLOB context_sources "contexts/src/*")
 add_executable(less ${sources} ${context_sources})
-add_executable(server server/server.cc)
+add_executable(server server/src/server.cc server/src/game_room.cc)
 
 if(UNIX)
     target_compile_options(less PRIVATE -Wall -Wextra -pedantic)
@@ -27,10 +27,14 @@ endif()
 add_subdirectory(libs)
 
 target_link_libraries(less sfml-graphics sfml-audio sfml-network nlohmann_json::nlohmann_json osdialog sfml-widgets)
-target_link_libraries(server sfml-network)
 target_include_directories(less PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/contexts/include>
+)
+
+target_link_libraries(server sfml-network)
+target_include_directories(server PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/server/include>
 )
 
 #### COPY ALL RESOURCES TO BUILD DIRECTORY ####
