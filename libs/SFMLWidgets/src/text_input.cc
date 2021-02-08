@@ -58,7 +58,7 @@ void TextInput::cursorRight() {
     }
 }
 
-TextInput::TextInput(std::string nameText, uint maxLength, Settings S, std::string defaultText, Validator V)
+TextInput::TextInput(std::string nameText, uint maxLength, const Settings& S, std::string defaultText, Validator V)
     :   m_nameText(nameText, S.font, S.chSize),
         m_maxLength(maxLength),
         m_insertText(defaultText, S.font, S.chSize),
@@ -97,7 +97,7 @@ void TextInput::setPosition(uint xpos, uint ypos)
 
     m_cursorLine.setPosition(m_insertText.findCharacterPos(m_cursor));
 
-    m_frame.setPosition({xpos + it_relXpos - m_chPixelWidth / 2.0f,
+    m_frame.setPosition({xpos + it_relXpos - m_chPixelWidth / 5.0f,
                          ypos - 2.0f});
 }
 

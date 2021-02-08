@@ -6,7 +6,7 @@
 namespace widget
 {
 
-Button::Button(std::string text, Settings S)
+Button::Button(std::string text, const Settings& S)
     : m_text(text, S.font, S.chSize),
       m_chPixelWidth(S.chPixelWidth)
 {

@@ -25,7 +25,7 @@ private:
 
 
 public:
-    Button(std::string text, Settings S);
+    Button(std::string text, const Settings& S);
     Button() = delete;
 
     void setPosition(uint x, uint y);

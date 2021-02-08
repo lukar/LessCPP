@@ -19,9 +19,9 @@ inline uint getChPixelWidth(const sf::Font& font, uint chSize)
 
 
 struct Settings {
-    const sf::Font& font;
-    const uint chSize;
-    const uint chPixelWidth;
+    sf::Font font;
+    uint chSize;
+    uint chPixelWidth;
 
     Settings(sf::Font& _font, uint _chSize)
         : font(_font),
@@ -29,24 +29,9 @@ struct Settings {
           chPixelWidth(getChPixelWidth(font, _chSize))
     {}
 
-    // Please forgive me (this replaces the current object instance with the one being passed in)
-    Settings& operator=(const Settings& second)
-    {
-        if (this == &second)
-            return *this;
-        this->~Settings();
-        new(this) Settings(second);
-        return *this;
-    }
+    Settings(const Settings&) = delete;
 
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wextra"
-    Settings()
-        : font(sf::Font()),
-          chSize(0),
-          chPixelWidth(0)
-    {}
-    #pragma GCC diagnostic pop
+    Settings() = default;
 };
 
 

@@ -20,7 +20,6 @@ int main()
     Medium = widget::Settings(mono_font, medium_font);
     Large = widget::Settings(mono_font, large_font);
 
-
     std::stack<Context*> contexts;
 
     sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Less game", sf::Style::Close);
@@ -54,7 +53,7 @@ int main()
             if (newcontext != nullptr) contexts.push(newcontext);
         }
 
-        contexts.top()->processBackgroundTask(); 
+        contexts.top()->processBackgroundTask();
 
         window.clear();
 

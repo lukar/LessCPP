@@ -48,7 +48,7 @@ public:
 
     TextInput(std::string nameText,
               uint charWidth,
-              Settings S,
+              const Settings& S,
               std::string defaultText = "",
               std::function<bool(std::string)> V = [](...){return true;}
     );
