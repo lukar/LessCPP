@@ -105,3 +105,21 @@ std::optional<Link> wait_move(sf::TcpSocket& tcp_socket) {
     packet >> location_old.x >> location_old.y >> location_new.x >> location_new.y;
     return { {location_old, location_new} };
 }
+
+void board_json2png(const nlohmann::json& game_json)
+{
+    sf::RenderStates states;
+    sf::RenderTexture rtexture;
+    rtexture.create(window_width, window_height);
+    rtexture.clear();
+    // generate field blocks
+    for (size_t y = 0; y < 3; ++y) {
+        for (size_t x = 0; x < 3; ++x) {
+            Block a_block(game_json["wall_matrix"][y][x]);
+            a_block.setPosition(x * block_size + block_size / 2, y * block_size + block_size / 2);
+            rtexture.draw(a_block, states);
+        }
+    }
+    rtexture.display(); // flips the image
+    rtexture.getTexture().copyToImage().saveToFile("board.png");
+}

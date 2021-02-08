@@ -10,6 +10,7 @@
 #include <cmath>
 #include <optional>
 #include "location.h"
+#include "block.h"
 
 template<typename T, typename R>
 constexpr float euclideanDistance(const sf::Vector2<T> &pointA, const sf::Vector2<R> &pointB) {
@@ -37,5 +38,5 @@ void send_move(sf::TcpSocket& tcp_socket,
     Location location_old,
     Location location_new);
 std::optional<Link> wait_move(sf::TcpSocket& tcp_socket);
-
+void board_json2png(const nlohmann::json& game_json);
 #endif //LESSCPP_HELPERS_H
