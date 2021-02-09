@@ -105,3 +105,36 @@ std::optional<Link> wait_move(sf::TcpSocket& tcp_socket) {
     packet >> location_old.x >> location_old.y >> location_new.x >> location_new.y;
     return { {location_old, location_new} };
 }
+
+void unique_wall_config_pngs()
+{
+    int n=0;
+    std::string filename;
+    std::string dir_name = "images/wall_configs"; // No final slash needed; inserted below.
+    std::filesystem::create_directories(dir_name);
+
+    for (auto wall_config : wall::unique_wall_configs) {
+        for (int rot=0; rot < 4; rot++) {
+            filename = dir_name + "/" + std::to_string(n)
+                                + "_" + std::to_string(rot) + ".png";
+            wall_config2png(wall::rotateWallConfig(wall_config, rot), filename);
+        }
+        n++;
+    }
+}
+
+void wall_config2png(WallConfig& wall_config, std::string filename) {
+    // Will it hurt if states and rtexture are created every time? Currently ~30 times total.
+    // Better to pass them by reference?
+    sf::RenderStates states; 
+    sf::RenderTexture rtexture;
+
+    Block a_block(wall_config);
+    a_block.setPosition(block_size / 2, block_size / 2);
+
+    rtexture.create(block_size, block_size);
+    rtexture.clear();
+    rtexture.draw(a_block, states);
+    rtexture.display(); // flips the image
+    rtexture.getTexture().copyToImage().saveToFile(filename);
+}

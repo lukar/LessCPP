@@ -10,6 +10,8 @@
 #include <cmath>
 #include <optional>
 #include "location.h"
+#include "block.h"
+#include <filesystem>
 
 template<typename T, typename R>
 constexpr float euclideanDistance(const sf::Vector2<T> &pointA, const sf::Vector2<R> &pointB) {
@@ -37,5 +39,8 @@ void send_move(sf::TcpSocket& tcp_socket,
     Location location_old,
     Location location_new);
 std::optional<Link> wait_move(sf::TcpSocket& tcp_socket);
+
+void wall_config2png(WallConfig& wall_config, std::string filename);
+void unique_wall_config_pngs();
 
 #endif //LESSCPP_HELPERS_H
