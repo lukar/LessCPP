@@ -47,7 +47,6 @@ Context* MainMenuContext::load_game() {
         free(filename);
         nlohmann::json game_json{};
         game_file >> game_json;
-        board_json2png(game_json);
         return new GameContext(this, game_json, GameMode::SINGLEPLAYER);
     }
 
