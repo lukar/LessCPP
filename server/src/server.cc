@@ -4,20 +4,41 @@
 
 #include <server/game_room.h>
 
+#include <signal.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+
+
+static bool RUN = true;
+void ctrlCHandler(int)
+{
+    RUN = false;
+}
+
 
 int main() {
+    struct sigaction sigIntHandler;
+
+    sigIntHandler.sa_handler = ctrlCHandler;
+    sigemptyset(&sigIntHandler.sa_mask);
+    sigIntHandler.sa_flags = 0;
+
+    sigaction(SIGINT, &sigIntHandler, nullptr);
+
+
 	unsigned short tcp_port = 53012;
 	sf::TcpListener listener;
     listener.setBlocking(false);
 
     std::vector<GameRoom> all_rooms;
     std::vector<std::unique_ptr<sf::TcpSocket>> unclassified_sockets;
-    auto new_socket = std::make_unique<sf::TcpSocket>();
+    std::unique_ptr<sf::TcpSocket> new_socket = std::make_unique<sf::TcpSocket>();
 	std::string p_request, p_name, p_game;
 	sf::Packet packet;
 	sf::Packet tmp_packet;
 	if (listener.listen(tcp_port) != sf::Socket::Done) { /* fail bind port*/ }
-	while (true) {
+    while (RUN) {
 		// bind the listener to a port
 
         new_socket->setBlocking(false);
@@ -68,5 +89,7 @@ int main() {
             room.exchange_packets();
 		}
 	}
+
+    listener.close();
 
 }
