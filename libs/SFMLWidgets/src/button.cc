@@ -37,4 +37,9 @@ void Button::draw(sf::RenderTarget &target, sf::RenderStates states) const
     target.draw(m_text, states);
 }
 
+void Button::setTextFillColor(const sf::Color& color)
+{
+    m_text.setFillColor(color);
+}
+
 }

@@ -31,8 +31,9 @@ public:
     }
     Context() = delete;
 
-    virtual void update(const float /* delta time */, const sf::Vector2f& /* Mouse position */) = 0;
-    virtual Context* processBackgroundTask() = 0;
+    virtual void update(const float /* delta time */, const sf::Vector2f& /* Mouse position */);
+    virtual void processBackgroundTask(); // returns time untill next call should happen in ms
+
     virtual Context* processEvent(const sf::Event&) = 0;
     virtual sf::Texture render() = 0;
 

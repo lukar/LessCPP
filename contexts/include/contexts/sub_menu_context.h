@@ -25,9 +25,7 @@ public:
 
     SubMenuContext(Context* previous, sf::Texture pretext, const Game& game);
 
-    void update(const float dt, const sf::Vector2f& mousepos) override { m_dt = dt; m_mousepos = mousepos; }
     Context* processEvent(const sf::Event&) override;
-    Context* processBackgroundTask() override;
     sf::Texture render() override;
 
 };

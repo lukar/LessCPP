@@ -3,46 +3,74 @@
 #include "contexts/sub_menu_context.h"
 #include "helpers.h"
 
-
 #include <iostream>
 
+GameContext::GameContext(Context* previous, std::array<WallConfig, 9> wall_configs)
+    : Context(previous),
+      game(wall_configs),
+      gui(wall_configs),
+      m_game_mode(GameMode::LOCAL_PVP) {}
 
+GameContext::GameContext(Context* previous, const nlohmann::json& game_json)
+    : Context(previous),
+      game(game_json),
+      gui(game_json),
+      m_game_mode(GameMode::LOCAL_PVP) {}
 
-GameContext::GameContext(Context* previous, std::array<WallConfig, 9> wall_configs, GameMode game_mode)
-    : Context(previous), game(wall_configs), gui(wall_configs), m_game_mode(game_mode) {}
-GameContext::GameContext(Context* previous, const nlohmann::json & game_json, GameMode game_mode)
-    : Context(previous), game(game_json), gui(game_json), m_game_mode(game_mode) {}
+GameContext::GameContext(Context* previous, std::array<WallConfig, 9> wall_configs, uint AI_difficulty)
+    : Context(previous),
+      game(wall_configs),
+      gui(wall_configs),
+      m_AI_difficulty(AI_difficulty),
+      m_game_mode(GameMode::SINGLEPLAYER) {}
 
+GameContext::GameContext(Context* previous, const nlohmann::json& game_json, uint AI_difficulty)
+    : Context(previous),
+      game(game_json),
+      gui(game_json),
+      m_AI_difficulty(AI_difficulty),
+      m_game_mode(GameMode::SINGLEPLAYER) {}
 
-GameContext::GameContext(Context* previous, std::array<WallConfig, 9> wall_configs, sf::TcpSocket* socket, std::string room_name)
-    : game(wall_configs), gui(wall_configs), m_game_mode(GameMode::MULTIPLAYER), tcp_socket(socket), Context(previous) {
+GameContext::GameContext(Context* previous, std::array<WallConfig, 9> wall_configs, std::unique_ptr<sf::TcpSocket> tcp_socket, std::string room_name)
+    : Context(previous),
+      game(wall_configs),
+      gui(wall_configs),
+      m_tcp_socket(std::move(tcp_socket)),
+      m_game_mode(GameMode::MULTIPLAYER)
+{
     sf::Packet packet;
     packet << std::string("post_game") << room_name << game.getJsonRepresentation().dump();
-    tcp_socket->send(packet);
+    m_tcp_socket->send(packet);
 }
-GameContext::GameContext(Context* previous, const nlohmann::json& game_json, sf::TcpSocket* tcp_soc)
-    : game(game_json), gui(game_json), m_game_mode(GameMode::MULTIPLAYER), tcp_socket(tcp_soc), Context(previous)
+
+GameContext::GameContext(Context* previous, const nlohmann::json& game_json, std::unique_ptr<sf::TcpSocket> tcp_socket)
+    : Context(previous),
+      game(game_json),
+      gui(game_json),
+      m_tcp_socket(std::move(tcp_socket)),
+      m_game_mode(GameMode::MULTIPLAYER)
 {
-    tcp_socket->setBlocking(false);
+    m_tcp_socket->setBlocking(false);
     opponent_color = Player::WHITE;
 }
 
-Context* GameContext::processBackgroundTask()
+void GameContext::processBackgroundTask()
 {
     //// Multiplayer - opponent - Update Player 2 moves
-    if (game.getState() != GameState::ENDED and game.active_player() == opponent_color) {
-        if (game.getState() == GameState::PREVIEW) return nullptr; // TODO: check if causes problems ...
-        
-        if (auto optional_link = wait_move(*tcp_socket)) {
-            auto link = optional_link.value();
-            if (game.movePiece(link.first, link.second)) {
-                const auto [piece_idx, player] = gui.pieceAtLocation(link.first).value();
-                gui.getPieces(player)[piece_idx].setLocation(link.second);
-                sound_drop.play();
+    if (m_game_mode == GameMode::MULTIPLAYER and game.getState() != GameState::ENDED and game.active_player() == opponent_color) {
+        if (game.getState() == GameState::PREVIEW) return; // TODO: check if causes problems ...
+
+        if (game.active_player() == opponent_color) {
+            if (auto optional_link = wait_move(*m_tcp_socket)) {
+                auto link = optional_link.value();
+                if (game.movePiece(link.first, link.second)) {
+                    const auto [piece_idx, player] = gui.pieceAtLocation(link.first).value();
+                    gui.getPieces(player)[piece_idx].setLocation(link.second);
+                    sound_drop.play();
+                }
             }
         }
     }
-    return nullptr;
 }
 
 Context* GameContext::processEvent(const sf::Event & event)
@@ -91,7 +119,7 @@ Context* GameContext::processEvent(const sf::Event & event)
 
                 if (new_location) {
                     if (game.movePiece(held_piece->getLocation(), new_location.value())) {
-                        send_move(*tcp_socket, held_piece->getLocation(), new_location.value());
+                        if (m_game_mode == GameMode::MULTIPLAYER) send_move(*m_tcp_socket, held_piece->getLocation(), new_location.value());
                         held_piece->setLocation(new_location.value());
                         sound_drop.play();
                     }
@@ -108,7 +136,7 @@ Context* GameContext::processEvent(const sf::Event & event)
         }
     }
     //// AI
-    else if (game.active_player() == opponent_color and m_game_mode==GameMode::SINGLEPLAYER) {
+    else if (game.active_player() == opponent_color and m_game_mode == GameMode::SINGLEPLAYER) {
         const auto & [path, eval] = recurseFindOptimal(game, Player::BLACK, 1, 0, 100);
         for (auto [piece, direction] : path) {
             if (game.active_player() != Player::BLACK) break;
@@ -117,7 +145,8 @@ Context* GameContext::processEvent(const sf::Event & event)
             gui.getPieces(Player::BLACK)[piece].resetPosition();
         }
     }
-    
+
+
     return nullptr;
 }
 

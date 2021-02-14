@@ -106,7 +106,33 @@ void TextInput::draw(sf::RenderTarget& target, sf::RenderStates states) const
     target.draw(m_frame, states);
     target.draw(m_nameText, states);
     target.draw(m_insertText, states);
-    target.draw(m_cursorLine, states);
+    if (focused) target.draw(m_cursorLine, states);
 }
+
+
+void TextInput::processInputEvent(const sf::Event& inputEvent)
+{
+    if (inputEvent.type == sf::Event::KeyPressed) {
+            if (inputEvent.key.code == sf::Keyboard::BackSpace)
+                this->backspace();
+            else if (inputEvent.key.code == sf::Keyboard::Delete)
+                this->delete_front();
+            else if (inputEvent.key.code == sf::Keyboard::Left)
+                this->cursorLeft();
+            else if (inputEvent.key.code == sf::Keyboard::Right)
+                this->cursorRight();
+        }
+    else if (inputEvent.type == sf::Event::TextEntered) {
+        if (31 < inputEvent.text.unicode and inputEvent.text.unicode < 126) {
+            this->append(static_cast<char>(inputEvent.text.unicode));
+        }
+    }
+}
+
+TextInput& TextInput::operator()(TextInput* object){
+    focused = (this == object);
+    return *this;
+}
+
 
 }

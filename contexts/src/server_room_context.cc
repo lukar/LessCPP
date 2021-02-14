@@ -4,56 +4,110 @@
 #include <fstream>
 #include <array>
 #include <iostream>
-#include <chrono>
-#include <ctime>
-#include <iomanip>
+
 #include "helpers.h"
 
-ServerRoomContext::ServerRoomContext(Context* pretext, sf::TcpSocket* tcp_socket)
-	: Context(pretext), m_tcp_socket(tcp_socket)
+ServerRoomContext::ServerRoomContext(Context* previous)
+    : Context(previous)
 {
-	text.setString("Server Room Browser");
-	joinRoomButton.setPosition(100, window_height / 3 + 50);
-	listRoomsButton.setPosition(100, window_height / 3 + 100);
-	postGameButton.setPosition(100, window_height / 3 + 150);
-	returnButton.setPosition(100, window_height - 100);
+    title.setString("Server Room Browser");
+
+    RoomNameTextInput.setPosition(50, window_height / 3 - 10);
+    IPTextInput.setPosition(450, window_height / 3 - 10);
+
+    ConnectButton.setPosition(450, window_height / 3 + 50);
+
+    joinRoomButton.setPosition(50, window_height / 3 + 50);
+    listRoomsButton.setPosition(50, window_height / 3 + 100);
+    postGameButton.setPosition(50, window_height / 3 + 150);
+    returnButton.setPosition(50, window_height - 100);
 }
 
-Context* ServerRoomContext::processBackgroundTask() { return nullptr; }
+void ServerRoomContext::processBackgroundTask()
+{
+    if (!m_connected) {
+        ConnectButton.setTextFillColor(sf::Color::Green);
+    } else {
+        ConnectButton.setTextFillColor(sf::Color::Red);
+    }
+
+
+//    m_timer -= m_dt;
+//    if (m_timer < 0 and m_connected and !m_pinging) {
+//        std::cout << "Pinging!" << std::endl;
+//        m_timer = 5;
+//        m_packet << "ping";
+//        sf::Socket::Status status = m_tcp_socket->send(m_packet);
+//        if (status != sf::Socket::Done) {
+//            m_connected = false;
+//        } else {
+//            m_pinging = true;
+//        }
+//    } else if (m_pinging){
+//        m_pinging = false;
+
+
+//    }
+}
+
 Context* ServerRoomContext::processEvent(const sf::Event& event)
 {
-	if (event.type == sf::Event::MouseButtonPressed) {
-		if (returnButton.contains(m_mousepos)) setReturnContext(nullptr);
+    if (event.type == sf::Event::MouseButtonPressed) {
+        if (returnButton.contains(m_mousepos)) setReturnContext(m_previous);
 		else if (postGameButton.contains(m_mousepos)) {
-			return new DialogContext(this, [this](std::string str) {return new GameContext(this, wall::generateNwallconfigs<9>(), m_tcp_socket, str); }, "game1");
+            if (m_tcp_socket) return new GameContext(this, wall::generateNwallconfigs<9>(), std::move(m_tcp_socket), RoomNameTextInput.getText());
 		}
 		else if (listRoomsButton.contains(m_mousepos)) {
-			std::cout << request_room_names(m_tcp_socket) << "\n";
+//			std::cout << request_room_names(m_tcp_socket) << "\n";
 		}
-		else if (joinRoomButton.contains(m_mousepos)) {
-			return new DialogContext(this, [this](std::string str) {return join_game_server(m_tcp_socket, str); }, "game1");
+        else if (joinRoomButton.contains(m_mousepos)) {
+            if (m_tcp_socket) return join_game_server(std::move(m_tcp_socket), RoomNameTextInput.getText());
 		}
+        else if (ConnectButton.contains(m_mousepos)) {
+            if (!m_connected) {
+                sf::Socket::Status status = m_tcp_socket->connect(IPTextInput.getText(), 53012);
+                if ( status == sf::Socket::Done ) {
+                    m_tcp_socket->setBlocking(false);
+                    m_connected = true;
+                }
+            } else {
+                m_tcp_socket->disconnect();
+                m_connected = false;
+            }
+        }
+        else if (RoomNameTextInput.contains(m_mousepos)) {
+            focusedTextInput = &RoomNameTextInput;
+        }
+        else if (IPTextInput.contains(m_mousepos)) {
+            focusedTextInput = &IPTextInput;
+        }
+        else {
+            focusedTextInput = nullptr;
+        }
 	}
-	if (event.type == sf::Event::KeyPressed) {
-	}
+
+    if (focusedTextInput != nullptr) focusedTextInput->processInputEvent(event);
 	return nullptr;
 }
 
 sf::Texture ServerRoomContext::render() {
 	rentex.clear();
 
-	rentex.draw(text);
-	rentex.draw(returnButton);
+    rentex.draw(title);
+    rentex.draw(RoomNameTextInput(focusedTextInput));
+    rentex.draw(IPTextInput(focusedTextInput));
+    rentex.draw(ConnectButton);
 	rentex.draw(postGameButton);
 	rentex.draw(listRoomsButton);
 	rentex.draw(joinRoomButton);
+    rentex.draw(returnButton);
 	rentex.display();
 
 	return rentex.getTexture();
 }
 
 
-Context* ServerRoomContext::join_game_server(sf::TcpSocket* tcp_socket, std::string room_name) {
+Context* ServerRoomContext::join_game_server(std::unique_ptr<sf::TcpSocket> tcp_socket, std::string room_name) {
 	sf::Packet packet;
 	packet << std::string("join_game") << room_name;
 	tcp_socket->send(packet);
@@ -63,6 +117,6 @@ Context* ServerRoomContext::join_game_server(sf::TcpSocket* tcp_socket, std::str
 	tcp_socket->setBlocking(false);
 	std::string json_string;
 	packet >> json_string;
-	return new GameContext(this, nlohmann::json::parse(json_string), tcp_socket);
+    return new GameContext(this, nlohmann::json::parse(json_string), std::move(tcp_socket));
 }
 

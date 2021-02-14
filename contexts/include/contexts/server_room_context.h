@@ -5,33 +5,49 @@
 
 #include "context.h"
 #include "SFMLWidgets/button.h"
+#include "SFMLWidgets/text_input.h"
 #include "game.h"
 #include "less.h"
 
+#include <regex>
+
 class ServerRoomContext : public Context {
 private:
+
 	// side text
 	//sf::Font font = getFont("resources/Roboto_Medium.ttf");
-	sf::Text text = initializeText(100, window_height / 4, Large, sf::Color::Green);
+    sf::Text title = initializeText(100, window_height / 10, Large, sf::Color::Green);
+
+    widget::TextInput RoomNameTextInput = widget::TextInput("Room name", 10, Medium, "");
+    widget::TextInput IPTextInput = widget::TextInput("IP", 15, Medium, "127.0.0.1",
+        [](std::string t) { return std::regex_match(t, std::regex("(\\d\\d?\\d?\\.){3}\\d\\d?\\d?")); } );
+    widget::TextInput* focusedTextInput = &RoomNameTextInput;
+
+    widget::Button ConnectButton = widget::Button("Connect", Medium);
 
 	widget::Button joinRoomButton = widget::Button("Join Room", Medium); 
 	widget::Button listRoomsButton = widget::Button("List Game Rooms", Medium);
 	widget::Button postGameButton = widget::Button("Host game", Medium);
 	widget::Button returnButton = widget::Button("Return to Menu", Medium);
 
-	sf::TcpSocket* m_tcp_socket;
-	sf::Texture m_pretext;
+    std::unique_ptr<sf::TcpSocket> m_tcp_socket = std::make_unique<sf::TcpSocket>();
+
+    float m_timer = 0;
+    bool m_connected = false;
+    bool m_pinging = false;
+
+
+    sf::Packet m_packet;
 
 public:
 
-	ServerRoomContext(Context*, sf::TcpSocket* tcp_socket);
+    ServerRoomContext(Context*);
 
-	void update(const float dt, const sf::Vector2f& mousepos) override { m_dt = dt; m_mousepos = mousepos; };
-	Context* processEvent(const sf::Event&) override;
-	Context* processBackgroundTask(void) override;
+    Context* processEvent(const sf::Event&) override;
 	sf::Texture render() override;
-	Context* join_game_server(sf::TcpSocket* tcp_socket, std::string room_name);
+    void processBackgroundTask() override;
 
+    Context* join_game_server(std::unique_ptr<sf::TcpSocket> tcp_socket, std::string room_name);
 };
 
 

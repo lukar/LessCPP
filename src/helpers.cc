@@ -61,15 +61,16 @@ std::optional<Direction> getDirection(Location oldL, Location newL) {
     else return {};
 }
 
-sf::TcpSocket* connect_to_server(sf::IpAddress url, unsigned short port) {
-    sf::TcpSocket* tcp_socket = new sf::TcpSocket;
+std::unique_ptr<sf::TcpSocket> connect_to_server(sf::IpAddress url, unsigned short port) {
+    std::unique_ptr<sf::TcpSocket> tcp_socket = std::make_unique<sf::TcpSocket>();
     sf::Socket::Status status = tcp_socket->connect(url, port);
     if (status != sf::Socket::Done) {
         std::cout << "Error connecting tcp - get_game_tcp_packets " << status << "\n";
         assert(0);
     }
     std::cout << "Tcp socket connected - get_game_tcp_packets " << status << "\n";
-    return tcp_socket;
+
+    return std::move(tcp_socket);
 }
 
 std::string request_room_names(sf::TcpSocket* tcp_socket) {
@@ -85,9 +86,7 @@ std::string request_room_names(sf::TcpSocket* tcp_socket) {
     return room_names;
 }
 
-void send_move(sf::TcpSocket& tcp_socket,
-    Location location_old,
-    Location location_new) {
+void send_move(sf::TcpSocket& tcp_socket, Location location_old, Location location_new) {
     sf::Packet packet;
     packet << location_old.x << location_old.y << location_new.x << location_new.y;
     tcp_socket.send(packet);

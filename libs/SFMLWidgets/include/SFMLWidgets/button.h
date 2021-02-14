@@ -29,6 +29,7 @@ public:
     Button() = delete;
 
     void setPosition(uint x, uint y);
+    void setTextFillColor(const sf::Color&);
 
     bool contains(sf::Vector2f pos) { return m_frame.getGlobalBounds().contains(pos); }
 

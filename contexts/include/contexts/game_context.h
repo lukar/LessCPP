@@ -13,6 +13,7 @@
 
 #include <array>
 #include "nlohmann/json.hpp"
+#include <stack>
 
 enum class GameMode {
     SINGLEPLAYER,
@@ -39,24 +40,33 @@ private:
     sf::Text text = initializeText(window_height + 10, 10, Tiny, sf::Color::Green);
 
     Player opponent_color = Player::BLACK;
-    sf::IpAddress m_ip_player2="0.0.0.0";
+    sf::IpAddress m_ip_player2 = "0.0.0.0";
     unsigned short m_tcp_port = 53012;
-    sf::TcpListener listener;
-    sf::TcpSocket *tcp_socket;
+//    sf::TcpListener listener;
+    std::unique_ptr<sf::TcpSocket> m_tcp_socket;
+    uint m_synced_moves = 0;
+
+    // AI
+    uint m_AI_difficulty = 0;
 
     const GameMode m_game_mode;
     
 public:
 
-    GameContext(Context*, std::array<WallConfig, 9> wall_configs, GameMode game_mode);
-    GameContext(Context*, std::array<WallConfig, 9> wall_configs, sf::TcpSocket* socket, std::string room_name);
-    GameContext(Context*, const nlohmann::json& game_json, GameMode game_mode);
-    GameContext(Context*, const nlohmann::json& game_json, sf::TcpSocket* tcp_soc);
+    // LOCAL PVP
+    GameContext(Context*, std::array<WallConfig, 9>);
+    GameContext(Context*, const nlohmann::json&);
 
-    void update(const float dt, const sf::Vector2f & mousepos) override { m_dt = dt; m_mousepos = mousepos; };
+    // SINGLEPLAYER
+    GameContext(Context*, std::array<WallConfig, 9>, uint AI_difficulty);
+    GameContext(Context*, const nlohmann::json&, uint AI_difficulty);
+
+    // MULTIPLAYER
+    GameContext(Context*, std::array<WallConfig, 9>, std::unique_ptr<sf::TcpSocket>, std::string room_name);
+    GameContext(Context*, const nlohmann::json&, std::unique_ptr<sf::TcpSocket>);
 
     Context* processEvent(const sf::Event& event) override;
-    Context* processBackgroundTask() override;
+    void processBackgroundTask() override;
     
     sf::Texture render() override;
 

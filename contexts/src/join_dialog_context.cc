@@ -16,7 +16,6 @@ JoinDialogContext::JoinDialogContext(Context* previous) : Context(previous)
     quitButton.setPosition(window_width / 2 - 15, window_height - 50);
 }
 
-Context* JoinDialogContext::processBackgroundTask() { return nullptr; }
 Context* JoinDialogContext::processEvent(const sf::Event & event)
 {
     if (event.type == sf::Event::MouseButtonPressed) {
@@ -29,7 +28,7 @@ Context* JoinDialogContext::processEvent(const sf::Event & event)
             IPTextInput.delete_front();
         else if (event.key.code == sf::Keyboard::Enter) {
             ip_player2 = IPTextInput.getText();
-            return new ServerRoomContext(this, connect_to_server(ip_player2, tcp_port));
+//            return new ServerRoomContext(this, connect_to_server(ip_player2, tcp_port));
         }
         else if (event.key.code == sf::Keyboard::Left) {
             IPTextInput.cursorLeft();

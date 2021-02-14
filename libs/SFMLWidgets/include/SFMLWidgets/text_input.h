@@ -35,6 +35,8 @@ private:
     uint m_chPixelWidth;
     uint m_chSize;
 
+    bool focused = false;
+
 
 public:
     void validate();
@@ -45,6 +47,11 @@ public:
     void setPosition(uint xpos, uint ypos);
     void cursorLeft();
     void cursorRight();
+
+    void processInputEvent(const sf::Event& inputEvent);
+
+    TextInput& operator()(TextInput*);
+
 
     TextInput(std::string nameText,
               uint charWidth,

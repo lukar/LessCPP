@@ -175,6 +175,7 @@ public:
         if (m_history_index == 0) { Resume(); return {}; }
         return m_history.rbegin()[--m_history_index]; 
     }
+
     Game() = default;
     Game(const Game &) = delete;
 

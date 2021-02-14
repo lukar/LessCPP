@@ -4,26 +4,26 @@
 #include <iostream>
 #include "osdialog.h"
 
-Context* DialogContext::processBackgroundTask() { return nullptr; }
 
-DialogContext::DialogContext(Context* pretext, std::function<Context* (std::string str)> function, std::string str)
-	:m_default_text(str + " " /*gets deleted*/), m_function(function), Context(pretext) {
-	IPTextInput.backspace();
-	quitButton.setPosition(window_width / 2 - 15, window_height/2 - 50);
+DialogContext::DialogContext(Context* previous, sf::TcpSocket& socket, std::string str)
+    : Context(previous),
+      m_default_text(str + " " /*gets deleted*/)
+{
+      IPTextInput.backspace();
+      quitButton.setPosition(window_width / 2 - 15, window_height/2 - 50);
 }
 
 Context* DialogContext::processEvent(const sf::Event& event)
 {
 	if (event.type == sf::Event::MouseButtonPressed) {
-		if (quitButton.contains(m_mousepos)) setReturnContext(nullptr);
-		else if (IPTextInput.contains(m_mousepos)); // do nothing
+        if (quitButton.contains(m_mousepos)) setReturnContext(m_previous);
 	}
 	if (event.key.code == sf::Keyboard::BackSpace)
 		IPTextInput.backspace();
 	if (event.key.code == sf::Keyboard::Enter) {
 		setReturnContext(nullptr);
 		IPTextInput.backspace(); // last space
-		return m_function(IPTextInput.getText());
+//		return m_function(IPTextInput.getText());
 	}
 	if (event.type == sf::Event::TextEntered)
 	{

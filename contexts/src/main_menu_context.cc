@@ -1,5 +1,5 @@
 #include "contexts/main_menu_context.h"
-#include "contexts/join_dialog_context.h"
+#include "contexts/server_room_context.h"
 #include "contexts/game_context.h"
 #include "wall.h"
 
@@ -21,18 +21,14 @@ MainMenuContext::MainMenuContext(Context* previous) : Context(previous)
     quitButton.setPosition(window_width / 2 - 15, window_height - 50);
 }
 
-Context* MainMenuContext::processBackgroundTask() { return nullptr; }
 Context* MainMenuContext::processEvent(const sf::Event & event)
 {
     if (event.type == sf::Event::MouseButtonPressed) {
         if (quitButton.contains(m_mousepos)) setReturn();
-        else if (SPGameButton.contains(m_mousepos)) return new GameContext(this, wall::generateNwallconfigs<9>(), GameMode::SINGLEPLAYER);
-        else if (LPVPGameButton.contains(m_mousepos)) return new GameContext(this, wall::generateNwallconfigs<9>(), GameMode::LOCAL_PVP);
+        else if (SPGameButton.contains(m_mousepos)) return new GameContext(this, wall::generateNwallconfigs<9>(), 1);
+        else if (LPVPGameButton.contains(m_mousepos)) return new GameContext(this, wall::generateNwallconfigs<9>());
         else if (loadGameButton.contains(m_mousepos)) return load_game();
-        else if (MPSGameButton.contains(m_mousepos)) return new JoinDialogContext(this);
-    }
-    if (event.type == sf::Event::KeyPressed) {
-        if (event.key.code == sf::Keyboard::J) return new JoinDialogContext(this);
+        else if (MPSGameButton.contains(m_mousepos)) return new ServerRoomContext(this);
     }
 
     return nullptr;
@@ -47,7 +43,7 @@ Context* MainMenuContext::load_game() {
         free(filename);
         nlohmann::json game_json{};
         game_file >> game_json;
-        return new GameContext(this, game_json, GameMode::SINGLEPLAYER);
+        return new GameContext(this, game_json, 1);
     }
 
     return nullptr;

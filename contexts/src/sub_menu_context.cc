@@ -27,7 +27,6 @@ SubMenuContext::SubMenuContext(Context* previous, sf::Texture pretext, const Gam
     saveGameButton.setPosition(window_width/3 + 50, window_height/3 + 100);
 }
 
-Context* SubMenuContext::processBackgroundTask(){ return nullptr; }
 Context* SubMenuContext::processEvent(const sf::Event & event)
 {
     if (event.type == sf::Event::MouseButtonPressed) {

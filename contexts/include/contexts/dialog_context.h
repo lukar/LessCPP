@@ -18,19 +18,16 @@ private:
 	std::string m_default_text;
 	sf::Font font = getFont("resources/Roboto_Medium.ttf");
 	sf::Text text = initializeText(window_width / 3, window_height / 3, Large, sf::Color::Green);
-	widget::TextInput IPTextInput = widget::TextInput("Enter Value", 15, Medium, m_default_text, [](std::string t) { return true; });
-	widget::Button quitButton = widget::Button("Quit", Medium);
-	std::function <Context* (std::string str)> m_function;
+    widget::TextInput IPTextInput = widget::TextInput("Enter Value", 15, Medium, m_default_text, [](...) { return true; });
+    widget::Button quitButton = widget::Button("Quit", Medium);
 	Context* p_return_context;
 
 public:
 
 	DialogContext() = default;
-	DialogContext(Context*, std::function <Context* (std::string str)> m_function, std::string str);
+    DialogContext(Context*, sf::TcpSocket&, std::string str);
 
-	void update(const float dt, const sf::Vector2f& mousepos) override { m_dt = dt; m_mousepos = mousepos; };
-	Context* processEvent(const sf::Event&) override;
-	Context* processBackgroundTask(void) override;
+    Context* processEvent(const sf::Event&) override;
 	sf::Texture render() override;
 };
 

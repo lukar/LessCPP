@@ -17,3 +17,4 @@ cmake-build-release/
 CMakeLists.txt.user
 ignore_*
 tags
+.color_coded
