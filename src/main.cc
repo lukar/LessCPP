@@ -57,7 +57,7 @@ int main()
 
         window.clear();
 
-        window.draw(sf::Sprite(contexts.top()->render()));
+         window.draw(sf::Sprite(contexts.top()->render()));
 
         window.display();
     }

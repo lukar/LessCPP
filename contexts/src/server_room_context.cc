@@ -64,11 +64,17 @@ Context* ServerRoomContext::processEvent(const sf::Event& event)
             if (m_tcp_socket) return join_game_server(std::move(m_tcp_socket), RoomNameTextInput.getText());
 		}
         else if (ConnectButton.contains(m_mousepos)) {
+            focusedTextInput = nullptr;
             if (!m_connected) {
-                sf::Socket::Status status = m_tcp_socket->connect(IPTextInput.getText(), 53012);
+                sf::Socket::Status status;
+                do {
+                    status = m_tcp_socket->connect(IPTextInput.getText(), 53012);
+                } while (status == sf::Socket::NotReady);
                 if ( status == sf::Socket::Done ) {
                     m_tcp_socket->setBlocking(false);
                     m_connected = true;
+                } else {
+                    std::cout << "Error during socket connection: " << status << std::endl;
                 }
             } else {
                 m_tcp_socket->disconnect();
@@ -78,7 +84,7 @@ Context* ServerRoomContext::processEvent(const sf::Event& event)
         else if (RoomNameTextInput.contains(m_mousepos)) {
             focusedTextInput = &RoomNameTextInput;
         }
-        else if (IPTextInput.contains(m_mousepos)) {
+        else if (IPTextInput.contains(m_mousepos) and !m_connected) {
             focusedTextInput = &IPTextInput;
         }
         else {
