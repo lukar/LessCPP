@@ -30,24 +30,6 @@ void ServerRoomContext::processBackgroundTask()
     } else {
         ConnectButton.setTextFillColor(sf::Color::Red);
     }
-
-
-//    m_timer -= m_dt;
-//    if (m_timer < 0 and m_connected and !m_pinging) {
-//        std::cout << "Pinging!" << std::endl;
-//        m_timer = 5;
-//        m_packet << "ping";
-//        sf::Socket::Status status = m_tcp_socket->send(m_packet);
-//        if (status != sf::Socket::Done) {
-//            m_connected = false;
-//        } else {
-//            m_pinging = true;
-//        }
-//    } else if (m_pinging){
-//        m_pinging = false;
-
-
-//    }
 }
 
 Context* ServerRoomContext::processEvent(const sf::Event& event)
@@ -66,18 +48,18 @@ Context* ServerRoomContext::processEvent(const sf::Event& event)
         else if (ConnectButton.contains(m_mousepos)) {
             focusedTextInput = nullptr;
             if (!m_connected) {
-                sf::Socket::Status status;
-                do {
-                    status = m_tcp_socket->connect(IPTextInput.getText(), 53012);
-                } while (status == sf::Socket::NotReady);
+                std::cout << "Attempting connection" << std::endl;
+                m_tcp_socket = std::make_unique<sf::TcpSocket>();
+                auto status = m_tcp_socket->connect(IPTextInput.getText(), 53012);
                 if ( status == sf::Socket::Done ) {
-                    m_tcp_socket->setBlocking(false);
                     m_connected = true;
                 } else {
                     std::cout << "Error during socket connection: " << status << std::endl;
                 }
             } else {
-                m_tcp_socket->disconnect();
+                std::cout << "Attempting disconnection" << std::endl;
+                // m_tcp_socket->disconnect();
+                m_tcp_socket.reset();
                 m_connected = false;
             }
         }

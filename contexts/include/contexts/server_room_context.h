@@ -10,6 +10,7 @@
 #include "less.h"
 
 #include <regex>
+#include <memory>
 
 class ServerRoomContext : public Context {
 private:
@@ -30,7 +31,7 @@ private:
 	widget::Button postGameButton = widget::Button("Host game", Medium);
 	widget::Button returnButton = widget::Button("Return to Menu", Medium);
 
-    std::unique_ptr<sf::TcpSocket> m_tcp_socket = std::make_unique<sf::TcpSocket>();
+    std::unique_ptr<sf::TcpSocket> m_tcp_socket;
 
     float m_timer = 0;
     bool m_connected = false;

@@ -1,5 +1,7 @@
 #include <server/game_room.h>
 
+#include <iso646.h>
+
 void GameRoom::exchange_packets() {
     if (!m_p2_connected) return; /* no second player */
 
