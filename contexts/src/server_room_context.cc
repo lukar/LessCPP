@@ -52,13 +52,13 @@ Context* ServerRoomContext::processEvent(const sf::Event& event)
                 m_tcp_socket = std::make_unique<sf::TcpSocket>();
                 auto status = m_tcp_socket->connect(IPTextInput.getText(), 53012);
                 if ( status == sf::Socket::Done ) {
+                    m_tcp_socket->setBlocking(false);
                     m_connected = true;
                 } else {
                     std::cout << "Error during socket connection: " << status << std::endl;
                 }
             } else {
                 std::cout << "Attempting disconnection" << std::endl;
-                // m_tcp_socket->disconnect();
                 m_tcp_socket.reset();
                 m_connected = false;
             }

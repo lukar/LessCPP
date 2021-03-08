@@ -2,15 +2,17 @@
 
 #include <iso646.h>
 
-void GameRoom::exchange_packets() {
+void GameRoom::exchange_packets() { // TODO: need to improve the logic when one is missing
     if (!m_p2_connected) return; /* no second player */
 
     sf::Packet packet;
-    if (m_tcp_socket_p1->receive(packet)) {/* no data */ }
-    else { m_tcp_socket_p2->send(packet); }
+    if (m_tcp_socket_p1->receive(packet) == sf::Socket::Status::Done) {
+        m_tcp_socket_p2->send(packet);
+    }
     packet.clear();
-    if (m_tcp_socket_p2->receive(packet)) {/* no data */ }
-    else { m_tcp_socket_p1->send(packet); }
+    if (m_tcp_socket_p2->receive(packet) == sf::Socket::Status::Done) {
+        m_tcp_socket_p1->send(packet);
+    }
     packet.clear();
 }
 

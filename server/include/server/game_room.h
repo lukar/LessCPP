@@ -12,7 +12,7 @@ class GameRoom {
     std::unique_ptr<sf::TcpSocket> m_tcp_socket_p2; // Black by default
 
 public:
-    std::string get_room_name() { return m_room_name; };
+    std::string get_room_name() const { return m_room_name; };
 
     void exchange_packets();
 
@@ -23,6 +23,11 @@ public:
 
     bool empty() const {
         return !m_tcp_socket_p1 and !m_tcp_socket_p2;
+    }
+
+    bool hasReady(const sf::SocketSelector& selector) const {
+        return  (m_tcp_socket_p1 ? selector.isReady(*m_tcp_socket_p1) : false) or
+                (m_tcp_socket_p2 ? selector.isReady(*m_tcp_socket_p2) : false);
     }
 
 };
