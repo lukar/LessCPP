@@ -12,11 +12,11 @@ class SubMenuContext : public Context {
 private:
     Context* p_main_menu_context;      // aka back to main menu
 
-    sf::Text text = sf::Text("Pause", Large.font, Large.chSize);
+    sf::Text text = sf::Text("Pause", Large->font, Large->chSize);
 
-    widget::Button returnButton = widget::Button("Return to Menu", Medium);
-    widget::Button continueButton = widget::Button("Continue", Medium);
-    widget::Button saveGameButton = widget::Button("Save Game", Medium);
+    widget::Button returnButton = widget::Button("Return to Menu", *Medium);
+    widget::Button continueButton = widget::Button("Continue", *Medium);
+    widget::Button saveGameButton = widget::Button("Save Game", *Medium);
 
     sf::Texture m_pretext;
     const Game & m_game;

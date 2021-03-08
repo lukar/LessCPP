@@ -15,10 +15,10 @@ int main()
 {
     // begin by initializing globals
     sf::Font mono_font = getFont("resources/Roboto_Mono_Medium_Nerd_Font_Complete.ttf");
-    Tiny = widget::Settings(mono_font, tiny_font);
-    Small = widget::Settings(mono_font, small_font);
-    Medium = widget::Settings(mono_font, medium_font);
-    Large = widget::Settings(mono_font, large_font);
+    Tiny = new widget::Settings(mono_font, tiny_font);
+    Small = new widget::Settings(mono_font, small_font);
+    Medium = new widget::Settings(mono_font, medium_font);
+    Large = new widget::Settings(mono_font, large_font);
 
     std::stack<Context*> contexts;
 
@@ -57,7 +57,7 @@ int main()
 
         window.clear();
 
-         window.draw(sf::Sprite(contexts.top()->render()));
+        window.draw(sf::Sprite(contexts.top()->render()));
 
         window.display();
     }

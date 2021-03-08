@@ -31,7 +31,7 @@ struct Settings {
 
     Settings(const Settings&) = delete;
 
-    Settings() = default;
+    Settings() = delete;
 };
 
 

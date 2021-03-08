@@ -32,10 +32,10 @@ constexpr uint small_font = 15;
 constexpr uint medium_font = 30;
 constexpr uint large_font = 60;
 
-inline widget::Settings Tiny{};
-inline widget::Settings Small{};
-inline widget::Settings Medium{};
-inline widget::Settings Large{};
+inline widget::Settings* Tiny;
+inline widget::Settings* Small;
+inline widget::Settings* Medium;
+inline widget::Settings* Large;
 
 
 #endif //LESSCPP_CONST_GLOBALS_H

@@ -17,9 +17,9 @@ private:
 	// side text
 	std::string m_default_text;
 	sf::Font font = getFont("resources/Roboto_Medium.ttf");
-	sf::Text text = initializeText(window_width / 3, window_height / 3, Large, sf::Color::Green);
-    widget::TextInput IPTextInput = widget::TextInput("Enter Value", 15, Medium, m_default_text, [](...) { return true; });
-    widget::Button quitButton = widget::Button("Quit", Medium);
+	sf::Text text = initializeText(window_width / 3, window_height / 3, *Large, sf::Color::Green);
+    widget::TextInput IPTextInput = widget::TextInput("Enter Value", 15, *Medium, m_default_text, [](...) { return true; });
+    widget::Button quitButton = widget::Button("Quit", *Medium);
 	Context* p_return_context;
 
 public:

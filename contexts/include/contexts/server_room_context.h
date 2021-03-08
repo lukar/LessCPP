@@ -17,19 +17,19 @@ private:
 
 	// side text
 	//sf::Font font = getFont("resources/Roboto_Medium.ttf");
-    sf::Text title = initializeText(100, window_height / 10, Large, sf::Color::Green);
+    sf::Text title = initializeText(100, window_height / 10, *Large, sf::Color::Green);
 
-    widget::TextInput RoomNameTextInput = widget::TextInput("Room name", 10, Medium, "");
-    widget::TextInput IPTextInput = widget::TextInput("IP", 15, Medium, "127.0.0.1",
+    widget::TextInput RoomNameTextInput = widget::TextInput("Room name", 10, *Medium, "");
+    widget::TextInput IPTextInput = widget::TextInput("IP", 15, *Medium, "127.0.0.1",
         [](std::string t) { return std::regex_match(t, std::regex("(\\d\\d?\\d?\\.){3}\\d\\d?\\d?")); } );
     widget::TextInput* focusedTextInput = &RoomNameTextInput;
 
-    widget::Button ConnectButton = widget::Button("Connect", Medium);
+    widget::Button ConnectButton = widget::Button("Connect", *Medium);
 
-	widget::Button joinRoomButton = widget::Button("Join Room", Medium); 
-	widget::Button listRoomsButton = widget::Button("List Game Rooms", Medium);
-	widget::Button postGameButton = widget::Button("Host game", Medium);
-	widget::Button returnButton = widget::Button("Return to Menu", Medium);
+	widget::Button joinRoomButton = widget::Button("Join Room", *Medium); 
+	widget::Button listRoomsButton = widget::Button("List Game Rooms", *Medium);
+	widget::Button postGameButton = widget::Button("Host game", *Medium);
+	widget::Button returnButton = widget::Button("Return to Menu", *Medium);
 
     std::unique_ptr<sf::TcpSocket> m_tcp_socket;
 

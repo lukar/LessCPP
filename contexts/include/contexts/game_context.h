@@ -37,7 +37,7 @@ private:
 
     // side text
     sf::Font font = getFont("resources/Roboto_Medium.ttf");
-    sf::Text text = initializeText(window_height + 10, 10, Tiny, sf::Color::Green);
+    sf::Text text = initializeText(window_height + 10, 10, *Tiny, sf::Color::Green);
 
     Player opponent_color = Player::BLACK;
     sf::IpAddress m_ip_player2 = "0.0.0.0";

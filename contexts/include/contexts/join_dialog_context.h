@@ -14,9 +14,9 @@
 
 class JoinDialogContext : public Context {
 private:
-    widget::TextInput IPTextInput = widget::TextInput("IP", 15, Medium, "127.0.0.1",
+    widget::TextInput IPTextInput = widget::TextInput("IP", 15, *Medium, "127.0.0.1",
         [](std::string t) { return std::regex_match(t, std::regex("(\\d\\d?\\d?\\.){3}\\d\\d?\\d?")); } );
-    widget::Button quitButton = widget::Button("Quit", Medium);
+    widget::Button quitButton = widget::Button("Quit", *Medium);
 
     sf::IpAddress ip_player2 = "127.0.0.1";
     unsigned short tcp_port = 53012;
