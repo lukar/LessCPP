@@ -1,5 +1,5 @@
-add_subdirectory(nlohmann_json)
 set(JSON_BuildTests OFF CACHE INTERNAL "")
+add_subdirectory(nlohmann_json)
 
 if(WIN32)
         set(SFML_STATIC_LIBRARIES TRUE)
