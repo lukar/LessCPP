@@ -1,14 +1,16 @@
-#ifndef SUB_MENU_CONTEXT_LESSCPP
-#define SUB_MENU_CONTEXT_LESSCPP
+#ifndef GAME_MENU_CONTEXT_LESSCPP
+#define GAME_MENU_CONTEXT_LESSCPP
 
 #include "const_globals.h"
 
 #include "contexts/context.h"
+#include "contexts/game_context.h"
 
 #include "SFMLWidgets/button.h"
+
 #include "game.h"
 
-class SubMenuContext : public Context {
+class GameMenuContext : public Context {
 private:
     Context* p_main_menu_context;      // aka back to main menu
 
@@ -19,11 +21,12 @@ private:
     widget::Button saveGameButton = widget::Button("Save Game", *Medium);
 
     sf::Texture m_pretext;
+    GameContext* m_game_context;
     const Game & m_game;
 
 public:
 
-    SubMenuContext(Context* previous, sf::Texture pretext, const Game& game);
+    GameMenuContext(GameContext* previous, sf::Texture pretext, const Game& game);
 
     Context* processEvent(const sf::Event&) override;
     sf::Texture render() override;
@@ -31,5 +34,5 @@ public:
 };
 
 
-#endif // SUB_MENU_CONTEXT_LESSCPP
+#endif // GAME_MENU_CONTEXT_LESSCPP
 

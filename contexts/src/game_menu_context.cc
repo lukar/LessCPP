@@ -1,4 +1,4 @@
-#include "contexts/sub_menu_context.h"
+#include "contexts/game_menu_context.h"
 #include <fstream>
 #include <array>
 #include <iostream>
@@ -16,8 +16,8 @@ static std::string getTimeStr(){
     return std::string(s.data());
 }
 
-SubMenuContext::SubMenuContext(Context* previous, sf::Texture pretext, const Game& game)
-    : Context(previous), m_pretext(pretext), m_game(game)
+GameMenuContext::GameMenuContext(GameContext* game_context, sf::Texture pretext, const Game& game)
+    : Context(game_context), m_pretext(pretext), m_game_context(game_context), m_game(game)
 {
     text.setPosition(window_width/3, window_height/3);
     text.setFillColor(sf::Color::Green);
@@ -27,10 +27,13 @@ SubMenuContext::SubMenuContext(Context* previous, sf::Texture pretext, const Gam
     saveGameButton.setPosition(window_width/3 + 50, window_height/3 + 100);
 }
 
-Context* SubMenuContext::processEvent(const sf::Event & event)
+Context* GameMenuContext::processEvent(const sf::Event & event)
 {
     if (event.type == sf::Event::MouseButtonPressed) {
-        if (returnButton.contains(m_mousepos)) { setReturnContext(m_previous->m_previous); }
+        if (returnButton.contains(m_mousepos)) {
+            m_game_context->leave_room();
+            setReturnContext(m_previous->m_previous);
+        }
         else if (continueButton.contains(m_mousepos)) { setReturnContext(m_previous); }
         else if (saveGameButton.contains(m_mousepos)) {
             osdialog_filters* filters = osdialog_filters_parse("json:json");
@@ -48,7 +51,7 @@ Context* SubMenuContext::processEvent(const sf::Event & event)
     return nullptr;
 }
 
-sf::Texture SubMenuContext::render() {
+sf::Texture GameMenuContext::render() {
     rentex.clear();
 
     rentex.draw(text);

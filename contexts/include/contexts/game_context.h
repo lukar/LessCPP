@@ -65,6 +65,9 @@ public:
     GameContext(Context*, std::array<WallConfig, 9>, std::unique_ptr<sf::TcpSocket>, std::string room_name);
     GameContext(Context*, const nlohmann::json&, std::unique_ptr<sf::TcpSocket>);
 
+    void leave_room();
+    void send_move(const Location& location_old, const Location& location_new);
+
     Context* processEvent(const sf::Event& event) override;
     void processBackgroundTask() override;
     

@@ -33,9 +33,6 @@ std::optional<Direction> getDirection(Location oldL, Location newL);
 
 std::unique_ptr<sf::TcpSocket> connect_to_server(sf::IpAddress url, unsigned short port=53012);
 std::string request_room_names(sf::TcpSocket* tcp_socket);
-void send_move(sf::TcpSocket& tcp_socket,
-    Location location_old,
-    Location location_new);
 std::optional<Link> wait_move(sf::TcpSocket& tcp_socket);
 
 #endif //LESSCPP_HELPERS_H

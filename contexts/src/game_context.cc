@@ -1,6 +1,6 @@
 #include "contexts/game_context.h"
 #include "ai.h"
-#include "contexts/sub_menu_context.h"
+#include "contexts/game_menu_context.h"
 #include "helpers.h"
 
 #include <iostream>
@@ -73,11 +73,24 @@ void GameContext::processBackgroundTask()
     }
 }
 
+void GameContext::leave_room()
+{
+    sf::Packet packet;
+    packet << "leave_room";
+    m_tcp_socket->send(packet);
+}
+
+void GameContext::send_move(const Location& location_old, const Location& location_new) {
+    sf::Packet packet;
+    packet << location_old.x << location_old.y << location_new.x << location_new.y;
+    m_tcp_socket->send(packet);
+}
+
 Context* GameContext::processEvent(const sf::Event & event)
 {
     if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::Q) {
-            return new SubMenuContext(this, rentex.getTexture(), game);
+            return new GameMenuContext(this, rentex.getTexture(), game);
         } else if (event.key.code == sf::Keyboard::Left) {
             const auto move = game.getReversedMove();
             if (move) {

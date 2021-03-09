@@ -86,12 +86,6 @@ std::string request_room_names(sf::TcpSocket* tcp_socket) {
     return room_names;
 }
 
-void send_move(sf::TcpSocket& tcp_socket, Location location_old, Location location_new) {
-    sf::Packet packet;
-    packet << location_old.x << location_old.y << location_new.x << location_new.y;
-    tcp_socket.send(packet);
-}
-
 std::optional<Link> wait_move(sf::TcpSocket& tcp_socket) {
 
     Location location_old;
