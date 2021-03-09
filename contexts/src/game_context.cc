@@ -132,7 +132,7 @@ Context* GameContext::processEvent(const sf::Event & event)
 
                 if (new_location) {
                     if (game.movePiece(held_piece->getLocation(), new_location.value())) {
-                        if (m_game_mode == GameMode::MULTIPLAYER) send_move(*m_tcp_socket, held_piece->getLocation(), new_location.value());
+                        if (m_game_mode == GameMode::MULTIPLAYER) send_move(held_piece->getLocation(), new_location.value());
                         held_piece->setLocation(new_location.value());
                         sound_drop.play();
                     }
