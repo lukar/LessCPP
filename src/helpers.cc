@@ -89,16 +89,11 @@ std::string request_room_names(sf::TcpSocket* tcp_socket) {
     return room_names;
 }
 
-std::optional<Link> wait_move(sf::TcpSocket& tcp_socket) {
+Link parse_move(sf::Packet packet) {
 
     Location location_old;
     Location location_new;
-    std::string recipient, msg;
 
-    sf::Packet packet;
-    if (tcp_socket.receive(packet)) {
-        return {};
-    }
-    packet >> recipient >> msg >> location_old.x >> location_old.y >> location_new.x >> location_new.y;
-    return { {location_old, location_new} };
+    packet >> location_old.x >> location_old.y >> location_new.x >> location_new.y;
+    return {location_old, location_new};
 }

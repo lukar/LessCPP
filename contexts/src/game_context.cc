@@ -58,13 +58,19 @@ GameContext::GameContext(Context* previous, const nlohmann::json& game_json, std
 
 void GameContext::processBackgroundTask()
 {
+    std::string recipient, msg;
+    sf::Packet packet;
     //// Multiplayer - opponent - Update Player 2 moves
     if (m_game_mode == GameMode::MULTIPLAYER and game.getState() != GameState::ENDED and game.active_player() == opponent_color) {
         if (game.getState() == GameState::PREVIEW) return; // TODO: check if causes problems ...
 
         if (game.active_player() == opponent_color) {
-            if (auto optional_link = wait_move(*m_tcp_socket)) {
-                auto link = optional_link.value();
+            if (m_tcp_socket->receive(packet) != sf::Socket::Status::Done) return;
+            packet >> recipient >> msg;
+            if (recipient != "peer") return;
+
+            if (msg == "move") {
+                auto link = parse_move(packet);
                 if (game.movePiece(link.first, link.second)) {
                     const auto [piece_idx, player] = gui.pieceAtLocation(link.first).value();
                     gui.getPieces(player)[piece_idx].setLocation(link.second);
