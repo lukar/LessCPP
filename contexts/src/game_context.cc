@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+using namespace std::string_literals;
+
 GameContext::GameContext(Context* previous, std::array<WallConfig, 9> wall_configs)
     : Context(previous),
       game(wall_configs),
@@ -39,7 +41,7 @@ GameContext::GameContext(Context* previous, std::array<WallConfig, 9> wall_confi
       m_game_mode(GameMode::MULTIPLAYER)
 {
     sf::Packet packet;
-    packet << std::string("post_game") << room_name << game.getJsonRepresentation().dump();
+    packet << "lobby"s << "post_game"s << room_name << game.getJsonRepresentation().dump();
     m_tcp_socket->send(packet);
 }
 
@@ -76,13 +78,13 @@ void GameContext::processBackgroundTask()
 void GameContext::leave_room()
 {
     sf::Packet packet;
-    packet << "leave_room";
+    packet << "server" << "leave_room";
     m_tcp_socket->send(packet);
 }
 
 void GameContext::send_move(const Location& location_old, const Location& location_new) {
     sf::Packet packet;
-    packet << location_old.x << location_old.y << location_new.x << location_new.y;
+    packet << "peer" << "move" << location_old.x << location_old.y << location_new.x << location_new.y;
     m_tcp_socket->send(packet);
 }
 

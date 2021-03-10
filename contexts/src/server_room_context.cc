@@ -7,6 +7,8 @@
 
 #include "helpers.h"
 
+using namespace std::string_literals;
+
 ServerRoomContext::ServerRoomContext(Context* previous)
     : Context(previous)
 {
@@ -97,14 +99,21 @@ sf::Texture ServerRoomContext::render() {
 
 Context* ServerRoomContext::join_game_server(std::unique_ptr<sf::TcpSocket> tcp_socket, std::string room_name) {
 	sf::Packet packet;
-	packet << std::string("join_game") << room_name;
-	tcp_socket->send(packet);
-	packet.clear();
-	tcp_socket->setBlocking(true); /*implement timeout*/
-	tcp_socket->receive(packet);
-	tcp_socket->setBlocking(false);
-	std::string json_string;
-	packet >> json_string;
+    std::string recipient, msg;
+    std::string json_string;
+
+    packet << "lobby"s << "join_game"s << room_name;
+    tcp_socket->send(packet);
+    
+    do {
+        packet.clear();
+        tcp_socket->setBlocking(true); /*implement timeout*/
+        tcp_socket->receive(packet);
+        tcp_socket->setBlocking(false);
+
+        packet >> recipient >> msg >> json_string;
+    } while (recipient != "peer");
+
     return new GameContext(this, nlohmann::json::parse(json_string), std::move(tcp_socket));
 }
 

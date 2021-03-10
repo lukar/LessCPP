@@ -7,6 +7,9 @@
 #include <iostream>
 #include "osdialog.h"
 
+#include <string>
+using namespace std::string_literals;
+
 sf::Vector2f getMousePosition(sf::RenderWindow  const& window) {
     return static_cast<sf::Vector2f>(sf::Mouse::getPosition(window));
 }
@@ -65,17 +68,17 @@ std::unique_ptr<sf::TcpSocket> connect_to_server(sf::IpAddress url, unsigned sho
     std::unique_ptr<sf::TcpSocket> tcp_socket = std::make_unique<sf::TcpSocket>();
     sf::Socket::Status status = tcp_socket->connect(url, port);
     if (status != sf::Socket::Done) {
-        std::cout << "Error connecting tcp - get_game_tcp_packets " << status << "\n";
+        std::cout << "Error connecting tcp - get_game_tcp_packets "s << status << "\n";
         assert(0);
     }
-    std::cout << "Tcp socket connected - get_game_tcp_packets " << status << "\n";
+    std::cout << "Tcp socket connected - get_game_tcp_packets "s << status << "\n";
 
     return std::move(tcp_socket);
 }
 
 std::string request_room_names(sf::TcpSocket* tcp_socket) {
     sf::Packet packet;
-    packet << std::string("list_rooms");
+    packet << "lobby"s << "list_rooms"s;
     tcp_socket->send(packet);
     packet.clear();
 
@@ -90,11 +93,12 @@ std::optional<Link> wait_move(sf::TcpSocket& tcp_socket) {
 
     Location location_old;
     Location location_new;
+    std::string recipient, msg;
 
     sf::Packet packet;
     if (tcp_socket.receive(packet)) {
         return {};
     }
-    packet >> location_old.x >> location_old.y >> location_new.x >> location_new.y;
+    packet >> recipient >> msg >> location_old.x >> location_old.y >> location_new.x >> location_new.y;
     return { {location_old, location_new} };
 }

@@ -14,7 +14,7 @@ class GameRoom {
 public:
     std::string get_room_name() const { return m_room_name; };
 
-    void exchange_packets();
+    void handle_packets();
 
     GameRoom(std::unique_ptr<sf::TcpSocket> tcp_socket_p1, std::string game_name, std::string game_json)
         : m_room_name(game_name), m_game_json(game_json), m_tcp_socket_p1(std::move(tcp_socket_p1)) {}

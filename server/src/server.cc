@@ -60,13 +60,14 @@ int main() {
 			}
 		} else { // check the unassigned clients for a request
 			for (auto& client : clients) {
-				if (selector.isReady(*client)) {
+				if (selector.isReady(*client)) { // TODO: can it be more than one?
 					// The client has sent some data, we can receive it
 					sf::Packet packet;
 					auto status = client->receive(packet);
 					if (status == sf::Socket::Done) {
-						std::string msg;
-						packet >> msg;
+						std::string recipient, msg;
+						packet >> recipient >> msg;
+						if (recipient != "lobby") continue;
 						if 		  (msg == "post_game") {
 							std::string p_name, p_game;
 							packet >> p_name >> p_game;
@@ -94,7 +95,7 @@ int main() {
 			}
 			for (auto& room : all_rooms) {
 				if (room.hasReady(selector)) {
-					room.exchange_packets(); // TODO: should remove a client if it detects a disconnection
+					room.handle_packets(); // TODO: should remove a client if it detects a disconnection
 				}
 			}
 		}
