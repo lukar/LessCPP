@@ -4,6 +4,8 @@
 #include <iso646.h>
 #include <SFML/Network.hpp>
 
+sf::Packet peer_msg(const std::string& message);
+
 class GameRoom {
     std::string m_room_name;
     std::string m_game_json;
@@ -16,8 +18,8 @@ public:
 
     void handle_packets();
 
-    GameRoom(std::unique_ptr<sf::TcpSocket> tcp_socket_p1, std::string game_name, std::string game_json)
-        : m_room_name(game_name), m_game_json(game_json), m_tcp_socket_p1(std::move(tcp_socket_p1)) {}
+    GameRoom(std::unique_ptr<sf::TcpSocket> tcp_socket_p1, std::string game_name)
+        : m_room_name(game_name), m_tcp_socket_p1(std::move(tcp_socket_p1)) {}
 
     void connect_p2(std::unique_ptr<sf::TcpSocket> tcp_socket_p2);
 

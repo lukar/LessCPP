@@ -50,7 +50,7 @@ GameContext::GameContext(Context* previous, std::array<WallConfig, 9> wall_confi
       m_game_mode(GameMode::MULTIPLAYER)
 {
     sf::Packet packet;
-    packet << "lobby"s << "post_game"s << room_name << game.getJsonRepresentation().dump();
+    packet << "server" << "game_json" << game.getJsonRepresentation().dump();
     m_tcp_socket->send(packet);
 }
 
@@ -85,6 +85,9 @@ void GameContext::processBackgroundTask()
                     gui.getPieces(player)[piece_idx].setLocation(link.second);
                     sound_drop.play();
                 }
+            }  else if (msg == "error") {
+                std::cout << "Error! Failed to create game room. Make sure room name is unique!\n";
+                setReturnContext(m_previous);
             }
         }
     }

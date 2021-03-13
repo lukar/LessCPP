@@ -48,7 +48,7 @@ public:
 	sf::Texture render() override;
     void processBackgroundTask() override;
 
-    Context* join_game_server(std::unique_ptr<sf::TcpSocket> tcp_socket, std::string room_name);
+    Context* join_game_server(std::string room_name);
 };
 
 

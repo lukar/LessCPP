@@ -14,8 +14,14 @@
 #include <unistd.h>
 #endif // __linux__
 
-static bool RUN = true;
+bool room_name_exists(const std::vector<GameRoom>& all_rooms, const std::string& room_name) {
+	for (auto& room : all_rooms) {
+		if (room_name == room.get_room_name()) return true;
+	}
+	return false;
+}
 
+static bool RUN = true;
 #ifdef __linux__
 void ctrlCHandler(int)
 {
@@ -69,11 +75,19 @@ int main() {
 						packet >> recipient >> msg;
 						if (recipient != "lobby") continue;
 						if 		  (msg == "post_game") {
-							std::string p_name, p_game;
-							packet >> p_name >> p_game;
-							std::cout << p_name << p_game << '\n';
-							all_rooms.push_back(GameRoom(std::move(client), p_name, p_game));
-							clients.erase(std::remove(std::begin(clients), std::end(clients), client), std::end(clients));
+							std::string p_name;
+							packet >> p_name;
+							if (room_name_exists(all_rooms, p_name)) {
+								std::cout << "Room: " << p_name << " already exists." << '\n';
+								client->send(peer_msg("error"));
+							}
+							else {
+								std::cout << "Room: " << p_name << " created." << '\n';
+								client->send(peer_msg("sucess"));
+								all_rooms.push_back(GameRoom(std::move(client), p_name));
+								clients.erase(std::remove(std::begin(clients), std::end(clients), client), std::end(clients));
+
+							}
 						} else if (msg == "join_game") {
 							std::string p_name;
 							packet >> p_name;
@@ -82,7 +96,12 @@ int main() {
 							});
 							if (room_it != all_rooms.end()) {
 								room_it->connect_p2(std::move(client));
+								std::cout << "A player joined room: " << p_name << '\n';
 								clients.erase(std::remove(std::begin(clients), std::end(clients), client), std::end(clients));
+							}
+							else {
+								std::cout << "Room: " << p_name << " does not exists." << '\n';
+								client->send(peer_msg("error"));
 							}
 						} else if (msg == "list_rooms") {}
 					} else if (status == sf::Socket::Disconnected) {

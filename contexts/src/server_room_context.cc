@@ -52,13 +52,22 @@ Context* ServerRoomContext::processEvent(const sf::Event& event)
     if (event.type == sf::Event::MouseButtonPressed) {
         if (returnButton.contains(m_mousepos)) setReturnContext(m_previous);
 		else if (postGameButton.contains(m_mousepos)) {
+            std::string recipient, msg;
+            sf::Packet packet;
+            packet << "lobby"s << "post_game"s << RoomNameTextInput.getText();
+            m_tcp_socket->send(packet);
+            m_tcp_socket->setBlocking(true);
+            if (m_tcp_socket->receive(packet) != sf::Socket::Status::Done) return nullptr;
+            m_tcp_socket->setBlocking(false);
+            packet >> recipient >> msg;
+            if (recipient != "peer" or msg != "sucess") return nullptr;
             if (m_tcp_socket) return new GameContext(this, wall::generateNwallconfigs<9>(), std::move(m_tcp_socket), RoomNameTextInput.getText());
 		}
 		else if (listRoomsButton.contains(m_mousepos)) {
 //			std::cout << request_room_names(m_tcp_socket) << "\n";
 		}
         else if (joinRoomButton.contains(m_mousepos)) {
-            if (m_tcp_socket) return join_game_server(std::move(m_tcp_socket), RoomNameTextInput.getText());
+            if (m_tcp_socket) return join_game_server(RoomNameTextInput.getText());
 		}
         else if (ConnectButton.contains(m_mousepos)) {
             focusedTextInput = nullptr;
@@ -110,23 +119,30 @@ sf::Texture ServerRoomContext::render() {
 }
 
 
-Context* ServerRoomContext::join_game_server(std::unique_ptr<sf::TcpSocket> tcp_socket, std::string room_name) {
+Context* ServerRoomContext::join_game_server(std::string room_name) {
 	sf::Packet packet;
     std::string recipient, msg;
     std::string json_string;
 
     packet << "lobby"s << "join_game"s << room_name;
-    tcp_socket->send(packet);
+    m_tcp_socket->send(packet);
     
-    do {
-        packet.clear();
-        tcp_socket->setBlocking(true); /*implement timeout*/
-        tcp_socket->receive(packet);
-        tcp_socket->setBlocking(false);
+    packet.clear();
+    m_tcp_socket->setBlocking(true); /*implement timeout*/
+    m_tcp_socket->receive(packet);
+    m_tcp_socket->setBlocking(false);
 
-        packet >> recipient >> msg >> json_string;
-    } while (recipient != "peer");
-
-    return new GameContext(this, nlohmann::json::parse(json_string), std::move(tcp_socket));
+    packet >> recipient >> msg;
+    if (recipient != "peer") {
+        std::cout << "Error! Recipient incorrect!\n";
+        return nullptr;
+    }
+    
+    if (msg == "error") {
+        std::cout << "Error! Failed to join game room. Make sure room name exists\n";
+        return nullptr;
+    }
+    packet >> json_string;
+    return new GameContext(this, nlohmann::json::parse(json_string), std::move(m_tcp_socket));
 }
 
