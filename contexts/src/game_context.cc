@@ -7,6 +7,15 @@
 
 using namespace std::string_literals;
 
+static Link parse_move(sf::Packet packet) {
+
+    Location location_old;
+    Location location_new;
+
+    packet >> location_old.x >> location_old.y >> location_new.x >> location_new.y;
+    return { location_old, location_new };
+}
+
 GameContext::GameContext(Context* previous, std::array<WallConfig, 9> wall_configs)
     : Context(previous),
       game(wall_configs),

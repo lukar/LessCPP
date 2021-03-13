@@ -9,6 +9,19 @@
 
 using namespace std::string_literals;
 
+std::string request_room_names(sf::TcpSocket* tcp_socket) {
+    sf::Packet packet;
+    packet << "lobby"s << "list_rooms"s;
+    tcp_socket->send(packet);
+    packet.clear();
+
+    tcp_socket->receive(packet);
+    tcp_socket->disconnect();
+    std::string room_names;
+    packet >> room_names;
+    return room_names;
+}
+
 ServerRoomContext::ServerRoomContext(Context* previous)
     : Context(previous)
 {
